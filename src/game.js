@@ -204,21 +204,35 @@ export function reroll() { if (G.scrap < G.rerollCost) return; G.scrap -= G.rero
 /* ---------- update ---------- */
 const K = (...c) => c.some(k => G.keys[k]);
 function nearest(x, y, max, skip) { let b = null, bd = max; for (const e of G.enemies) { if (e.dead || (skip && skip.has(e))) continue; const d = Math.hypot(e.x - x, e.y - y) - e.r; if (d < bd) { bd = d; b = e } } return b }
+// Tyres are springy: they return most of the impact speed and always kick you
+// back out a little. Hay bales just absorb the hit.
+const TIRE_BOUNCE = .95, TIRE_KICK = 95;
+function bounceOff(o, nx, ny, bounce, tire, cx, cy) {
+  const vn = o.vx * nx + o.vy * ny; if (vn >= 0) return;
+  let out = -vn * (tire ? TIRE_BOUNCE : bounce);
+  if (tire && -vn > 15) out = Math.max(out, o === G.P ? TIRE_KICK : TIRE_KICK * .5);
+  o.vx += (out - vn) * nx; o.vy += (out - vn) * ny;
+  if (o !== G.P || vn > -45) return;
+  const k = Math.min(1, -vn / 160);
+  if (tire) { o.a += (Math.random() - .5) * .5 * k; o.stun = .35 * k; G.cheer = Math.max(G.cheer, k * .6) }
+  G.shake = Math.max(G.shake, 3 + k * 9);
+  puff(cx, cy, 6 + 10 * k | 0, { c: 0xffd27a, glow: true, k: 's', s0: 100, s1: 300, l0: .15, l1: .35, z: 8, vz0: 40, vz1: 140, grav: 400 });
+  if (tire) puff(cx, cy, 4 + 6 * k | 0, { c: 0x2a2826, s0: 40, s1: 140, l0: .5, l1: .9, z0: 2, z1: 4, z: 10, vz0: 80, vz1: 200, grav: 600 });
+  puff(cx, cy, 5, { c: 0xdccbad, s0: 10, s1: 50, l0: .5, l1: .9, z0: 3, z1: 6, grow: 10, z: 4, vz0: 10, vz1: 30 });
+}
 function collideStatic(o, r, bounce) {
   for (const b of G.obs) {
     const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy), m = r + b.r;
     if (d < m && d > 0) {
       const nx = dx / d, ny = dy / d; o.x = b.x + nx * m; o.y = b.y + ny * m;
-      const vn = o.vx * nx + o.vy * ny;
-      if (vn < 0) {
-        o.vx -= (1 + bounce) * vn * nx; o.vy -= (1 + bounce) * vn * ny;
-        if (o === G.P && vn < -85) { G.shake = Math.max(G.shake, 5); puff(o.x - nx * r, o.y - ny * r, 8, { c: 0xffd27a, glow: true, k: 's', s0: 100, s1: 300, l0: .15, l1: .35, z: 8, vz0: 40, vz1: 140, grav: 400 }) }
-      }
+      bounceOff(o, nx, ny, bounce, b.k === 'tire', o.x - nx * r, o.y - ny * r);
     }
   }
   const lo = EDGE + r;
-  if (o.x < lo) { o.x = lo; o.vx = Math.abs(o.vx) * bounce } if (o.x > AW - lo) { o.x = AW - lo; o.vx = -Math.abs(o.vx) * bounce }
-  if (o.y < lo) { o.y = lo; o.vy = Math.abs(o.vy) * bounce } if (o.y > AH - lo) { o.y = AH - lo; o.vy = -Math.abs(o.vy) * bounce }
+  if (o.x < lo) { o.x = lo; bounceOff(o, 1, 0, bounce, true, EDGE, o.y) }
+  if (o.x > AW - lo) { o.x = AW - lo; bounceOff(o, -1, 0, bounce, true, AW - EDGE, o.y) }
+  if (o.y < lo) { o.y = lo; bounceOff(o, 0, 1, bounce, true, o.x, EDGE) }
+  if (o.y > AH - lo) { o.y = AH - lo; bounceOff(o, 0, -1, bounce, true, o.x, AH - EDGE) }
 }
 function hitPlayer(d) {
   const P = G.P;
@@ -253,15 +267,15 @@ export function update(dt) {
   /* driving: split velocity into forward and lateral; grip eats lateral, handbrake drops grip */
   const fx = Math.cos(P.a), fy = Math.sin(P.a);
   let fwd = P.vx * fx + P.vy * fy, lat = -P.vx * fy + P.vy * fx;
-  const up = K('KeyW', 'ArrowUp'), dn = K('KeyS', 'ArrowDown'), hb = K('Space'), lt = K('KeyA', 'ArrowLeft'), rt = K('KeyD', 'ArrowRight');
+  P.stun = Math.max(0, (P.stun || 0) - dt);
+  const up = K('KeyW', 'ArrowUp') && P.stun <= 0, dn = K('KeyS', 'ArrowDown'), hb = K('Space'), lt = K('KeyA', 'ArrowLeft'), rt = K('KeyD', 'ArrowRight');
   P.boost = K('ShiftLeft', 'ShiftRight') && P.nitro > .02;
   const bm = P.boost ? 1.8 * S.nitroPow : 1, top = S.top * (P.boost ? 1.35 * S.nitroPow : 1);
   if (P.boost) { P.nitro = Math.max(0, P.nitro - dt * .45); puff(P.x - fx * P.len * .55, P.y - fy * P.len * .55, 2, { c: 0x7fd4ff, glow: true, a: P.a + Math.PI, sp: .25, s0: 90, s1: 180, l0: .12, l1: .25, z0: 3, z1: 5, z: 8 }) }
   if (up) fwd += S.accel * bm * dt;
-  if (dn) fwd -= (fwd > 0 ? S.accel * 1.4 : S.accel * .6) * dt;
+  if (dn && fwd > -top * .4) fwd -= (fwd > 0 ? S.accel * 1.4 : S.accel * .6) * dt; // reverse is capped, bounces are not
   if (hb) fwd -= fwd * .55 * dt;
   if (fwd > top) fwd += (top - fwd) * Math.min(1, dt * 3);
-  if (fwd < -top * .4) fwd = -top * .4;
   fwd -= fwd * (up || dn ? .12 : .9) * dt;
   lat *= Math.max(0, 1 - (hb ? S.grip * .16 : S.grip) * dt);
   P.vx = fx * fwd - fy * lat; P.vy = fy * fwd + fx * lat;
