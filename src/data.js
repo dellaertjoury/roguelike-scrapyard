@@ -1,32 +1,32 @@
 // Static game data: cars, upgrades, weapons, enemy palette.
-// Speeds are in world units per second (10 units ≈ 1 metre, so 300 ≈ 108 km/h).
+// Speeds are in world units per second (10 units ≈ 1 metre, so 190 ≈ 68 km/h).
 
 export const CARS = [
   {
     id: 'hatch', name: 'Stray Hatch', color: '#f2c230', num: 7, len: 44, wid: 24,
     shape: { cabL: .5, cabX: -.08, cabH: .42 },
     desc: 'Light and twitchy, grips like glue. Folds if you look at it wrong.',
-    st: { maxhp: 70, top: 335, accel: 430, grip: 6.2, turn: 3.4, mass: .8, ram: .8 },
+    st: { maxhp: 70, top: 210, accel: 290, grip: 6.2, turn: 3.4, mass: .8, ram: .8 },
     w: { mg: 1 }, bars: [90, 88, 30, 30]
   },
   {
     id: 'muscle', name: 'Rust Muscle', color: '#e8553a', num: 23, len: 50, wid: 26,
     shape: { cabL: .36, cabX: -.14, cabH: .34 },
     desc: 'V8 brawler that loves going sideways. Heat builds faster in a slide.',
-    st: { maxhp: 100, top: 305, accel: 380, grip: 4.8, turn: 3.0, mass: 1.2, ram: 1, driftGain: 1.35 },
+    st: { maxhp: 100, top: 190, accel: 255, grip: 4.8, turn: 2.9, mass: 1.2, ram: 1, driftGain: 1.35 },
     w: { mg: 1 }, bars: [75, 60, 55, 55]
   },
   {
     id: 'hearse', name: 'Iron Hearse', color: '#56606e', num: 66, len: 60, wid: 28,
     shape: { cabL: .62, cabX: -.12, cabH: .44 },
     desc: 'Slow, heavy, armoured. Rams for a living and lays mines behind it.',
-    st: { maxhp: 150, top: 255, accel: 300, grip: 4.3, turn: 2.6, mass: 2, ram: 1.6, armor: .1 },
+    st: { maxhp: 150, top: 160, accel: 205, grip: 4.3, turn: 2.6, mass: 2, ram: 1.6, armor: .1 },
     w: { mines: 1 }, bars: [45, 45, 90, 95]
   }
 ];
 
 export const BASE = {
-  maxhp: 100, top: 305, accel: 380, grip: 4.8, turn: 3.0, mass: 1, ram: 1, armor: 0, dmg: 1, rate: 1,
+  maxhp: 100, top: 190, accel: 255, grip: 4.8, turn: 3.0, mass: 1, ram: 1, armor: 0, dmg: 1, rate: 1,
   magnet: 110, regen: 0, driftGain: 1, exhaust: 0, spikes: 0, nitroPow: 1, nitroFill: 1, luck: 0
 };
 
@@ -74,8 +74,8 @@ export const ECOL = ['#7c9a5e', '#a8452f', '#4f7a92', '#b49a5a', '#7a62a0', '#8a
 
 // Enemy archetypes scale with wave number n.
 export const ENEMY = n => ({
-  rust:  { r: 17, len: 42, wid: 22, hp: 16 + n * 7, spd: 150 + n * 4, dmg: 8 + n * .8, mass: .9, turn: 2.4, sc: 1 },
-  spit:  { r: 17, len: 40, wid: 22, hp: 20 + n * 6, spd: 140 + n * 2.5, dmg: 6 + n * .6, mass: .8, turn: 2.6, sc: 2 },
-  brute: { r: 25, len: 62, wid: 32, hp: 80 + n * 20, spd: 110 + n * 2.5, dmg: 18 + n * 1.5, mass: 2.6, turn: 1.6, sc: 4 },
-  boss:  { r: 46, len: 112, wid: 56, hp: 650 * (n / 5) + n * 60, spd: 125, dmg: 30 + n, mass: 8, turn: 1.3, sc: 40 }
+  rust:  { r: 17, len: 42, wid: 22, hp: 16 + n * 7, spd: 95 + n * 3, dmg: 8 + n * .8, mass: .9, turn: 2.4, sc: 1 },
+  spit:  { r: 17, len: 40, wid: 22, hp: 20 + n * 6, spd: 90 + n * 2, dmg: 6 + n * .6, mass: .8, turn: 2.6, sc: 2 },
+  brute: { r: 25, len: 62, wid: 32, hp: 80 + n * 20, spd: 70 + n * 2, dmg: 18 + n * 1.5, mass: 2.6, turn: 1.6, sc: 4 },
+  boss:  { r: 46, len: 112, wid: 56, hp: 650 * (n / 5) + n * 60, spd: 80, dmg: 30 + n, mass: 8, turn: 1.3, sc: 40 }
 });

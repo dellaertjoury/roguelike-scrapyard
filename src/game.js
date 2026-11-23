@@ -212,7 +212,7 @@ function collideStatic(o, r, bounce) {
       const vn = o.vx * nx + o.vy * ny;
       if (vn < 0) {
         o.vx -= (1 + bounce) * vn * nx; o.vy -= (1 + bounce) * vn * ny;
-        if (o === G.P && vn < -130) { G.shake = Math.max(G.shake, 5); puff(o.x - nx * r, o.y - ny * r, 8, { c: 0xffd27a, glow: true, k: 's', s0: 100, s1: 300, l0: .15, l1: .35, z: 8, vz0: 40, vz1: 140, grav: 400 }) }
+        if (o === G.P && vn < -85) { G.shake = Math.max(G.shake, 5); puff(o.x - nx * r, o.y - ny * r, 8, { c: 0xffd27a, glow: true, k: 's', s0: 100, s1: 300, l0: .15, l1: .35, z: 8, vz0: 40, vz1: 140, grav: 400 }) }
       }
     }
   }
@@ -267,7 +267,7 @@ export function update(dt) {
   P.vx = fx * fwd - fy * lat; P.vy = fy * fwd + fx * lat;
   const sp = Math.hypot(P.vx, P.vy), steer = (rt ? 1 : 0) - (lt ? 1 : 0);
   P.steer += (steer - P.steer) * Math.min(1, dt * 10);
-  P.a += steer * S.turn * Math.min(1, sp / 120) * (fwd < -5 ? -1 : 1) * (hb ? 1.35 : 1) * dt;
+  P.a += steer * S.turn * Math.min(1, sp / 80) * (fwd < -5 ? -1 : 1) * (hb ? 1.35 : 1) * dt;
   P.x += P.vx * dt; P.y += P.vy * dt;
   collideStatic(P, P.r, .35);
   P.inv = Math.max(0, P.inv - dt);
@@ -275,10 +275,10 @@ export function update(dt) {
   P.lat = lat; P.fwd = fwd; P.sp = sp; P.slipDeg = sp > 30 ? Math.round(Math.atan2(Math.abs(lat), Math.abs(fwd)) * 180 / Math.PI) : 0;
 
   /* drifting: skid marks, combo, heat (fire-rate boost), nitro refill */
-  const slip = Math.abs(lat), isDrift = slip > 55 && sp > 110;
+  const slip = Math.abs(lat), isDrift = slip > 36 && sp > 72;
   const wl = [[P.x - fx * P.len * .32 - fy * P.wid * .42, P.y - fy * P.len * .32 + fx * P.wid * .42], [P.x - fx * P.len * .32 + fy * P.wid * .42, P.y - fy * P.len * .32 - fx * P.wid * .42]];
-  if ((isDrift || (hb && sp > 70)) && P.wl) {
-    g.strokeStyle = `rgba(40,28,18,${clamp(slip / 380, .14, .36)})`; g.lineWidth = 5;
+  if ((isDrift || (hb && sp > 45)) && P.wl) {
+    g.strokeStyle = `rgba(40,28,18,${clamp(slip / 250, .14, .36)})`; g.lineWidth = 5;
     for (let i = 0; i < 2; i++) { g.beginPath(); g.moveTo(P.wl[i][0], P.wl[i][1]); g.lineTo(wl[i][0], wl[i][1]); g.stroke() }
     G.groundDirty = true;
     if (Math.random() < .45) { const w = wl[Math.random() * 2 | 0]; puff(w[0], w[1], 1, { c: 0xdccbad, s0: 5, s1: 30, l0: .5, l1: .9, z0: 3, z1: 5, grow: 9, drag: 1.5, z: 4, vz0: 8, vz1: 25 }) }
@@ -286,7 +286,7 @@ export function update(dt) {
   P.wl = wl;
   if (isDrift) {
     drift.on = true; drift.off = 0;
-    drift.pts += slip * dt * drift.mult * .7;
+    drift.pts += slip * dt * drift.mult * 1.05;
     drift.mult = Math.min(5, drift.mult + dt * .45 * S.driftGain);
     drift.heat = Math.min(1, drift.heat + dt * .6 * S.driftGain);
     P.nitro = Math.min(1, P.nitro + dt * .18 * S.driftGain * S.nitroFill);
@@ -321,7 +321,7 @@ export function update(dt) {
       e.cd -= dt;
       if (e.cd <= 0 && d < 600) {
         e.cd = rnd(1.8, 2.8); const a = Math.atan2(dy, dx);
-        G.ebul.push({ x: e.x + Math.cos(a) * 20, y: e.y + Math.sin(a) * 20, vx: Math.cos(a) * 300, vy: Math.sin(a) * 300, life: 3, dmg: e.dmg });
+        G.ebul.push({ x: e.x + Math.cos(a) * 20, y: e.y + Math.sin(a) * 20, vx: Math.cos(a) * 200, vy: Math.sin(a) * 200, life: 4, dmg: e.dmg });
         puff(e.x + Math.cos(a) * 22, e.y + Math.sin(a) * 22, 4, { c: 0xb8ff70, glow: true, a, sp: .4, s0: 60, s1: 160, l0: .1, l1: .25, z0: 3, z1: 5, z: 14 });
       }
     }
@@ -355,12 +355,12 @@ export function update(dt) {
       if (rel > 0) {
         const j = 1.5 * rel / (1 / pm + 1 / em);
         P.vx -= j / pm * nx; P.vy -= j / pm * ny; e.vx += j / em * nx; e.vy += j / em * ny;
-        if (rel > 65) {
-          hurt(e, rel * .16 * S.ram * pm * (P.boost ? 1.4 : 1));
+        if (rel > 42) {
+          hurt(e, rel * .25 * S.ram * pm * (P.boost ? 1.4 : 1));
           puff(P.x + nx * P.r, P.y + ny * P.r, 10 + rel / 25 | 0, { c: 0xffd27a, glow: true, k: 's', s0: 120, s1: 360, l0: .15, l1: .4, z: 10, vz0: 40, vz1: 200, grav: 500 });
-          G.shake = Math.max(G.shake, rel / 45);
+          G.shake = Math.max(G.shake, rel / 30);
         }
-        if (!e.dead) hitPlayer(e.dmg * (rel > 190 ? .35 : 1));
+        if (!e.dead) hitPlayer(e.dmg * (rel > 125 ? .35 : 1));
       } else if (P.inv <= 0) hitPlayer(e.dmg * .6);
     }
   }
@@ -373,14 +373,14 @@ export function update(dt) {
       CD.mg = .42 / (1 + .2 * (W.mg - 1)) / rateMul;
       for (const b of W.mg >= 3 ? [1, -1] : [0]) {
         const off = b * 5, a = P.gunA + rnd(-.04, .04), ox = -Math.sin(P.gunA) * off, oy = Math.cos(P.gunA) * off;
-        G.bullets.push({ x: P.x + ox + Math.cos(a) * 16, y: P.y + oy + Math.sin(a) * 16, vx: Math.cos(a) * 900 + P.vx * .3, vy: Math.sin(a) * 900 + P.vy * .3, life: .7, dmg: (6 + W.mg * 3) * S.dmg });
+        G.bullets.push({ x: P.x + ox + Math.cos(a) * 16, y: P.y + oy + Math.sin(a) * 16, vx: Math.cos(a) * 700 + P.vx * .3, vy: Math.sin(a) * 700 + P.vy * .3, life: .8, dmg: (6 + W.mg * 3) * S.dmg });
       }
       puff(P.x + Math.cos(P.gunA) * 20, P.y + Math.sin(P.gunA) * 20, 2, { c: 0xffe08c, glow: true, a: P.gunA, sp: .3, s0: 60, s1: 160, l0: .05, l1: .1, z0: 3, z1: 5, z: 22 });
     }
   }
   if (W.mines) {
     CD.mines -= dt;
-    if (CD.mines <= 0 && sp > 40) { CD.mines = (2.4 - .3 * W.mines) / rateMul; G.mines.push({ x: P.x - fx * P.len * .6, y: P.y - fy * P.len * .6, arm: .5, t: 0 }); if (G.mines.length > 14) G.mines.shift() }
+    if (CD.mines <= 0 && sp > 25) { CD.mines = (2.4 - .3 * W.mines) / rateMul; G.mines.push({ x: P.x - fx * P.len * .6, y: P.y - fy * P.len * .6, arm: .5, t: 0 }); if (G.mines.length > 14) G.mines.shift() }
   }
   for (const m of G.mines) {
     m.arm -= dt; m.t += dt;
@@ -446,5 +446,5 @@ export function update(dt) {
   /* camera target: ahead of the car */
   G.cam.x += (P.x + P.vx * .3 - G.cam.x) * Math.min(1, dt * 5);
   G.cam.y += (P.y + P.vy * .3 - G.cam.y) * Math.min(1, dt * 5);
-  G.cam.x = clamp(G.cam.x, 200, AW - 200); G.cam.y = clamp(G.cam.y, 160, AH - 160);
+  G.cam.x = clamp(G.cam.x, 420, AW - 420); G.cam.y = clamp(G.cam.y, 300, AH - 300);
 }

@@ -27,7 +27,7 @@ new ResizeObserver(resize).observe(host); resize();
 scene.add(new THREE.HemisphereLight(0xeef6ff, 0x7a8f55, 1.7));
 const sun = new THREE.DirectionalLight(0xfff0d6, 2.6);
 sun.castShadow = true; sun.shadow.mapSize.set(2048, 2048);
-Object.assign(sun.shadow.camera, { left: -750, right: 750, top: 750, bottom: -750, near: 50, far: 3000 });
+Object.assign(sun.shadow.camera, { left: -1000, right: 1000, top: 1000, bottom: -1000, near: 50, far: 3200 });
 sun.shadow.bias = -0.0005; sun.shadow.normalBias = .8;
 scene.add(sun, sun.target);
 const SUN_OFF = new THREE.Vector3(-520, 1100, 380);
@@ -258,10 +258,10 @@ function finish(m, n) { m.count = n; m.instanceMatrix.needsUpdate = true; if (m.
 let camH = 1000;
 function placeCamera(cx, cz, shake) {
   const asp = VW / VH, t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-  camH = (asp > 1 ? 740 : 560) / (2 * t * asp);
+  camH = (asp > 1 ? 1180 : 820) / (2 * t * asp);
   const sx = shake ? rnd(-shake, shake) : 0, sz = shake ? rnd(-shake, shake) : 0;
   camera.position.set(cx + sx, camH, cz + camH * .34 + sz); camera.lookAt(cx + sx, 0, cz + sz);
-  scene.fog.near = camH + 500; scene.fog.far = camH + 2400;
+  scene.fog.near = camH + 700; scene.fog.far = camH + 2800;
   sun.position.set(cx + SUN_OFF.x, SUN_OFF.y, cz + SUN_OFF.z); sun.target.position.set(cx, 0, cz); sun.target.updateMatrixWorld();
 }
 

@@ -48,7 +48,7 @@ assets/           optional art (see ART_PROMPTS.md)
 
 ## Tuning
 
-Car speed, grip and handling live in `CARS` in `src/data.js`. Speeds are in world units per second, where 10 units ≈ 1 m, so `top: 305` ≈ 110 km/h.
+Car speed, grip and handling live in `CARS` in `src/data.js`. Speeds are in world units per second, where 10 units ≈ 1 m, so `top: 190` ≈ 68 km/h.
 Enemy speed and health scale per wave in `ENEMY`.
 
 ## Art
