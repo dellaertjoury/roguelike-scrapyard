@@ -18,7 +18,7 @@ const loadBest = () => { try { best = JSON.parse(localStorage.getItem('scrapyard
 export function buildMenu(portraits) {
   loadBest();
   if (A.logo) $('title').innerHTML = `<img src="${A.logo.src}" alt="Scrapyard Derby">`;
-  if (A.menuBg) $('menu').style.backgroundImage = `linear-gradient(rgba(24,26,30,.55),rgba(24,26,30,.85)),url(${A.menuBg.src})`;
+  if (A.menuBg) $('menu').style.backgroundImage = `linear-gradient(rgba(24,26,30,.2),rgba(24,26,30,.45) 45%,rgba(24,26,30,.82)),url(${A.menuBg.src})`;
   $('bestLine').textContent = best
     ? `Your best: wave ${best.wave}, ${fmt(best.score)} points.`
     : 'Pick a junker. Survive the wave, spend scrap in the garage, go again.';

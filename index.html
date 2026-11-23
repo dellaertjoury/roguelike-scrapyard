@@ -7,8 +7,11 @@
 <meta name="description" content="A low-poly drift-and-wreck survival roguelike. Drift to charge your guns, ram to wreck, upgrade your car between waves.">
 <meta property="og:title" content="Scrapyard Derby">
 <meta property="og:description" content="Drift to charge your guns, ram to wreck, upgrade your junker between waves.">
-<meta property="og:image" content="assets/og.jpg">
+<meta property="og:image" content="https://dellaertjoury.github.io/roguelike-scrapyard/assets/og.jpg">
+<meta property="og:url" content="https://dellaertjoury.github.io/roguelike-scrapyard/">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="assets/favicon.png">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@700;800&family=Inter:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
@@ -69,7 +72,7 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 .ov h1{font:800 clamp(40px,7vw,76px)/1 Rubik,sans-serif;margin:0;text-shadow:0 5px 0 rgba(0,0,0,.25)}
 .ov h1 img{max-width:min(600px,100%);max-height:26vh;width:auto;height:auto;display:block;filter:drop-shadow(0 8px 14px rgba(0,0,0,.35))}
 .ov h2{font:800 clamp(26px,3.4vw,38px)/1.05 Rubik,sans-serif;margin:0}
-.sub{color:var(--mute);margin:0}
+.sub{color:var(--mute);margin:0}#menu .sub{color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.8),0 0 12px rgba(0,0,0,.5)}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .car,.card{font:inherit;color:inherit;text-align:left;background:var(--glass2);backdrop-filter:blur(6px);border:2px solid transparent;border-radius:16px;padding:12px;cursor:pointer;display:flex;flex-direction:column;gap:7px;transition:transform .12s,border-color .12s}
 .car:hover,.car:focus-visible,.card:hover:not(:disabled),.card:focus-visible{border-color:var(--haz);transform:translateY(-3px);outline:none}

@@ -43,7 +43,7 @@ export function makeGround() {
     gr.addColorStop(0, `rgba(${c},${rnd(.12, .3) * k})`); gr.addColorStop(1, `rgba(${c},0)`);
     g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
   }
-  for (let i = 0; i < 4500; i++) {
+  for (let i = 0; i < (dirtImg ? 0 : 4500); i++) {
     g.fillStyle = Math.random() < .5 ? 'rgba(70,50,32,.4)' : 'rgba(225,200,160,.35)';
     const s = rnd(2, 4); g.fillRect(rnd(0, AW), rnd(0, AH), s, s);
   }
