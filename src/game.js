@@ -260,7 +260,7 @@ function bankDrift() {
 // is used up, then it closes and another opens 15 s later. Fuel keeps burning while you fill, so a pump
 // is worth exactly its reserve (+30 s of lap) and there is no way to freeze the lap clock.
 // paint per enemy type, after the portraits: olive wreckers, teal spitters, mustard brutes (a few shades each)
-const SPEED_K = { rust: .86, spit: .78, thief: .9, brute: .74 }; // share of the player's top speed
+const SPEED_K = { rust: .8, spit: .72, thief: .84, brute: .7 }; // share of the player's top speed
 const TYPE_COL = { rust: ['#7f8f3a', '#6f8034', '#8d9a4a'], spit: ['#3f8a8f', '#367a80', '#4b9499'], brute: ['#e0a92a', '#d49a22'] };
 export const START_T = 3; // 3-2-1 countdown: no fuel burn, spawns, throttle or guns until GO
 // a pump holds 30 L (= 30 s of lap) and pours it straight in while you stand on the pad: 6 L/s, so ~5 s to drain
@@ -806,9 +806,9 @@ export function update(dt) {
   /* waves */
   if (live) { fuelStep(dt); G.spawnT -= dt }
   if (live && G.spawnT <= 0 && G.fuel > 2) {
-    // early laps are calm: one car every ~3 s and a low cap, ramping up from lap 4
-    G.spawnT = Math.max(.5, 3.2 - G.wave * .3) * rnd(.8, 1.2);
-    const n = 1 + Math.floor((G.wave - 1) / 3) + (G.wave >= 4 && Math.random() < .3 ? 1 : 0), cap = Math.min(60, 4 + G.wave * 3);
+    // slower enemies, but more of them: a car every ~2.5 s from lap 1, bigger groups and a higher cap as laps go up
+    G.spawnT = Math.max(.42, 2.6 - G.wave * .26) * rnd(.8, 1.2);
+    const n = 1 + Math.floor(G.wave / 3) + (G.wave >= 3 && Math.random() < .35 ? 1 : 0), cap = Math.min(72, 6 + G.wave * 4);
     for (let i = 0; i < n && G.enemies.length + G.pend.length < cap; i++) {
       const r = Math.random();
       queue(G.wave >= 2 && r > .85 ? 'thief' : G.wave >= 3 && r < .35 ? 'spit' : 'rust'); // three kinds for now: rammers, gunners, fuel thieves

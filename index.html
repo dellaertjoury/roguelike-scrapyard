@@ -184,7 +184,18 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 .ov h1 img{max-width:min(600px,100%);max-height:24vh;width:auto;height:auto;display:block;filter:drop-shadow(0 8px 14px rgba(0,0,0,.35))}
 .ov h2{font:800 clamp(24px,3.2vw,36px)/1.05 Rubik,sans-serif;margin:0}
 .sub{color:var(--mute);margin:0}
-#menu .sub{color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.8),0 0 12px rgba(0,0,0,.5)}
+/* main menu fills big screens: wider column, vertically centred, bigger cards and type */
+#menu>*,#settings.menubg>*{width:min(1720px,100%)}#settings.menubg>.opts{width:min(720px,94vw)}#settings.menubg>.row{width:auto}
+#menu>:first-child,#settings>:first-child{margin-top:auto}#menu>:last-child,#settings>:last-child{margin-bottom:auto}
+#menu{gap:clamp(16px,2.2vh,30px)}#menu .grid3{gap:clamp(14px,1.8vw,32px)}#menu .grid2{gap:clamp(12px,1.8vw,32px)}
+#menu .car{padding:clamp(12px,1vw,20px);gap:clamp(7px,.7vw,12px);background:rgba(28,29,33,.82)}
+#menu .car b{font-size:clamp(19px,1.5vw,30px)}#menu .car .d{font-size:clamp(15px,.95vw,19px)}
+#menu .bar{font-size:clamp(13px,.85vw,16px)}#menu .bar i{height:clamp(6px,.5vw,9px)}
+#menu .pack{min-height:clamp(132px,15vh,210px);padding:clamp(16px,1.3vw,26px)}#menu .pack b{font-size:clamp(24px,1.8vw,34px)}#menu .pack .d{font-size:clamp(15px,1vw,19px)}
+#menu .chips img{width:clamp(76px,6vw,120px);height:auto;aspect-ratio:76/41}#menu .chips span{font-size:clamp(13px,.85vw,16px)}
+#menu .keys{font-size:clamp(15px,.9vw,18px)}#menu .lbl{font-size:clamp(11px,.7vw,14px)}
+#settings.menubg .opt{background:rgba(28,29,33,.82)}
+#menu .sub{font-size:clamp(16px,1vw,20px);color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.8),0 0 12px rgba(0,0,0,.5)}
 .menuhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px}
 .grid3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
 .grid2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}

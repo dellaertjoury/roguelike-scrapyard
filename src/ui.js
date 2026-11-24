@@ -47,7 +47,7 @@ export function buildMenu(p) {
   loadBest();
   const logo = A.logos.vls;
   $('title').innerHTML = logo ? `<img src="${logo}" alt="${esc(t('title'))}">` : esc(t('title'));
-  if (A.menuBg) $('menu').style.backgroundImage = `linear-gradient(rgba(24,26,30,.2),rgba(24,26,30,.45) 45%,rgba(24,26,30,.82)),url(${A.menuBg.src})`;
+  if (A.menuBg) $('menu').style.backgroundImage = `linear-gradient(rgba(20,21,25,.58),rgba(20,21,25,.72) 45%,rgba(20,21,25,.9)),url(${A.menuBg.src})`;
   set($('bestLine'), best ? t('best', { lap: best.wave, score: fmt(best.score) }) : t('pick'));
   const C = L().cars;
   $('cars').innerHTML = CARS.map((c, i) => `
@@ -86,7 +86,7 @@ const BPV = {
   top: { h: 240, slots: { front: [162, 115, 130, 22, 'c'], rear: [438, 115, 470, 22, 'c'], trunk: [395, 115, 300, 218, 'c'] } },
   side: { h: 250, slots: { turret: [282, 46, 200, 22, 'r'], roof: [338, 62, 400, 22, 'l'], hood: [182, 120, 130, 228, 'c'], sides: [300, 168, 370, 228, 'c'] } }
 };
-// the drawings are made front-right and mirrored, so the back (spoiler) ends up on the right; deliberately a bit
+// the top view is drawn front-right and mirrored, the side view is drawn front-left; both end with the spoiler on the right; deliberately a bit
 // scrappy: a crooked door, a riveted patch, a dented panel, a bent bumper and a spoiler bolted on at an angle
 const MIRROR = s => `<g transform="translate(${VW},0) scale(-1,1)">${s}</g>`;
 const BP_DRAW = {
@@ -98,14 +98,14 @@ const BP_DRAW = {
     <circle class="rivet" cx="377" cy="133" r="1.8"/><circle class="rivet" cx="397" cy="136" r="1.8"/><circle class="rivet" cx="375" cy="146" r="1.8"/><circle class="rivet" cx="395" cy="149" r="1.8"/>
     <rect x="442" y="72" width="10" height="86" rx="3" transform="rotate(5 447 115)"/>
     <rect class="spoiler" x="126" y="58" width="16" height="114" rx="3" transform="rotate(-3 134 115)"/><line x1="142" y1="80" x2="160" y2="84"/><line x1="142" y1="150" x2="160" y2="146"/></g>`),
-  side: MIRROR(`<g class="car-o"><path d="M140 150 L140 118 Q142 104 158 102 L232 98 L270 60 Q276 54 286 54 L356 54 Q366 54 372 62 L396 98 L448 104 Q460 106 460 120 L460 150 Z"/>
+  side: `<g class="car-o"><path d="M140 150 L140 118 Q142 104 158 102 L232 98 L270 60 Q276 54 286 54 L356 54 Q366 54 372 62 L396 98 L448 104 Q460 106 460 120 L460 150 Z"/>
     <path d="M282 100 L284 64 M348 62 L352 100" /><path d="M286 100 L346 102 L348 146 L288 144 Z" transform="rotate(-3 316 122)"/><line x1="232" y1="98" x2="396" y2="98"/>
-    <path class="dent" d="M410 104 l6 8 l-7 5 l8 6"/><rect class="patch" x="162" y="112" width="34" height="24" transform="rotate(-6 179 124)"/>
-    <circle class="rivet" cx="167" cy="117" r="1.8"/><circle class="rivet" cx="191" cy="115" r="1.8"/><circle class="rivet" cx="169" cy="133" r="1.8"/><circle class="rivet" cx="193" cy="131" r="1.8"/>
+    <path class="dent" d="M410 104 l6 8 l-7 5 l8 6"/><rect class="patch" x="354" y="106" width="30" height="22" transform="rotate(-6 369 117)"/>
+    <circle class="rivet" cx="359" cy="111" r="1.8"/><circle class="rivet" cx="379" cy="109" r="1.8"/><circle class="rivet" cx="361" cy="125" r="1.8"/><circle class="rivet" cx="381" cy="123" r="1.8"/>
     <circle cx="200" cy="152" r="26"/><circle cx="400" cy="152" r="26"/><circle cx="200" cy="152" r="10"/><circle cx="400" cy="152" r="10"/>
     <rect x="176" y="158" width="250" height="8" rx="3" transform="rotate(1 300 162)"/>
-    <path class="spoiler" d="M118 78 L178 74 L180 84 L120 88 Z"/><line x1="150" y1="86" x2="154" y2="102"/><line x1="170" y1="84" x2="172" y2="100"/>
-    <path d="M140 140 L120 142 L120 148 L140 147"/></g>`)
+    <path class="spoiler" d="M422 74 L482 78 L480 88 L420 84 Z"/><line x1="450" y1="86" x2="446" y2="104"/><line x1="430" y1="84" x2="428" y2="100"/>
+    <path d="M460 140 L480 142 L480 148 L460 147"/></g>`
 };
 const partDescAt = (id, l) => { const d = PART[id]; return d.w ? L().w[d.w][1](l, ...WSTAT[d.w](l)) : L().parts[id][1] };
 function bpView(view) {
@@ -183,7 +183,8 @@ export function wire(onStart, onMenu, onLang) {
   $('resume').onclick = () => { G.state = 'play'; show(null) };
   // pause menu: settings, end the lap and go to the garage, or cancel the run and go back to the main menu
   let optFrom = 'menu';
-  const openOpts = from => { optFrom = from; renderOpts(); show('settings') };
+  // from the main menu the settings screen sits on the same darkened menu backdrop; from pause it overlays the game
+  const openOpts = from => { optFrom = from; $('settings').style.backgroundImage = from === 'menu' ? $('menu').style.backgroundImage : ''; $('settings').classList.toggle('menubg', from === 'menu'); renderOpts(); show('settings') };
   $('pSettings').onclick = () => openOpts('pause');
   $('mSettings').onclick = () => openOpts('menu');
   $('optBack').onclick = () => show(optFrom);
