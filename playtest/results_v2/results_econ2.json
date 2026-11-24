@@ -1,0 +1,150 @@
+{
+ "emptyLapCombo": [
+  {
+   "car": "hatch",
+   "state": "shop",
+   "scrapFromOneCombo": 7,
+   "score": 3607,
+   "bestDrift": 496
+  },
+  {
+   "car": "muscle",
+   "state": "shop",
+   "scrapFromOneCombo": 8,
+   "score": 4547,
+   "bestDrift": 627
+  },
+  {
+   "car": "hearse",
+   "state": "shop",
+   "scrapFromOneCombo": 7,
+   "score": 3441,
+   "bestDrift": 474
+  }
+ ],
+ "driftUnderAttack": [
+  {
+   "car": "hatch",
+   "laps": [
+    {
+     "lap": 1,
+     "end": "shop",
+     "scrap": 30,
+     "score": 4538,
+     "bestDrift": 540,
+     "hitsTaken": 0,
+     "hp": 70
+    },
+    {
+     "lap": 2,
+     "end": "shop",
+     "scrap": 33,
+     "score": 5144,
+     "bestDrift": 951,
+     "hitsTaken": 0,
+     "hp": 70
+    },
+    {
+     "lap": 3,
+     "end": "over",
+     "scrap": 11,
+     "score": 2205,
+     "bestDrift": 951,
+     "hitsTaken": 10,
+     "hp": 0
+    }
+   ]
+  },
+  {
+   "car": "muscle",
+   "laps": [
+    {
+     "lap": 1,
+     "end": "shop",
+     "scrap": 27,
+     "score": 5296,
+     "bestDrift": 635,
+     "hitsTaken": 0,
+     "hp": 100
+    },
+    {
+     "lap": 2,
+     "end": "shop",
+     "scrap": 33,
+     "score": 5863,
+     "bestDrift": 788,
+     "hitsTaken": 0,
+     "hp": 100
+    },
+    {
+     "lap": 3,
+     "end": "shop",
+     "scrap": 31,
+     "score": 3804,
+     "bestDrift": 1034,
+     "hitsTaken": 12,
+     "hp": 26
+    }
+   ]
+  },
+  {
+   "car": "hearse",
+   "laps": [
+    {
+     "lap": 1,
+     "end": "shop",
+     "scrap": 28,
+     "score": 4414,
+     "bestDrift": 1314,
+     "hitsTaken": 8,
+     "hp": 138
+    },
+    {
+     "lap": 2,
+     "end": "shop",
+     "scrap": 33,
+     "score": 7273,
+     "bestDrift": 1414,
+     "hitsTaken": 3,
+     "hp": 150
+    },
+    {
+     "lap": 3,
+     "end": "shop",
+     "scrap": 26,
+     "score": 2742,
+     "bestDrift": 1414,
+     "hitsTaken": 13,
+     "hp": 91
+    }
+   ]
+  }
+ ],
+ "rampLoop": [
+  {
+   "car": "hatch",
+   "jumps": 0,
+   "scrapFromJumps": 0,
+   "score": 0
+  },
+  {
+   "car": "muscle",
+   "jumps": 0,
+   "scrapFromJumps": 0,
+   "score": 47
+  }
+ ],
+ "untouchedPayout": {
+  "lap5": {
+   "aliveAtEnd": [
+    "rust:1",
+    "harvester:40",
+    "rust:1",
+    "rust:1",
+    "rust:1"
+   ],
+   "scrapPaidWithoutKilling": 0,
+   "wrecksCounted": 0
+  }
+ }
+}

@@ -3,7 +3,7 @@
   "runs": 60,
   "nan": 0,
   "escaped": 0,
-  "stuck": 17,
+  "stuck": 14,
   "maxPen": 0,
   "samples": [
    {
@@ -11,10 +11,10 @@
     "cx": 0,
     "cy": 0,
     "off": -0.5,
-    "moved": 53,
+    "moved": 57,
     "end": [
-     86,
-     629
+     98,
+     556
     ]
    },
    {
@@ -22,10 +22,10 @@
     "cx": 0,
     "cy": 0,
     "off": -0.25,
-    "moved": 72,
+    "moved": 22,
     "end": [
-     67,
-     269
+     96,
+     227
     ]
    },
    {
@@ -33,10 +33,10 @@
     "cx": 0,
     "cy": 0,
     "off": 0,
-    "moved": 4,
+    "moved": 23,
     "end": [
-     59,
-     59
+     71,
+     53
     ]
    },
    {
@@ -44,10 +44,10 @@
     "cx": 0,
     "cy": 0,
     "off": 0.25,
-    "moved": 80,
+    "moved": 84,
     "end": [
-     144,
-     56
+     80,
+     59
     ]
    }
   ]
@@ -152,10 +152,10 @@
   },
   {
    "label": "hatch v8 L3 + nitro L3 + boost",
-   "maxZ": 424,
-   "scrap": 9,
-   "score": 730,
-   "dist": 865
+   "maxZ": 407,
+   "scrap": 8,
+   "score": 720,
+   "dist": 850
   },
   {
    "label": "hearse base",
@@ -203,8 +203,8 @@
     "framesBelowSurface": 0,
     "of": 300,
     "end": [
-     68,
-     152
+     -142,
+     87
     ]
    },
    {
@@ -213,8 +213,8 @@
     "framesBelowSurface": 0,
     "of": 300,
     "end": [
-     97,
-     152
+     32,
+     177
     ]
    }
   ]
@@ -250,7 +250,7 @@
    "gameSeconds": 20,
    "killed": false,
    "hpStart": 1670,
-   "hpEnd": 403,
+   "hpEnd": 509,
    "bounces": 0,
    "scrapFromAir": 1,
    "score": 110,

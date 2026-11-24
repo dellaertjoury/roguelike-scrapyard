@@ -1,0 +1,270 @@
+{
+ "corners": {
+  "runs": 60,
+  "nan": 0,
+  "escaped": 0,
+  "stuck": 17,
+  "maxPen": 0,
+  "samples": [
+   {
+    "car": 0,
+    "cx": 0,
+    "cy": 0,
+    "off": -0.5,
+    "moved": 53,
+    "end": [
+     86,
+     629
+    ]
+   },
+   {
+    "car": 0,
+    "cx": 0,
+    "cy": 0,
+    "off": -0.25,
+    "moved": 72,
+    "end": [
+     67,
+     269
+    ]
+   },
+   {
+    "car": 0,
+    "cx": 0,
+    "cy": 0,
+    "off": 0,
+    "moved": 4,
+    "end": [
+     59,
+     59
+    ]
+   },
+   {
+    "car": 0,
+    "cx": 0,
+    "cy": 0,
+    "off": 0.25,
+    "moved": 80,
+    "end": [
+     144,
+     56
+    ]
+   }
+  ]
+ },
+ "tunnel": {
+  "tries": 12,
+  "passedThrough": 0,
+  "maxPenetration": 0,
+  "speeds": [
+   {
+    "sp": 300,
+    "kind": "tire",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 300,
+    "kind": "hay",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 600,
+    "kind": "tire",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 600,
+    "kind": "hay",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 900,
+    "kind": "tire",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 900,
+    "kind": "hay",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 1400,
+    "kind": "tire",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 1400,
+    "kind": "hay",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 2000,
+    "kind": "tire",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 2000,
+    "kind": "hay",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 3000,
+    "kind": "tire",
+    "through": false,
+    "pen": 0
+   },
+   {
+    "sp": 3000,
+    "kind": "hay",
+    "through": false,
+    "pen": 0
+   }
+  ]
+ },
+ "enemyWall": {
+  "maxEnemyOutside": 0,
+  "nan": 0
+ },
+ "ramps": [
+  {
+   "label": "hatch base",
+   "maxZ": 105,
+   "scrap": 4,
+   "score": 340,
+   "dist": 256
+  },
+  {
+   "label": "hatch nitro",
+   "maxZ": 182,
+   "scrap": 6,
+   "score": 470,
+   "dist": 476
+  },
+  {
+   "label": "hatch v8 L3 + nitro L3 + boost",
+   "maxZ": 424,
+   "scrap": 9,
+   "score": 730,
+   "dist": 865
+  },
+  {
+   "label": "hearse base",
+   "maxZ": 73,
+   "scrap": 3,
+   "score": 280,
+   "dist": 162
+  }
+ ],
+ "rampInside": {
+  "player": [
+   {
+    "u": 100,
+    "v": 0,
+    "framesStuckBelowSurface": 0,
+    "of": 150,
+    "endZ": 0
+   },
+   {
+    "u": 130,
+    "v": 0,
+    "framesStuckBelowSurface": 0,
+    "of": 150,
+    "endZ": 0
+   },
+   {
+    "u": 60,
+    "v": 30,
+    "framesStuckBelowSurface": 0,
+    "of": 150,
+    "endZ": 0
+   },
+   {
+    "u": 140,
+    "v": -35,
+    "framesStuckBelowSurface": 0,
+    "of": 150,
+    "endZ": 0
+   }
+  ],
+  "enemy": [
+   {
+    "u": 100,
+    "v": 0,
+    "framesBelowSurface": 0,
+    "of": 300,
+    "end": [
+     68,
+     152
+    ]
+   },
+   {
+    "u": 75,
+    "v": 10,
+    "framesBelowSurface": 0,
+    "of": 300,
+    "end": [
+     97,
+     152
+    ]
+   }
+  ]
+ },
+ "crush": [
+  {
+   "type": "brute",
+   "wave": 6,
+   "gameSeconds": 8.7,
+   "killed": true,
+   "hpStart": 200,
+   "hpEnd": 0,
+   "bounces": 0,
+   "scrapFromAir": 1,
+   "score": 270,
+   "playerHpLost": 291
+  },
+  {
+   "type": "harvester",
+   "wave": 5,
+   "gameSeconds": 13.6,
+   "killed": true,
+   "hpStart": 950,
+   "hpEnd": 0,
+   "bounces": 0,
+   "scrapFromAir": 1,
+   "score": 1710,
+   "playerHpLost": 624
+  },
+  {
+   "type": "monster",
+   "wave": 10,
+   "gameSeconds": 20,
+   "killed": false,
+   "hpStart": 1670,
+   "hpEnd": 403,
+   "bounces": 0,
+   "scrapFromAir": 1,
+   "score": 110,
+   "playerHpLost": 1078
+  }
+ ],
+ "mine": {
+  "triggerRadius": "e.r + 26 (rust: 43)",
+  "blastRadius": 104,
+  "ringDrawnAt": 104
+ },
+ "airborne": {
+  "note": "player at z=13 directly above a car (|dz|<=14 counts as touching)",
+  "playerDamaged": true,
+  "pushedApart": 36
+ }
+}

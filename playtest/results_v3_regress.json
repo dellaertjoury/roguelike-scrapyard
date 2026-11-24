@@ -1,0 +1,132 @@
+{
+ "sim": {
+  "N7": {
+   "capEmpty": {
+    "capLeft": 8,
+    "airT": 1.4,
+    "scrap": 5,
+    "driftScrapAfter": 5
+   },
+   "capAlmostFull": {
+    "capLeft": 1,
+    "airT": 1.4,
+    "scrap": 1,
+    "driftScrapAfter": 8
+   },
+   "capFull": {
+    "capLeft": 0,
+    "airT": 1.4,
+    "scrap": 0,
+    "driftScrapAfter": 8
+   }
+  },
+  "comboResetOnHit": {
+   "before": {
+    "time": 4.5,
+    "pts": 250
+   },
+   "after": {
+    "time": 0,
+    "pts": 0,
+    "mult": 1
+   }
+  },
+  "natural": {
+   "frames": 7209,
+   "nan": 0,
+   "enemyCentreBeyondWallLine": 0,
+   "maxEnemyPen": 12,
+   "enemyOutsideArena": 0,
+   "playerPen": 3,
+   "inObstacleDeep": 35,
+   "onPumpPost": 9,
+   "deepOverlap": 0
+  }
+ },
+ "pauseFuel": {
+  "state": "pause",
+  "fuelDeltaIn2sPause": 0.0
+ },
+ "blurFuel": {
+  "state": "pause",
+  "fuelDeltaIn1_5s": 0.0
+ },
+ "stallFuel": {
+  "fuelBurnAcross3sStall": 0.167
+ },
+ "langs": {
+  "en": {
+   "fuel": "7.5",
+   "label": "7.5 L · Fuel",
+   "lap": "Lap 1",
+   "title": "Scrapyard Derby",
+   "logo": "http://localhost:8765/assets/logo.png"
+  },
+  "fr": {
+   "fuel": "7,5",
+   "label": "7,5 L · Carburant",
+   "lap": "Tour 1",
+   "title": "Derby de la Casse",
+   "logo": "http://localhost:8765/assets/logo-fr.png"
+  },
+  "de": {
+   "fuel": "7,5",
+   "label": "7,5 L · Sprit",
+   "lap": "Runde 1",
+   "title": "Schrottplatz-Derby",
+   "logo": "http://localhost:8765/assets/logo-de.png"
+  },
+  "es": {
+   "fuel": "7,5",
+   "label": "7,5 L · Gasolina",
+   "lap": "Vuelta 1",
+   "title": "Derbi del Desguace",
+   "logo": "http://localhost:8765/assets/logo-es.png"
+  },
+  "vls": {
+   "fuel": "7,5",
+   "label": "7,5 L · Benzine",
+   "lap": "Toer 1",
+   "title": "Otokerkof Derby",
+   "logo": "http://localhost:8765/assets/logo-vls.png"
+  }
+ },
+ "garageFooter": {
+  "390x844": {
+   "rows": 2,
+   "allInView": true,
+   "bottoms": [
+    774,
+    774,
+    826
+   ],
+   "vh": 844,
+   "wrapped": []
+  },
+  "768x1024": {
+   "rows": 1,
+   "allInView": true,
+   "bottoms": [
+    993,
+    993,
+    993
+   ],
+   "vh": 1024,
+   "wrapped": []
+  },
+  "1366x800": {
+   "rows": 1,
+   "allInView": true,
+   "bottoms": [
+    756,
+    756,
+    756
+   ],
+   "vh": 800,
+   "wrapped": []
+  }
+ },
+ "errors": [
+  "[.WebGL-0x1da4001b6000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

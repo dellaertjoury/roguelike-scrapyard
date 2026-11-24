@@ -66,6 +66,14 @@ async def open_game(pw, tag, lang='en', vw=1366, vh=800, slow3=0, touch=False):
         errs.append(text)
         with open(ERRLOG, 'a') as f:
             f.write(json.dumps({'run': tag, 'kind': kind, 'text': text[:600], 't': time.time()}) + '\n')
+    http = []
+    def resp(r):
+        if r.status >= 400:
+            http.append(f'{r.status} {r.url}')
+            with open(ERRLOG, 'a') as f:
+                f.write(json.dumps({'run': tag, 'kind': 'http', 'text': f'{r.status} {r.url}', 't': time.time()}) + '\n')
+    pg.on('response', resp)
+    pg.on('requestfailed', lambda r: (http.append('FAILED ' + r.url), None) if 'fonts.googleapis' not in r.url else None)
     pg.on('pageerror', lambda e: log('pageerror', str(e)))
     pg.on('console', lambda m: log('console', m.text) if m.type in ('error',) else None)
     pg.on('console', lambda m: log('warning', m.text) if m.type == 'warning' else None)
@@ -85,4 +93,5 @@ async def open_game(pw, tag, lang='en', vw=1366, vh=800, slow3=0, touch=False):
     await pg.goto(URL)
     await pg.wait_for_selector('#loading', state='detached', timeout=60000)
     await pg.evaluate(INSTALL)
-    return b, Game(pg, tag, errs)
+    g = Game(pg, tag, errs); g.http = http
+    return b, g

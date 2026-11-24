@@ -28,7 +28,7 @@ async def main():
         for (w, h) in [(1366, 800), (390, 844)]:
             b, g = await open_game(pw, 'arrows', vw=w, vh=h)
             await g.start(0)
-            await g.ev("(() => { const G = M.G; G.spawnT = 1e9; G.waveT = 1e9; G.P.hp = G.S.maxhp = 1e9 })()")
+            await g.ev("(() => { const G = M.G; G.spawnT = 1e9; G.fuel = 1e9; G.P.hp = G.S.maxhp = 1e9 })()")
             print(w, h, json.dumps(await g.ev(JS)))
             await b.close()
 asyncio.run(main())

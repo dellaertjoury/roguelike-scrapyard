@@ -108,9 +108,9 @@
    "plate*",
    "v8"
   ],
-  "scrap": 4846,
-  "best": "{\"wave\":2,\"score\":0}",
-  "bestLine": "Your best: lap 2, 0 points."
+  "scrap": 4847,
+  "best": "{\"wave\":2,\"score\":96}",
+  "bestLine": "Your best: lap 2, 96 points."
  },
  "newRun": {
   "wave": 1,
@@ -121,7 +121,7 @@
   "maxhp": 100,
   "texts": 0,
   "mines": 0,
-  "drift": "{\"on\":false,\"pts\":0,\"mult\":1,\"off\":0.49999999999999994,\"heat\":0,\"time\":0}"
+  "drift": "{\"on\":false,\"pts\":0,\"mult\":1,\"off\":0.8833666666666711,\"heat\":0,\"time\":0,\"near\":true}"
  },
  "dieAtLapEnd": {
   "afterFrame": "clear",
@@ -136,6 +136,6 @@
   "menuThenOtherCar": 6
  },
  "errors": [
-  "[.WebGL-0x2fd4012c7600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  "[.WebGL-0x8b400175600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
  ]
 }

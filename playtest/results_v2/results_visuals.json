@@ -1,0 +1,15 @@
+{
+ "stuck": {
+  "type": "spit",
+  "x": 1383,
+  "y": 742,
+  "z": 0,
+  "rampHeightThere": 22.8,
+  "frames": 121
+ },
+ "stuckAfter5s": {
+  "moved": 0,
+  "alive": true,
+  "z": 0
+ }
+}

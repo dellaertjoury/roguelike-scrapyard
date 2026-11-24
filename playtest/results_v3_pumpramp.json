@@ -1,0 +1,122 @@
+{
+ "runup": {
+  "found": {
+   "pump": [
+    1222,
+    225
+   ],
+   "behindFoot": 140,
+   "offLine": 9
+  },
+  "jumps": [
+   {
+    "car": "hatch",
+    "nitro": false,
+    "jumped": true,
+    "landedPastLip": 258,
+    "hitPumpPost": true,
+    "minDistToPost": 32
+   },
+   {
+    "car": "muscle",
+    "nitro": false,
+    "jumped": true,
+    "landedPastLip": 225,
+    "hitPumpPost": true,
+    "minDistToPost": 34
+   },
+   {
+    "car": "hearse",
+    "nitro": false,
+    "jumped": true,
+    "landedPastLip": 168,
+    "hitPumpPost": true,
+    "minDistToPost": 37
+   },
+   {
+    "car": "hatch",
+    "nitro": true,
+    "jumped": true,
+    "landedPastLip": 470,
+    "hitPumpPost": true,
+    "minDistToPost": 32
+   },
+   {
+    "car": "muscle",
+    "nitro": true,
+    "jumped": true,
+    "landedPastLip": 391,
+    "hitPumpPost": true,
+    "minDistToPost": 34
+   },
+   {
+    "car": "hearse",
+    "nitro": true,
+    "jumped": true,
+    "landedPastLip": 294,
+    "hitPumpPost": true,
+    "minDistToPost": 37
+   }
+  ]
+ },
+ "landing": {
+  "found": {
+   "pump": [
+    1074,
+    717
+   ],
+   "pastLip": 520,
+   "offLine": 18
+  },
+  "jumps": [
+   {
+    "car": "hatch",
+    "nitro": false,
+    "jumped": true,
+    "landedPastLip": 262,
+    "hitPumpPost": true,
+    "minDistToPost": 32
+   },
+   {
+    "car": "muscle",
+    "nitro": false,
+    "jumped": true,
+    "landedPastLip": 227,
+    "hitPumpPost": true,
+    "minDistToPost": 34
+   },
+   {
+    "car": "hearse",
+    "nitro": false,
+    "jumped": true,
+    "landedPastLip": 167,
+    "hitPumpPost": false,
+    "minDistToPost": 358
+   },
+   {
+    "car": "hatch",
+    "nitro": true,
+    "jumped": true,
+    "landedPastLip": 479,
+    "hitPumpPost": true,
+    "minDistToPost": 32
+   },
+   {
+    "car": "muscle",
+    "nitro": true,
+    "jumped": true,
+    "landedPastLip": 408,
+    "hitPumpPost": true,
+    "minDistToPost": 34
+   },
+   {
+    "car": "hearse",
+    "nitro": true,
+    "jumped": true,
+    "landedPastLip": 295,
+    "hitPumpPost": true,
+    "minDistToPost": 37
+   }
+  ]
+ }
+}

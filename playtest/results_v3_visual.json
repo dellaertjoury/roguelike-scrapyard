@@ -1,0 +1,518 @@
+{
+ "gauge": {
+  "390_0.05": {
+   "faceW": 176,
+   "faceH": 96,
+   "needleW": 13,
+   "needleH": 54,
+   "pivot": [
+    94.3,
+    83.5
+   ],
+   "hub": [
+    88,
+    83.5
+   ],
+   "offsetPx": 6.3,
+   "rot": "-83.86deg",
+   "art": true,
+   "fuelTxt": "0.1"
+  },
+  "390_30": {
+   "faceW": 176,
+   "faceH": 96,
+   "needleW": 13,
+   "needleH": 54,
+   "pivot": [
+    94.3,
+    83.5
+   ],
+   "hub": [
+    88,
+    83.5
+   ],
+   "offsetPx": 6.3,
+   "rot": "0deg",
+   "art": true,
+   "fuelTxt": "30"
+  },
+  "390_60": {
+   "faceW": 176,
+   "faceH": 96,
+   "needleW": 13,
+   "needleH": 54,
+   "pivot": [
+    94.3,
+    83.5
+   ],
+   "hub": [
+    88,
+    83.5
+   ],
+   "offsetPx": 6.3,
+   "rot": "84deg",
+   "art": true,
+   "fuelTxt": "60"
+  },
+  "768_0.05": {
+   "faceW": 176,
+   "faceH": 96,
+   "needleW": 13,
+   "needleH": 54,
+   "pivot": [
+    94.3,
+    83.5
+   ],
+   "hub": [
+    88,
+    83.5
+   ],
+   "offsetPx": 6.3,
+   "rot": "-83.86deg",
+   "art": true,
+   "fuelTxt": "0.1"
+  },
+  "768_30": {
+   "faceW": 176,
+   "faceH": 96,
+   "needleW": 13,
+   "needleH": 54,
+   "pivot": [
+    94.3,
+    83.5
+   ],
+   "hub": [
+    88,
+    83.5
+   ],
+   "offsetPx": 6.3,
+   "rot": "0deg",
+   "art": true,
+   "fuelTxt": "30"
+  },
+  "768_60": {
+   "faceW": 176,
+   "faceH": 96,
+   "needleW": 13,
+   "needleH": 54,
+   "pivot": [
+    94.3,
+    83.5
+   ],
+   "hub": [
+    88,
+    83.5
+   ],
+   "offsetPx": 6.3,
+   "rot": "84deg",
+   "art": true,
+   "fuelTxt": "60"
+  },
+  "1366_0.05": {
+   "faceW": 176,
+   "faceH": 96,
+   "needleW": 13,
+   "needleH": 54,
+   "pivot": [
+    94.3,
+    83.5
+   ],
+   "hub": [
+    88,
+    83.5
+   ],
+   "offsetPx": 6.3,
+   "rot": "-83.86deg",
+   "art": true,
+   "fuelTxt": "0.1"
+  },
+  "1366_30": {
+   "faceW": 176,
+   "faceH": 96,
+   "needleW": 13,
+   "needleH": 54,
+   "pivot": [
+    94.3,
+    83.5
+   ],
+   "hub": [
+    88,
+    83.5
+   ],
+   "offsetPx": 6.3,
+   "rot": "0deg",
+   "art": true,
+   "fuelTxt": "30"
+  },
+  "1366_60": {
+   "faceW": 176,
+   "faceH": 96,
+   "needleW": 13,
+   "needleH": 54,
+   "pivot": [
+    94.3,
+    83.5
+   ],
+   "hub": [
+    88,
+    83.5
+   ],
+   "offsetPx": 6.3,
+   "rot": "84deg",
+   "art": true,
+   "fuelTxt": "60"
+  }
+ },
+ "banners": {
+  "390_thief": {
+   "overlaps": [
+    "pnl tl x fuelPnl (93x4)",
+    "fuelPnl x pnl tr (18x13)"
+   ],
+   "banner": [
+    0,
+    338,
+    390,
+    578
+   ],
+   "art": [
+    59,
+    338,
+    332,
+    485
+   ]
+  },
+  "390_elite": {
+   "worstOverlaps": [
+    "pnl tl x fuelPnl (93x4)",
+    "fuelPnl x bossPnl (200x43)",
+    "fuelPnl x pnl tr (18x13)"
+   ],
+   "boss": [
+    59,
+    206,
+    332,
+    272
+   ],
+   "fuel": [
+    95,
+    84,
+    295,
+    249
+   ]
+  },
+  "768_thief": {
+   "overlaps": [],
+   "banner": [
+    0,
+    307,
+    768,
+    622
+   ],
+   "art": [
+    174,
+    307,
+    594,
+    535
+   ]
+  },
+  "768_elite": {
+   "worstOverlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "boss": [
+    164,
+    170,
+    604,
+    236
+   ],
+   "fuel": [
+    280,
+    16,
+    488,
+    199
+   ]
+  },
+  "1366_thief": {
+   "overlaps": [],
+   "banner": [
+    0,
+    240,
+    1366,
+    573
+   ],
+   "art": [
+    473,
+    240,
+    893,
+    468
+   ]
+  },
+  "1366_elite": {
+   "worstOverlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "boss": [
+    463,
+    170,
+    903,
+    236
+   ],
+   "fuel": [
+    579,
+    16,
+    787,
+    199
+   ]
+  }
+ },
+ "pump": {
+  "390_on": {
+   "filling": true,
+   "panelClass": "pnl tc filling"
+  },
+  "390_off": [
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1800,
+     1200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     200,
+     1200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1800,
+     200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     200,
+     200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1000,
+     1250
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1900,
+     680
+    ]
+   }
+  ],
+  "768_on": {
+   "filling": true,
+   "panelClass": "pnl tc filling"
+  },
+  "768_off": [
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1800,
+     1200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     200,
+     1200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1800,
+     200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     200,
+     200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1000,
+     1250
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1900,
+     680
+    ]
+   }
+  ],
+  "1366_on": {
+   "filling": true,
+   "panelClass": "pnl tc filling"
+  },
+  "1366_off": [
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1800,
+     1200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     200,
+     1200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1800,
+     200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     200,
+     200
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1000,
+     1250
+    ]
+   },
+   {
+    "pumpArrow": false,
+    "badgeShown": false,
+    "badgeInView": true,
+    "badgeOverPanels": [],
+    "arrowOverPanels": [],
+    "at": [
+     1900,
+     680
+    ]
+   }
+  ]
+ },
+ "cans": {},
+ "errors_390": [
+  "[.WebGL-0x244001c3400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ],
+ "http_390": [
+  "404 http://localhost:8765/assets/garage-bg.jpg",
+  "404 http://localhost:8765/assets/ui/speed.png",
+  "404 http://localhost:8765/assets/ui/lock.png",
+  "404 http://localhost:8765/assets/ui/repair.png",
+  "404 http://localhost:8765/assets/ui/reroll.png"
+ ],
+ "errors_768": [
+  "[.WebGL-0xda40016d600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ],
+ "http_768": [
+  "404 http://localhost:8765/assets/garage-bg.jpg",
+  "404 http://localhost:8765/assets/ui/speed.png",
+  "404 http://localhost:8765/assets/ui/repair.png",
+  "404 http://localhost:8765/assets/ui/lock.png",
+  "404 http://localhost:8765/assets/ui/reroll.png"
+ ],
+ "errors_1366": [
+  "[.WebGL-0x32f4009cd400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ],
+ "http_1366": [
+  "404 http://localhost:8765/assets/garage-bg.jpg",
+  "404 http://localhost:8765/assets/ui/speed.png",
+  "404 http://localhost:8765/assets/ui/lock.png",
+  "404 http://localhost:8765/assets/ui/repair.png",
+  "404 http://localhost:8765/assets/ui/reroll.png"
+ ]
+}

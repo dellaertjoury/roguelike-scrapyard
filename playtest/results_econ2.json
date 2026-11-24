@@ -29,28 +29,28 @@
     {
      "lap": 1,
      "end": "shop",
-     "scrap": 30,
-     "score": 4538,
-     "bestDrift": 540,
+     "scrap": 29,
+     "score": 4482,
+     "bestDrift": 513,
      "hitsTaken": 0,
      "hp": 70
     },
     {
      "lap": 2,
      "end": "shop",
-     "scrap": 33,
-     "score": 5144,
-     "bestDrift": 951,
+     "scrap": 36,
+     "score": 6161,
+     "bestDrift": 871,
      "hitsTaken": 0,
      "hp": 70
     },
     {
      "lap": 3,
      "end": "over",
-     "scrap": 11,
-     "score": 2205,
-     "bestDrift": 951,
-     "hitsTaken": 10,
+     "scrap": 19,
+     "score": 3590,
+     "bestDrift": 940,
+     "hitsTaken": 8,
      "hp": 0
     }
    ]
@@ -61,29 +61,29 @@
     {
      "lap": 1,
      "end": "shop",
-     "scrap": 27,
-     "score": 5296,
-     "bestDrift": 635,
+     "scrap": 28,
+     "score": 5439,
+     "bestDrift": 703,
      "hitsTaken": 0,
      "hp": 100
     },
     {
      "lap": 2,
      "end": "shop",
-     "scrap": 33,
-     "score": 5863,
-     "bestDrift": 788,
+     "scrap": 36,
+     "score": 7452,
+     "bestDrift": 1279,
      "hitsTaken": 0,
      "hp": 100
     },
     {
      "lap": 3,
-     "end": "shop",
-     "scrap": 31,
-     "score": 3804,
-     "bestDrift": 1034,
-     "hitsTaken": 12,
-     "hp": 26
+     "end": "over",
+     "scrap": 14,
+     "score": 3004,
+     "bestDrift": 1884,
+     "hitsTaken": 13,
+     "hp": 0
     }
    ]
   },
@@ -93,29 +93,29 @@
     {
      "lap": 1,
      "end": "shop",
-     "scrap": 28,
-     "score": 4414,
-     "bestDrift": 1314,
-     "hitsTaken": 8,
-     "hp": 138
+     "scrap": 26,
+     "score": 5951,
+     "bestDrift": 1604,
+     "hitsTaken": 4,
+     "hp": 150
     },
     {
      "lap": 2,
      "end": "shop",
-     "scrap": 33,
-     "score": 7273,
-     "bestDrift": 1414,
+     "scrap": 34,
+     "score": 7045,
+     "bestDrift": 1604,
      "hitsTaken": 3,
      "hp": 150
     },
     {
      "lap": 3,
-     "end": "shop",
-     "scrap": 26,
-     "score": 2742,
-     "bestDrift": 1414,
-     "hitsTaken": 13,
-     "hp": 91
+     "end": "over",
+     "scrap": 21,
+     "score": 1502,
+     "bestDrift": 1604,
+     "hitsTaken": 22,
+     "hp": 0
     }
    ]
   }
@@ -131,7 +131,7 @@
    "car": "muscle",
    "jumps": 0,
    "scrapFromJumps": 0,
-   "score": 47
+   "score": 48
   }
  ],
  "untouchedPayout": {

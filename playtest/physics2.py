@@ -7,7 +7,7 @@ from harness import open_game
 PROBES = r"""
 () => {
   const m = M, G = m.G, AW = m.AW, AH = m.AH, EDGE = m.EDGE, out = {};
-  const reset = (car = 0) => { m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.waveT = 1e9; G.P.hp = G.S.maxhp = 1e6; };
+  const reset = (car = 0) => { m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.fuel = 1e9; G.P.hp = G.S.maxhp = 1e6; };
   const mk = (type, wave, x, y, extra = {}) => { const D0 = D.ENEMY(wave)[type]; return Object.assign({ type, x, y, a: 0, vx: 0, vy: 0, max: D0.hp, flash: 0, cd: 2, charge: 0, hitcd: 0, sawcd: 0, burncd: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0, col: '#888', num: 1 }, D0, extra) };
 
   /* corner: ram into a corner with nitro for 4 s, then try to leave: reverse 1 s + steer, then forward 3 s */
@@ -75,7 +75,7 @@ PROBES = r"""
         if (G.state !== 'pause' && G.state !== 'play') break;
       }
       // finish the lap
-      G.waveT = .01; step(2, 1 / 30, []); for (let i = 0; i < 60 && G.state !== 'shop'; i++) step(1, 1 / 30, []);
+      G.fuel = .01; step(2, 1 / 30, []); for (let i = 0; i < 60 && G.state !== 'shop'; i++) step(1, 1 / 30, []);
       r.laps++; m.nextWave(); G.state = 'pause'; G.P.hp = 1e6;
     }
     r.enemiesEverBelowRamp = r.enemiesEverBelowRamp.size;

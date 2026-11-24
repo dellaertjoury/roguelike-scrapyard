@@ -1,0 +1,807 @@
+{
+ "en": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 12
+  },
+  "1920x1080_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 6
+  },
+  "768x1024_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (21x80)"
+   ],
+   "hudCoverPct": 14
+  },
+  "390x844_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (97x75)",
+    "pnl tc x pnl tr (49x75)"
+   ],
+   "hudCoverPct": 24
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Blueprint\n    \n    \n    \n    \n    \n    R\" 391>381",
+    "#blueprint \"RoofCCrane MagnetLv 2/3HoodFFlamethrower\" 379>357",
+    ".pn \"Flamethrower\" 83>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    829,
+    800
+   ]
+  },
+  "1920x1080_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Blueprint\n    \n    \n    \n    \n    \n    R\" 391>381",
+    "#blueprint \"RoofCCrane MagnetLv 2/3HoodFFlamethrower\" 379>357",
+    ".pn \"Flamethrower\" 83>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    829,
+    1080
+   ]
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    731,
+    1024
+   ]
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Blueprint\n    \n    \n    \n    \n    \n    R\" 361>352",
+    "#blueprint \"RoofCCrane MagnetLv 2/3HoodFFlamethrower\" 349>328",
+    ".pn \"Flamethrower\" 83>62",
+    ".pn \"Afterburner Pipes\" 71>62"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    921,
+    844
+   ]
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "THREE.Material: parameter 'color' has value of undefined.",
+   "[.WebGL-0x32f400963200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "de": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 12
+  },
+  "1920x1080_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 6
+  },
+  "768x1024_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (21x80)"
+   ],
+   "hudCoverPct": 14
+  },
+  "390x844_hud": {
+   "clipped": [
+    "#heatTxt \"Hitze · Feuerrate +72 %\" in .meter \"Hitze · Feuerrate +72 "
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (97x75)",
+    "pnl tc x pnl tr (49x75)"
+   ],
+   "hudCoverPct": 24
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Bauplan\n    \n    \n    \n    \n    \n    Dac\" 391>381",
+    "#blueprint \"DachÜÜberrollkäfigLv 2/3MotorhaubeMMunit\" 379>357",
+    ".pn \"Überrollkäfig\" 79>75",
+    ".pn \"Munitionskiste\" 89>75",
+    ".pn \"Nachbrenner-Rohre\" 84>75",
+    ".pn \"Nitroflaschen\" 82>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Bauplan\n    \n    \n    \n    \n    \n    Dac\" 391>381",
+    "#blueprint \"DachÜÜberrollkäfigLv 2/3MotorhaubeMMunit\" 379>357",
+    ".pn \"Überrollkäfig\" 79>75",
+    ".pn \"Munitionskiste\" 89>75",
+    ".pn \"Nachbrenner-Rohre\" 84>75",
+    ".pn \"Nitroflaschen\" 82>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Bauplan\n    \n    \n    \n    \n    \n    Dac\" 361>352",
+    "#blueprint \"DachÜÜberrollkäfigLv 2/3MotorhaubeMMunit\" 349>328",
+    ".pn \"Überrollkäfig\" 79>62",
+    ".pn \"Munitionskiste\" 89>62",
+    ".pn \"Stachelgrill\" 68>62",
+    ".pn \"Nachbrenner-Rohre\" 84>62",
+    ".pn \"Nitroflaschen\" 82>62"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "THREE.Material: parameter 'color' has value of undefined.",
+   "[.WebGL-0x2ebc009ad400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "fr": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 11
+  },
+  "1920x1080_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 6
+  },
+  "768x1024_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (21x80)"
+   ],
+   "hudCoverPct": 13
+  },
+  "390x844_hud": {
+   "clipped": [
+    "#heatTxt \"Chauffe · cadence +72 %\" in .meter \"Chauffe · cadence +72 "
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (97x75)",
+    "pnl tc x pnl tr (46x75)"
+   ],
+   "hudCoverPct": 24
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Plan\n    \n    \n    \n    \n    \n    ToitMM\" 391>381",
+    "#blueprint \"ToitMMitrailleuse de toitLv 2/4CapotRRef\" 379>357",
+    ".pn \"Refroidisseur d'armes\" 81>75",
+    ".pn \"Échappements postcombustion\" 98>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    829,
+    800
+   ]
+  },
+  "1920x1080_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Plan\n    \n    \n    \n    \n    \n    ToitMM\" 391>381",
+    "#blueprint \"ToitMMitrailleuse de toitLv 2/4CapotRRef\" 379>357",
+    ".pn \"Refroidisseur d'armes\" 81>75",
+    ".pn \"Échappements postcombustion\" 98>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    829,
+    1080
+   ]
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    731,
+    1024
+   ]
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Plan\n    \n    \n    \n    \n    \n    ToitMM\" 361>352",
+    "#blueprint \"ToitMMitrailleuse de toitLv 2/4CapotRRef\" 349>328",
+    ".pn \"Mitrailleuse de toit\" 70>62",
+    ".pn \"Refroidisseur d'armes\" 81>62",
+    ".pn \"Échappements postcombustion\" 98>62"
+   ],
+   "offscreenX": [],
+   "clamped": [
+    ".pn \"Plaques de portière\""
+   ],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    1047,
+    844
+   ]
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "THREE.Material: parameter 'color' has value of undefined.",
+   "[.WebGL-0x9cc00181c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "es": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 12
+  },
+  "1920x1080_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 6
+  },
+  "768x1024_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (21x80)"
+   ],
+   "hudCoverPct": 14
+  },
+  "390x844_hud": {
+   "clipped": [
+    "#heatTxt \"Calor · cadencia +72 %\" in .meter \"Calor · cadencia +72 %"
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (97x75)",
+    "pnl tc x pnl tr (67x75)"
+   ],
+   "hudCoverPct": 25
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Plano\n    \n    \n    \n    \n    \n    Techo\" 391>381",
+    "#blueprint \"TechoAAmetralladora de techoLv 2/4CapóRR\" 379>357",
+    ".pn \"Ametralladora de techo\" 85>75",
+    ".pn \"Escapes de postcombustión\" 98>75",
+    ".pn \"Caja de herramientas\" 80>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    829,
+    800
+   ]
+  },
+  "1920x1080_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Plano\n    \n    \n    \n    \n    \n    Techo\" 391>381",
+    "#blueprint \"TechoAAmetralladora de techoLv 2/4CapóRR\" 379>357",
+    ".pn \"Ametralladora de techo\" 85>75",
+    ".pn \"Escapes de postcombustión\" 98>75",
+    ".pn \"Caja de herramientas\" 80>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    829,
+    1080
+   ]
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    731,
+    1024
+   ]
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Plano\n    \n    \n    \n    \n    \n    Techo\" 361>352",
+    "#blueprint \"TechoAAmetralladora de techoLv 2/4CapóRR\" 349>328",
+    ".pn \"Ametralladora de techo\" 85>62",
+    ".pn \"Refrigerador de armas\" 76>62",
+    ".pn \"Escapes de postcombustión\" 98>62",
+    ".pn \"Caja de herramientas\" 80>62"
+   ],
+   "offscreenX": [],
+   "clamped": [
+    ".pn \"Escapes de postcombustión\"",
+    ".pn \"Placas en las puertas\""
+   ],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    1104,
+    844
+   ]
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "THREE.Material: parameter 'color' has value of undefined.",
+   "[.WebGL-0x14fc001cfa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "vls": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 12
+  },
+  "1920x1080_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "hudCoverPct": 6
+  },
+  "768x1024_hud": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (21x80)"
+   ],
+   "hudCoverPct": 14
+  },
+  "390x844_hud": {
+   "clipped": [
+    "#heatTxt \"Ette · +72% rapper sjieten\" in .meter \"Ette · +72% rapper sji"
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x pnl tc (97x75)",
+    "pnl tc x pnl tr (49x75)"
+   ],
+   "hudCoverPct": 24
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Bouwplan\n    \n    \n    \n    \n    \n    Da\" 391>381",
+    "#blueprint \"DakDDakmitraljeurLv 2/4MotorkapVV8 mee b\" 379>357",
+    ".pn \"Dakmitraljeur\" 81>75",
+    ".pn \"Pinnekesgrille\" 85>75",
+    ".pn \"Vuurspuwende uitlaten\" 92>75",
+    ".pn \"Gereedschapskiste\" 117>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    848,
+    800
+   ]
+  },
+  "1920x1080_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Bouwplan\n    \n    \n    \n    \n    \n    Da\" 391>381",
+    "#blueprint \"DakDDakmitraljeurLv 2/4MotorkapVV8 mee b\" 379>357",
+    ".pn \"Dakmitraljeur\" 81>75",
+    ".pn \"Pinnekesgrille\" 85>75",
+    ".pn \"Vuurspuwende uitlaten\" 92>75",
+    ".pn \"Gereedschapskiste\" 117>75"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    848,
+    1080
+   ]
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [
+    ".pn \"Gereedschapskiste\" 117>111"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    731,
+    1024
+   ]
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [
+    ".col \"Bouwplan\n    \n    \n    \n    \n    \n    Da\" 361>352",
+    "#blueprint \"DakDDakmitraljeurLv 2/4MotorkapVV8 mee b\" 349>328",
+    ".pn \"Dakmitraljeur\" 81>62",
+    ".pn \"Pinnekesgrille\" 85>62",
+    ".pn \"Vuurspuwende uitlaten\" 92>62",
+    ".pn \"Gereedschapskiste\" 117>62"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    956,
+    844
+   ]
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1920x1080_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "THREE.Material: parameter 'color' has value of undefined.",
+   "[.WebGL-0x84c0017a800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ }
+}

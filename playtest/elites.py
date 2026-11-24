@@ -5,7 +5,7 @@ from harness import open_game
 
 SETUP = r"""(() => {
 window.mkE = (type, wave, x, y, extra = {}) => { const D0 = D.ENEMY(wave)[type]; return Object.assign({ type, x, y, a: 0, vx: 0, vy: 0, max: D0.hp, flash: 0, cd: 0, charge: 0, hitcd: 0, sawcd: 0, burncd: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0, col: '#888', num: 1 }, D0, extra) };
-window.resetE = (car = 1) => { const m = M, G = m.G; m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.waveT = 1e9; G.W.mg = 0; G.W.mines = 0; G.P.hp = G.S.maxhp = 1e6; };
+window.resetE = (car = 1) => { const m = M, G = m.G; m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.fuel = 1e9; G.W.mg = 0; G.W.mines = 0; G.P.hp = G.S.maxhp = 1e6; };
 })()"""
 
 PROBES = r"""

@@ -83,7 +83,7 @@ async def main():
                 await pg.screenshot(path=f'shots/read_{lang}_{w}x{h}_hud_banner.png')
                 rep[f'{w}x{h}_hud'] = await g.ev(CHECK, '#hud')
             await pg.set_viewport_size({'width': 1366, 'height': 800})
-            await g.ev("(() => { const G = M.G; G.P.hp = G.S.maxhp; G.waveT = .02; G.state = 'play' })()")
+            await g.ev("(() => { const G = M.G; G.P.hp = G.S.maxhp; G.fuel = .01; G.state = 'play' })()")
             await pg.wait_for_selector('#shop:not(.hide)', timeout=30000)
             await g.ev(SETUP_SHOP)
             for (w, h) in SIZES:

@@ -8,12 +8,12 @@
   },
   "obsOnRamp": 0,
   "obsInJumpPath": 0,
-  "lipNearWall": 364,
+  "lipNearWall": 334,
   "rampsOverlap": 0,
-  "minLipToWall": 189.18253188925928,
-  "minLandToWall": 126.01882672748411,
+  "minLipToWall": 188.26773864916436,
+  "minLandToWall": 126.10351293269787,
   "rampBackBlocked": 0,
-  "minObsGap": 140.0008775550409,
+  "minObsGap": 140.0011830777899,
   "obsTouchWall": 0,
   "examples": []
  },
@@ -21,114 +21,114 @@
   "center": {
    "asked": 2080,
    "got": 2080,
-   "minD": 360.0692579522123,
+   "minD": 360.017890840662,
    "inObs": 0,
    "onRampBody": 0,
    "eliteOnRamp": 0,
    "eliteInObs": 0,
    "inWall": 0,
-   "offscreen": 1130,
+   "offscreen": 1135,
    "n": 2080,
    "dHist": {
-    "300": 270,
-    "400": 727,
-    "500": 821,
-    "600": 262
+    "300": 276,
+    "400": 697,
+    "500": 857,
+    "600": 250
    }
   },
   "corner_tl": {
    "asked": 2080,
    "got": 2080,
-   "minD": 280.15964638611433,
+   "minD": 280.3354354047371,
    "inObs": 0,
    "onRampBody": 0,
    "eliteOnRamp": 0,
    "eliteInObs": 0,
    "inWall": 0,
-   "offscreen": 77,
+   "offscreen": 51,
    "n": 2080,
    "dHist": {
-    "200": 63,
-    "300": 554,
-    "400": 739,
-    "500": 550,
-    "600": 174
+    "200": 60,
+    "300": 580,
+    "400": 709,
+    "500": 568,
+    "600": 163
    }
   },
   "corner_br": {
    "asked": 2080,
    "got": 2080,
-   "minD": 280.1869156382797,
+   "minD": 280.4216744059868,
    "inObs": 0,
    "onRampBody": 0,
    "eliteOnRamp": 0,
    "eliteInObs": 0,
    "inWall": 0,
-   "offscreen": 68,
+   "offscreen": 59,
    "n": 2080,
    "dHist": {
-    "200": 70,
-    "300": 588,
-    "400": 707,
-    "500": 551,
-    "600": 164
+    "200": 59,
+    "300": 565,
+    "400": 743,
+    "500": 535,
+    "600": 178
    }
   },
   "wall_mid_top": {
    "asked": 2080,
    "got": 2080,
-   "minD": 280.1013194593999,
+   "minD": 280.0755010272743,
    "inObs": 0,
    "onRampBody": 0,
    "eliteOnRamp": 0,
    "eliteInObs": 0,
    "inWall": 0,
-   "offscreen": 153,
+   "offscreen": 129,
    "n": 2080,
    "dHist": {
-    "200": 41,
-    "300": 470,
-    "400": 721,
-    "500": 619,
-    "600": 229
+    "200": 36,
+    "300": 466,
+    "400": 767,
+    "500": 612,
+    "600": 199
    }
   },
   "wall_left": {
    "asked": 2080,
    "got": 2080,
-   "minD": 280.0641337399912,
+   "minD": 280.12233149499787,
    "inObs": 0,
    "onRampBody": 0,
    "eliteOnRamp": 0,
    "eliteInObs": 0,
    "inWall": 0,
-   "offscreen": 1351,
+   "offscreen": 1314,
    "n": 2080,
    "dHist": {
-    "200": 50,
-    "300": 512,
-    "400": 687,
-    "500": 666,
-    "600": 165
+    "200": 40,
+    "300": 485,
+    "400": 728,
+    "500": 690,
+    "600": 137
    }
   },
   "random": {
    "asked": 2080,
    "got": 2080,
-   "minD": 280.68039265115664,
+   "minD": 280.2279500803879,
    "inObs": 0,
    "onRampBody": 0,
    "eliteOnRamp": 0,
    "eliteInObs": 0,
    "inWall": 0,
-   "offscreen": 710,
+   "offscreen": 749,
    "n": 2080,
    "dHist": {
-    "200": 54,
-    "300": 496,
-    "400": 763,
-    "500": 596,
-    "600": 171
+    "200": 61,
+    "300": 521,
+    "400": 730,
+    "500": 578,
+    "600": 190
    }
   }
  }

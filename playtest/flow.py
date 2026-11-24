@@ -38,7 +38,7 @@ async def main():
         await pg.click('#resume'); await pg.wait_for_timeout(200)
 
         # ---- garage: buy / level / replace / recompute
-        await g.ev("(() => { const G = M.G; G.P.hp = G.S.maxhp; G.scrap = 5000; G.waveT = .02 })()")
+        await g.ev("(() => { const G = M.G; G.P.hp = G.S.maxhp; G.scrap = 5000; G.fuel = .01 })()")
         await pg.wait_for_selector('#shop:not(.hide)', timeout=30000)
         rec = await g.ev(r"""(() => {
           const G = M.G, m = M, res = [];
@@ -91,7 +91,7 @@ async def main():
 
         # ---- dying exactly as the lap ends
         res = await g.ev(r"""(() => {
-          const G = M.G, P = G.P; G.state = 'play'; G.waveT = 1 / 30 * .5; P.inv = 0; P.hp = .1;
+          const G = M.G, P = G.P; G.state = 'play'; G.fuel = .01; P.inv = 0; P.hp = .1;
           G.ebul.push({ x: P.x, y: P.y, vx: 0, vy: 0, life: 1, dmg: 50 });
           step(1, 1 / 30, [], null, true); const s1 = G.state;
           for (let i = 0; i < 80; i++) step(1, 1 / 30, [], null, true);

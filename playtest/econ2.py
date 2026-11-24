@@ -62,7 +62,7 @@ PROBES = r"""
     reset(1); G.wave = 4; m.nextWave(); G.state = 'pause';
     G.pend.forEach(s => s.t = .01); step(3, 1 / 30, []);
     const alive = G.enemies.map(e => e.type + ':' + e.sc);
-    const s0 = G.scrap; G.waveT = .01; step(2, 1 / 30, [], null, true); for (let k = 0; k < 60 && G.state !== 'shop'; k++) step(1, 1 / 30, []);
+    const s0 = G.scrap; G.fuel = .01; step(2, 1 / 30, [], null, true); for (let k = 0; k < 60 && G.state !== 'shop'; k++) step(1, 1 / 30, []);
     r.lap5 = { aliveAtEnd: alive, scrapPaidWithoutKilling: G.scrap - s0, wrecksCounted: G.wrecks };
     out.untouchedPayout = r;
   }

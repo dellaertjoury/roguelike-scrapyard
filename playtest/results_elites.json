@@ -22,11 +22,11 @@
     "y": 97
    },
    "monsterPenetrationIntoWall": 0,
-   "playerDamage": 131,
+   "playerDamage": 128,
    "playerMaxSpeed": 320,
    "playerEnd": [
-    71,
-    66
+    69,
+    64
    ],
    "nan": false
   },
@@ -41,11 +41,11 @@
     "y": 1253
    },
    "monsterPenetrationIntoWall": 0,
-   "playerDamage": 246,
+   "playerDamage": 242,
    "playerMaxSpeed": 228,
    "playerEnd": [
-    1194,
-    1225
+    1198,
+    1228
    ],
    "nan": false
   },
@@ -60,10 +60,10 @@
     "y": 1263
    },
    "monsterPenetrationIntoWall": 0,
-   "playerDamage": 157,
+   "playerDamage": 130,
    "playerMaxSpeed": 320,
    "playerEnd": [
-    1926,
+    1932,
     1297
    ],
    "nan": false

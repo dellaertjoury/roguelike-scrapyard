@@ -1,0 +1,358 @@
+{
+ "lapLength": {
+  "parked": {
+   "gameSeconds": 60,
+   "pumpsOpened": 1,
+   "state": "shop"
+  },
+  "nitroAlways": {
+   "gameSeconds": 30,
+   "pumpsOpened": 1,
+   "state": "shop"
+  },
+  "teleportCamper": {
+   "gameSeconds": 200,
+   "pumpsOpened": 8,
+   "state": "shop"
+  },
+  "teleportCamperNitro": {
+   "gameSeconds": 50,
+   "pumpsOpened": 2,
+   "state": "shop"
+  },
+  "drivingCamper": [
+   {
+    "gameSeconds": 160,
+    "pumpsOpened": 5,
+    "state": "shop",
+    "framesNotFillingWhilePumpOpen": 536
+   },
+   {
+    "gameSeconds": 160,
+    "pumpsOpened": 5,
+    "state": "shop",
+    "framesNotFillingWhilePumpOpen": 547
+   },
+   {
+    "gameSeconds": 160,
+    "pumpsOpened": 5,
+    "state": "shop",
+    "framesNotFillingWhilePumpOpen": 534
+   },
+   {
+    "gameSeconds": 160,
+    "pumpsOpened": 5,
+    "state": "shop",
+    "framesNotFillingWhilePumpOpen": 508
+   },
+   {
+    "gameSeconds": 160,
+    "pumpsOpened": 6,
+    "state": "shop",
+    "framesNotFillingWhilePumpOpen": 485
+   },
+   {
+    "gameSeconds": 160,
+    "pumpsOpened": 5,
+    "state": "shop",
+    "framesNotFillingWhilePumpOpen": 545
+   }
+  ],
+  "onePump": {
+   "given": 20,
+   "ticks": 6,
+   "secondsToEmpty": 21.2,
+   "pumpClosed": true,
+   "nextPumpIn": 15
+  },
+  "pumpWithNearlyFullTank": {
+   "secondsOpen": 20.8,
+   "litresGiven": 20,
+   "closed": true,
+   "state": "pause"
+  },
+  "leaveAndReturn": {
+   "firstTickAfterSeconds": 5,
+   "note": "in 2.5 s, out 0.5 s, back in"
+  },
+  "hoveringOverPad": {
+   "fuelChange": -6.67,
+   "expectedBurnOnly": -6.67
+  }
+ },
+ "placement": {
+  "levels": 600,
+  "pumps": 4290,
+  "retries": 0,
+  "inObstacle": 0,
+  "zoneTouchesObstacle": 0,
+  "onRamp": 0,
+  "zoneOnRamp": 0,
+  "onLandingPath": 64,
+  "postOnRunUp": 98,
+  "nearWall": 0,
+  "tooClose": 0,
+  "minDistObstacleEdge": 30,
+  "minDistRamp": 50,
+  "minWall": 186,
+  "minLandingPath": 3,
+  "minRunUp": 0,
+  "samples": [
+   {
+    "pu": [
+     1680,
+     339
+    ],
+    "ramps": [
+     [
+      576,
+      841,
+      0.55
+     ],
+     [
+      1541,
+      920,
+      4.99
+     ]
+    ]
+   },
+   {
+    "pu": [
+     538,
+     383
+    ],
+    "ramps": [
+     [
+      576,
+      841,
+      0.55
+     ],
+     [
+      1541,
+      920,
+      4.99
+     ]
+    ]
+   },
+   {
+    "pu": [
+     1106,
+     583
+    ],
+    "ramps": [
+     [
+      576,
+      841,
+      0.55
+     ],
+     [
+      1541,
+      920,
+      4.99
+     ]
+    ]
+   },
+   {
+    "pu": [
+     397,
+     444
+    ],
+    "ramps": [
+     [
+      576,
+      841,
+      0.55
+     ],
+     [
+      1541,
+      920,
+      4.99
+     ]
+    ]
+   },
+   {
+    "pu": [
+     361,
+     996
+    ],
+    "ramps": [
+     [
+      576,
+      841,
+      0.55
+     ],
+     [
+      1541,
+      920,
+      4.99
+     ]
+    ]
+   }
+  ]
+ },
+ "landing": {
+  "jumps": 320,
+  "maxLand": 486,
+  "minLand": 167
+ },
+ "post": {
+  "runs": 40,
+  "tunnelled": 0,
+  "maxPen": 0,
+  "stuckRuns": 0,
+  "details": [
+   {
+    "speed": 150,
+    "minCentreDist": 34,
+    "contactDist": 34,
+    "speedAfter": 255
+   },
+   {
+    "speed": 300,
+    "minCentreDist": 34,
+    "contactDist": 34,
+    "speedAfter": 256
+   },
+   {
+    "speed": 480,
+    "minCentreDist": 34,
+    "contactDist": 34,
+    "speedAfter": 256
+   },
+   {
+    "speed": 800,
+    "minCentreDist": 34,
+    "contactDist": 34,
+    "speedAfter": 256
+   },
+   {
+    "speed": 1200,
+    "minCentreDist": 34,
+    "contactDist": 34,
+    "speedAfter": 256
+   }
+  ],
+  "enemiesPinnedOnPostFrames": 0
+ },
+ "edges": {
+  "dieAtPump": {
+   "states": [
+    "dead",
+    "over"
+   ],
+   "fuel": 29.97,
+   "pumpRes": 20,
+   "filling": true
+  },
+  "lapEnd_tickSameFrame": {
+   "states": [
+    "play"
+   ],
+   "fuel": 3.05,
+   "bannerKey": "lap",
+   "fillingFlagAfter": true,
+   "pumpKept": true,
+   "cansKept": 0
+  },
+  "lapEnd_tick3FramesLater": {
+   "states": [
+    "play",
+    "clear",
+    "shop"
+   ],
+   "fuel": 0,
+   "bannerKey": "outOfFuel",
+   "fillingFlagAfter": true,
+   "pumpKept": true,
+   "cansKept": 0
+  },
+  "nextLapClean": {
+   "fuel": 60,
+   "pump": null,
+   "pumpT": 8,
+   "cans": 0,
+   "filling": true
+  },
+  "nitroBurnPerSec": 2,
+  "normalBurnPerSec": 1,
+  "emptyNitroHeldBurnPerSec": 1,
+  "spawnsQueuedBelow2L": 1
+ },
+ "thief": {
+  "single": {
+   "fuelAfter": 27.33,
+   "stolen": 6,
+   "fleeSeconds": 3,
+   "stealsIn200Frames": 1,
+   "cansAfterKill": [
+    {
+     "l": 12,
+     "distFromPlayer": 37
+    }
+   ],
+   "fuelFromCan": 12
+  },
+  "lowFuel": {
+   "tankBefore": 3,
+   "stolen": 2.966666666666667,
+   "canLitres": null,
+   "fuelAfterPickup": 0,
+   "netGainLitres": -2.9
+  },
+  "fiveThieves": {
+   "fuelLostInOneFrame": 30,
+   "thievesThatStole": 5
+  },
+  "stealLastLitres": {
+   "state": "play",
+   "fuel": 0,
+   "stolen": 0.4666666666666667
+  },
+  "canOnRamp": [
+   {
+    "alongRamp": 0.2,
+    "rampHeightThere": 6,
+    "pickedUp": true
+   },
+   {
+    "alongRamp": 0.4,
+    "rampHeightThere": 12,
+    "pickedUp": true
+   },
+   {
+    "alongRamp": 0.6,
+    "rampHeightThere": 18,
+    "pickedUp": false
+   },
+   {
+    "alongRamp": 0.8,
+    "rampHeightThere": 24,
+    "pickedUp": false
+   },
+   {
+    "alongRamp": 0.95,
+    "rampHeightThere": 28.5,
+    "pickedUp": false
+   }
+  ],
+  "natural": {
+   "spawnsByType": {
+    "rust": 176,
+    "brute": 47,
+    "spit": 52,
+    "thief": 31,
+    "harvester": 1
+   },
+   "thiefShare": 0.101,
+   "steals": 39,
+   "litresStolenPerLap": 37,
+   "cansDropped": 16,
+   "cansLeftOnGroundAtSomeLapEnd": 2,
+   "thievesStuckOver2s": 0,
+   "thiefFramesInCorners": 127
+  }
+ },
+ "errors": [
+  "[.WebGL-0x235400171000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

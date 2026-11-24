@@ -61,7 +61,7 @@ async def main():
                 r['stateAfterPauseTap'] = await g.ev("M.G.state")
                 await pg.screenshot(path=f'shots/touch_{w}x{h}_paused.png')
                 # garage on touch
-                await g.ev("(() => { const G = M.G; G.state = 'play'; G.scrap = 500; G.waveT = .02 })()")
+                await g.ev("(() => { const G = M.G; G.state = 'play'; G.scrap = 500; G.fuel = .01 })()")
                 await pg.wait_for_selector('#shop:not(.hide)', timeout=30000)
                 await pg.wait_for_timeout(300)
                 await pg.screenshot(path=f'shots/touch_{w}x{h}_garage.png')
@@ -70,6 +70,6 @@ async def main():
             out[f'{w}x{h}'] = r
             print(w, h, json.dumps(r))
             await b.close()
-    json.dump(out, open('results_v2_touch.json', 'w'), indent=1)
+    json.dump(out, open(os.environ.get('OUT', 'results_v2_touch.json'), 'w'), indent=1)
 
 asyncio.run(main())

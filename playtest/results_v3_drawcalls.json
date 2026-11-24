@@ -1,0 +1,10 @@
+{
+ "base": 15,
+ "rust_x10": 70,
+ "spit_x10": 90,
+ "brute_x10": 70,
+ "thief_x10": 70,
+ "harvester_x10": 71,
+ "cans_x20": 21,
+ "pump": 9
+}

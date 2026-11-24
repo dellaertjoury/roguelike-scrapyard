@@ -1,0 +1,204 @@
+{
+ "390x844": {
+  "touchVisible": "block",
+  "buttons": 7,
+  "btnRects": {
+   "ArrowLeft": [
+    16,
+    750,
+    90,
+    824
+   ],
+   "ArrowRight": [
+    104,
+    750,
+    178,
+    824
+   ],
+   "ShiftLeft": [
+    210,
+    678,
+    270,
+    738
+   ],
+   "ArrowUp": [
+    282,
+    646,
+    374,
+    738
+   ],
+   "ArrowDown": [
+    210,
+    764,
+    270,
+    824
+   ],
+   "Space": [
+    282,
+    750,
+    356,
+    824
+   ],
+   "tPause": [
+    171,
+    776,
+    219,
+    824
+   ]
+  },
+  "buttonPanelOverlaps": [],
+  "panelPanelOverlaps": [
+   "pnl tl x pnl tc (72x4)",
+   "pnl tc x bossPnl (159x28)",
+   "bossPnl x driftPnl (34x55)"
+  ],
+  "speedPanel": "none",
+  "keysWhileHoldingGas": [
+   "ArrowUp"
+  ],
+  "speedAfterGas": 27,
+  "keysAfterRelease": [],
+  "multiTouchKeys": [
+   "ArrowUp",
+   "ArrowRight"
+  ],
+  "keysAfterMultiRelease": [],
+  "stateAfterPauseTap": "pause",
+  "touchVisibleInGarage": false,
+  "errors": [
+   "[.WebGL-0x5f4001af400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "768x1024": {
+  "touchVisible": "block",
+  "buttons": 7,
+  "btnRects": {
+   "ArrowLeft": [
+    16,
+    930,
+    90,
+    1004
+   ],
+   "ArrowRight": [
+    104,
+    930,
+    178,
+    1004
+   ],
+   "ShiftLeft": [
+    588,
+    858,
+    648,
+    918
+   ],
+   "ArrowUp": [
+    660,
+    826,
+    752,
+    918
+   ],
+   "ArrowDown": [
+    588,
+    944,
+    648,
+    1004
+   ],
+   "Space": [
+    660,
+    930,
+    734,
+    1004
+   ],
+   "tPause": [
+    360,
+    956,
+    408,
+    1004
+   ]
+  },
+  "buttonPanelOverlaps": [],
+  "panelPanelOverlaps": [],
+  "speedPanel": "none",
+  "keysWhileHoldingGas": [
+   "ArrowUp"
+  ],
+  "speedAfterGas": 203,
+  "keysAfterRelease": [],
+  "multiTouchKeys": [
+   "ArrowUp",
+   "ArrowRight"
+  ],
+  "keysAfterMultiRelease": [],
+  "stateAfterPauseTap": "pause",
+  "touchVisibleInGarage": false,
+  "errors": [
+   "[.WebGL-0x2cec009da600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "1366x800": {
+  "touchVisible": "block",
+  "buttons": 7,
+  "btnRects": {
+   "ArrowLeft": [
+    16,
+    706,
+    90,
+    780
+   ],
+   "ArrowRight": [
+    104,
+    706,
+    178,
+    780
+   ],
+   "ShiftLeft": [
+    1186,
+    634,
+    1246,
+    694
+   ],
+   "ArrowUp": [
+    1258,
+    602,
+    1350,
+    694
+   ],
+   "ArrowDown": [
+    1186,
+    720,
+    1246,
+    780
+   ],
+   "Space": [
+    1258,
+    706,
+    1332,
+    780
+   ],
+   "tPause": [
+    659,
+    732,
+    707,
+    780
+   ]
+  },
+  "buttonPanelOverlaps": [],
+  "panelPanelOverlaps": [],
+  "speedPanel": "none",
+  "keysWhileHoldingGas": [
+   "ArrowUp"
+  ],
+  "speedAfterGas": 184,
+  "keysAfterRelease": [],
+  "multiTouchKeys": [
+   "ArrowUp",
+   "ArrowRight"
+  ],
+  "keysAfterMultiRelease": [],
+  "stateAfterPauseTap": "pause",
+  "touchVisibleInGarage": false,
+  "errors": [
+   "[.WebGL-0x10ac001bfa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ }
+}

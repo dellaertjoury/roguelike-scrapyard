@@ -15,7 +15,7 @@ FIND_STUCK = r"""
   const keys = [['KeyW'], ['KeyW', 'KeyD'], ['KeyW', 'KeyA', 'Space'], ['KeyW', 'ShiftLeft'], ['KeyS', 'KeyA'], ['KeyW', 'KeyD', 'Space']];
   for (let seg = 0; seg < 400 && !found; seg++) {
     step(30, 1 / 30, keys[seg % keys.length], () => {
-      G.P.hp = 1e9; G.P.nitro = 1; if (G.waveT < 5) G.waveT = 60;
+      G.P.hp = 1e9; G.P.nitro = 1; if (G.fuel < 5) G.fuel = 60;
       for (const e of G.enemies) { const R = G.ramps.find(R => below(e, R)); if (R) { runs.set(e, (runs.get(e) || 0) + 1); if (runs.get(e) > 120 && !found) { found = { e, R } } } else runs.delete(e) }
       if (found) return false;
     });

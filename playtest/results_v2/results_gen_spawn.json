@@ -1,0 +1,135 @@
+{
+ "gen": {
+  "runs": 3000,
+  "fewRamps": 0,
+  "fewObs": 0,
+  "obsHist": {
+   "12": 3000
+  },
+  "obsOnRamp": 0,
+  "obsInJumpPath": 0,
+  "lipNearWall": 364,
+  "rampsOverlap": 0,
+  "minLipToWall": 189.18253188925928,
+  "minLandToWall": 126.01882672748411,
+  "rampBackBlocked": 0,
+  "minObsGap": 140.0008775550409,
+  "obsTouchWall": 0,
+  "examples": []
+ },
+ "spawn": {
+  "center": {
+   "asked": 2080,
+   "got": 2080,
+   "minD": 360.0692579522123,
+   "inObs": 0,
+   "onRampBody": 0,
+   "eliteOnRamp": 0,
+   "eliteInObs": 0,
+   "inWall": 0,
+   "offscreen": 1130,
+   "n": 2080,
+   "dHist": {
+    "300": 270,
+    "400": 727,
+    "500": 821,
+    "600": 262
+   }
+  },
+  "corner_tl": {
+   "asked": 2080,
+   "got": 2080,
+   "minD": 280.15964638611433,
+   "inObs": 0,
+   "onRampBody": 0,
+   "eliteOnRamp": 0,
+   "eliteInObs": 0,
+   "inWall": 0,
+   "offscreen": 77,
+   "n": 2080,
+   "dHist": {
+    "200": 63,
+    "300": 554,
+    "400": 739,
+    "500": 550,
+    "600": 174
+   }
+  },
+  "corner_br": {
+   "asked": 2080,
+   "got": 2080,
+   "minD": 280.1869156382797,
+   "inObs": 0,
+   "onRampBody": 0,
+   "eliteOnRamp": 0,
+   "eliteInObs": 0,
+   "inWall": 0,
+   "offscreen": 68,
+   "n": 2080,
+   "dHist": {
+    "200": 70,
+    "300": 588,
+    "400": 707,
+    "500": 551,
+    "600": 164
+   }
+  },
+  "wall_mid_top": {
+   "asked": 2080,
+   "got": 2080,
+   "minD": 280.1013194593999,
+   "inObs": 0,
+   "onRampBody": 0,
+   "eliteOnRamp": 0,
+   "eliteInObs": 0,
+   "inWall": 0,
+   "offscreen": 153,
+   "n": 2080,
+   "dHist": {
+    "200": 41,
+    "300": 470,
+    "400": 721,
+    "500": 619,
+    "600": 229
+   }
+  },
+  "wall_left": {
+   "asked": 2080,
+   "got": 2080,
+   "minD": 280.0641337399912,
+   "inObs": 0,
+   "onRampBody": 0,
+   "eliteOnRamp": 0,
+   "eliteInObs": 0,
+   "inWall": 0,
+   "offscreen": 1351,
+   "n": 2080,
+   "dHist": {
+    "200": 50,
+    "300": 512,
+    "400": 687,
+    "500": 666,
+    "600": 165
+   }
+  },
+  "random": {
+   "asked": 2080,
+   "got": 2080,
+   "minD": 280.68039265115664,
+   "inObs": 0,
+   "onRampBody": 0,
+   "eliteOnRamp": 0,
+   "eliteInObs": 0,
+   "inWall": 0,
+   "offscreen": 710,
+   "n": 2080,
+   "dHist": {
+    "200": 54,
+    "300": 496,
+    "400": 763,
+    "500": 596,
+    "600": 171
+   }
+  }
+ }
+}

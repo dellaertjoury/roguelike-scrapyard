@@ -13,7 +13,7 @@ SPAWNCLOSE = r"""
   for (let seg = 0; seg < 240; seg++) {
     // steer toward the newest pending spawn marker half the time (worst case: driving at the telegraph)
     step(15, 1 / 30, keys[seg % 4], () => {
-      G.P.hp = 1e9; G.P.nitro = 1; if (G.waveT < 5) G.waveT = 60;
+      G.P.hp = 1e9; G.P.nitro = 1; if (G.fuel < 5) G.fuel = 60;
       const s = G.pend[G.pend.length - 1]; if (s && seg % 2) G.P.a = Math.atan2(s.y - G.P.y, s.x - G.P.x);
       for (const e of G.enemies) if (!e._seen) { e._seen = 1; res.spawns++; const d = Math.hypot(e.x - G.P.x, e.y - G.P.y); res.minD = Math.min(res.minD, d); if (d < e.r + G.P.r + 60) res.within60++; if (d < e.r + G.P.r) res.overlapping++; if (Math.abs(e.x - G.cam.x) > 590 || Math.abs(e.y - G.cam.y) > 345) res.offscreenAtSpawn++ }
     });

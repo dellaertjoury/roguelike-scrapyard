@@ -7,7 +7,7 @@ from harness import open_game
 
 SETUP = r"""(() => {
 window.mkE = (type, wave, x, y, extra = {}) => { const D0 = D.ENEMY(wave)[type]; return Object.assign({ type, x, y, a: 0, vx: 0, vy: 0, max: D0.hp, flash: 0, cd: 0, charge: 0, hitcd: 0, sawcd: 0, burncd: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0, col: '#888', num: 1 }, D0, extra) };
-window.resetE = (car = 1) => { const m = M, G = m.G; m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.waveT = 1e9; G.W.mg = 0; G.W.mines = 0; G.P.hp = G.S.maxhp = 1e6; G.obs = []; G.ramps = []; };
+window.resetE = (car = 1) => { const m = M, G = m.G; m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.fuel = 1e9; G.W.mg = 0; G.W.mines = 0; G.P.hp = G.S.maxhp = 1e6; G.obs = []; G.ramps = []; };
 })()"""
 
 RAM = r"""
@@ -43,7 +43,7 @@ PINNED = r"""
   const keys = [['KeyW'], ['KeyW', 'KeyD'], ['KeyW', 'KeyA', 'Space'], ['KeyW', 'ShiftLeft'], ['KeyS', 'KeyA'], ['KeyW', 'KeyD', 'Space']];
   for (let seg = 0; seg < 360; seg++) {
     step(30, 1 / 30, keys[(seg * 7) % keys.length], () => {
-      G.P.hp = 1e9; G.P.nitro = 1; if (G.waveT < 3) { G.waveT = 60; G.wave = Math.min(11, G.wave + 1) }
+      G.P.hp = 1e9; G.P.nitro = 1; if (G.fuel < 3) { G.fuel = 60; G.wave = Math.min(11, G.wave + 1) }
       for (const e of G.enemies) {
         const pinned = !e.air && Math.hypot(e.vx, e.vy) < 15 && G.ramps.some(R => near(e, R));
         if (pinned) { total++; const n = (runs.get(e) || 0) + 1; runs.set(e, n); longest = Math.max(longest, n); if (n === 60 && !seen.has(e)) { seen.add(e); pinnedLong++ } } else runs.delete(e);
@@ -117,7 +117,7 @@ async def main():
         await g.shot(f'{tag}edge_arrows.png')
 
         # blueprint markers
-        await g.ev("(() => { const G = M.G; G.pend = []; G.scrap = 999; G.waveT = .02; G.state = 'play' })()")
+        await g.ev("(() => { const G = M.G; G.pend = []; G.scrap = 999; G.fuel = .01; G.state = 'play' })()")
         await g.page.wait_for_selector('#shop:not(.hide)', timeout=30000)
         out['blueprintMarkers'] = await g.ev("""(() => { const SL = D.SLOTS; return { slotsOrder: SL, markers: [...document.querySelectorAll('#blueprint .mk')].map(m => m.dataset.slot + '=' + m.textContent.trim()), rows: [...document.querySelectorAll('#blueprint .bprow')].map(r => r.dataset.slot + '=' + r.querySelector('.num').textContent) } })()""")
         await g.page.hover('#cards .card:nth-child(1)')

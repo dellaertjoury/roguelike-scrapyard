@@ -6,7 +6,7 @@ from harness import open_game
 PROBES = r"""
 () => {
   const m = M, G = m.G, AW = m.AW, AH = m.AH, EDGE = m.EDGE, out = {};
-  const reset = (car = 0) => { m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.waveT = 1e9; G.P.hp = G.S.maxhp = 1e6; };
+  const reset = (car = 0) => { m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.fuel = 1e9; G.P.hp = G.S.maxhp = 1e6; };
   const finite = () => [G.P.x, G.P.y, G.P.vx, G.P.vy, G.P.z].every(Number.isFinite);
 
   /* 1. corners and walls: drive full nitro into each corner at several angles */

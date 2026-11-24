@@ -1,0 +1,69 @@
+{
+ "ram": {
+  "main circle only (side hit)": {
+   "harvesterHpLost": 57.9,
+   "damageTexts": 2,
+   "playerSpeedAfter": 59
+  },
+  "nose zone (both circles overlap)": {
+   "harvesterHpLost": 0,
+   "damageTexts": 1,
+   "playerSpeedAfter": 193
+  },
+  "nose tip": {
+   "harvesterHpLost": 57.9,
+   "damageTexts": 2,
+   "playerSpeedAfter": 59
+  },
+  "harvesterNoseIntoWall": {
+   "nosePastWallLine": -26,
+   "playerX": 58,
+   "playerHits": 37
+  }
+ },
+ "pinned": {
+  "gameSeconds": 360,
+  "enemyFramesPinnedOnRampFace": 170,
+  "enemiesPinnedOver2s": 1,
+  "longestFrames": 65
+ },
+ "bladeStop": {
+  "st": "hold",
+  "d": 107
+ },
+ "wheels": true,
+ "edgeArrows": {
+  "shown": 0,
+  "elite": 0
+ },
+ "blueprintMarkers": {
+  "slotsOrder": [
+   "roof",
+   "hood",
+   "front",
+   "rear",
+   "trunk",
+   "sides"
+  ],
+  "markers": [
+   "roof=1",
+   "hood=2",
+   "front=3",
+   "rear=4",
+   "trunk=5",
+   "sides=6",
+   "sides=6"
+  ],
+  "rows": [
+   "roof=1",
+   "hood=2",
+   "front=3",
+   "rear=4",
+   "trunk=5",
+   "sides=6"
+  ]
+ },
+ "errors": [
+  "[.WebGL-0x299c001cb800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

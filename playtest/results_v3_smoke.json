@@ -1,0 +1,67 @@
+{
+ "assets": {
+  "ui": [
+   "hull",
+   "nitro",
+   "heat",
+   "lap",
+   "scrap",
+   "drift",
+   "boss",
+   "fuel-needle",
+   "pump",
+   "jerrycan",
+   "fuel-gauge"
+  ],
+  "missingUi": [
+   "speed",
+   "lock",
+   "repair",
+   "reroll"
+  ],
+  "icons": 22,
+  "cars": [
+   "hatch",
+   "muscle",
+   "taxi",
+   "hearse",
+   "mini",
+   "safety",
+   "f1"
+  ],
+  "elites": [
+   "harvester",
+   "thief",
+   "monster",
+   "tow"
+  ],
+  "packs": [
+   "britland",
+   "f1"
+  ],
+  "logos": [
+   "en",
+   "fr",
+   "vls",
+   "es",
+   "de"
+  ],
+  "fx": [
+   "fire",
+   "pad"
+  ],
+  "dirt": true,
+  "menuBg": true,
+  "garageBg": false
+ },
+ "http": [
+  "404 http://localhost:8765/assets/garage-bg.jpg",
+  "404 http://localhost:8765/assets/ui/speed.png",
+  "404 http://localhost:8765/assets/ui/repair.png",
+  "404 http://localhost:8765/assets/ui/reroll.png",
+  "404 http://localhost:8765/assets/ui/lock.png"
+ ],
+ "errors": [
+  "[.WebGL-0xcb400179c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

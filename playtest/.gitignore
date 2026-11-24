@@ -17,3 +17,9 @@ shots/*
 !shots/v2_cars_closeup.png
 __pycache__/
 results_v1/*.png
+!shots/v3_banner_elite_1366x800.png
+!shots/v3_banner_elite_390x844.png
+!shots/v3_hud390_all_langs.png
+!shots/v3_gauge_sheet.png
+!shots/v3_cans_thief_pump_1366x800.png
+!shots/v3_pump_on_ramp_runup.png

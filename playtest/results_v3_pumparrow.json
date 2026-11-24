@@ -1,0 +1,160 @@
+{
+ "390x844": {
+  "n": 16,
+  "pumpArrowShown": 10,
+  "badgeShown": 10,
+  "badgeOutOfView": 0,
+  "badgeOverPanels": [],
+  "arrowOverPanels": [],
+  "missing": [
+   [
+    1298,
+    1197
+   ],
+   [
+    1000,
+    1240
+   ],
+   [
+    702,
+    1197
+   ],
+   [
+    702,
+    163
+   ],
+   [
+    1000,
+    120
+   ],
+   [
+    1298,
+    163
+   ]
+  ]
+ },
+ "768x1024": {
+  "n": 16,
+  "pumpArrowShown": 11,
+  "badgeShown": 11,
+  "badgeOutOfView": 0,
+  "badgeOverPanels": [
+   [
+    [
+     1552,
+     1076
+    ],
+    [
+     "driftPnl"
+    ]
+   ]
+  ],
+  "arrowOverPanels": [
+   [
+    [
+     1552,
+     1076
+    ],
+    [
+     "driftPnl"
+    ]
+   ]
+  ],
+  "missing": [
+   [
+    1298,
+    1197
+   ],
+   [
+    702,
+    1197
+   ],
+   [
+    702,
+    163
+   ],
+   [
+    1000,
+    120
+   ],
+   [
+    1298,
+    163
+   ]
+  ]
+ },
+ "1366x800": {
+  "n": 16,
+  "pumpArrowShown": 14,
+  "badgeShown": 14,
+  "badgeOutOfView": 0,
+  "badgeOverPanels": [
+   [
+    [
+     1552,
+     1076
+    ],
+    [
+     "driftPnl"
+    ]
+   ],
+   [
+    [
+     448,
+     1076
+    ],
+    [
+     "pnl bl"
+    ]
+   ],
+   [
+    [
+     1000,
+     120
+    ],
+    [
+     "fuelPnl"
+    ]
+   ]
+  ],
+  "arrowOverPanels": [
+   [
+    [
+     1552,
+     1076
+    ],
+    [
+     "driftPnl"
+    ]
+   ],
+   [
+    [
+     448,
+     1076
+    ],
+    [
+     "pnl bl"
+    ]
+   ],
+   [
+    [
+     1000,
+     120
+    ],
+    [
+     "fuelPnl"
+    ]
+   ]
+  ],
+  "missing": [
+   [
+    448,
+    284
+   ],
+   [
+    1552,
+    284
+   ]
+  ]
+ }
+}

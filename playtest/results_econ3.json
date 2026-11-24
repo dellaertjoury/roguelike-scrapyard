@@ -1,0 +1,1245 @@
+{
+ "bots": [
+  {
+   "bot": "passive",
+   "mortal": false,
+   "rows": [
+    {
+     "lap": 1,
+     "scrap": 18,
+     "secs": 60,
+     "wrecks": 18,
+     "dmg": 72,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 2,
+     "scrap": 23,
+     "secs": 54,
+     "wrecks": 21,
+     "dmg": 569,
+     "pumps": 0,
+     "refuelL": 6,
+     "stolenL": 12,
+     "end": "shop"
+    },
+    {
+     "lap": 3,
+     "scrap": 20,
+     "secs": 60,
+     "wrecks": 18,
+     "dmg": 781,
+     "pumps": 0,
+     "refuelL": 12,
+     "stolenL": 6,
+     "end": "shop"
+    },
+    {
+     "lap": 4,
+     "scrap": 22,
+     "secs": 24,
+     "wrecks": 13,
+     "dmg": 426,
+     "pumps": 0,
+     "refuelL": 6,
+     "stolenL": 42,
+     "end": "shop"
+    },
+    {
+     "lap": 5,
+     "scrap": 70,
+     "secs": 30,
+     "wrecks": 21,
+     "dmg": 854,
+     "pumps": 0,
+     "refuelL": 12,
+     "stolenL": 42,
+     "end": "shop"
+    },
+    {
+     "lap": 6,
+     "scrap": 109,
+     "secs": 50,
+     "wrecks": 59,
+     "dmg": 1107,
+     "pumps": 0,
+     "refuelL": 66,
+     "stolenL": 66,
+     "end": "shop"
+    },
+    {
+     "lap": 7,
+     "scrap": 95,
+     "secs": 28,
+     "wrecks": 50,
+     "dmg": 602,
+     "pumps": 0,
+     "refuelL": 42,
+     "stolenL": 74,
+     "end": "shop"
+    },
+    {
+     "lap": 8,
+     "scrap": 88,
+     "secs": 32,
+     "wrecks": 44,
+     "dmg": 765,
+     "pumps": 0,
+     "refuelL": 24,
+     "stolenL": 52,
+     "end": "shop"
+    },
+    {
+     "lap": 9,
+     "scrap": 75,
+     "secs": 25,
+     "wrecks": 42,
+     "dmg": 543,
+     "pumps": 0,
+     "refuelL": 24,
+     "stolenL": 53,
+     "end": "shop"
+    },
+    {
+     "lap": 10,
+     "scrap": 207,
+     "secs": 43,
+     "wrecks": 86,
+     "dmg": 1480,
+     "pumps": 0,
+     "refuelL": 96,
+     "stolenL": 96,
+     "end": "shop"
+    },
+    {
+     "lap": 11,
+     "scrap": 27,
+     "secs": 34,
+     "wrecks": 20,
+     "dmg": 1291,
+     "pumps": 0,
+     "refuelL": 12,
+     "stolenL": 32,
+     "end": "shop"
+    },
+    {
+     "lap": 12,
+     "scrap": 24,
+     "secs": 12,
+     "wrecks": 21,
+     "dmg": 253,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 48,
+     "end": "shop"
+    },
+    {
+     "lap": 13,
+     "scrap": 62,
+     "secs": 19,
+     "wrecks": 43,
+     "dmg": 440,
+     "pumps": 0,
+     "refuelL": 41,
+     "stolenL": 77,
+     "end": "shop"
+    },
+    {
+     "lap": 14,
+     "scrap": 168,
+     "secs": 42,
+     "wrecks": 91,
+     "dmg": 1468,
+     "pumps": 0,
+     "refuelL": 114,
+     "stolenL": 126,
+     "end": "shop"
+    },
+    {
+     "lap": 15,
+     "scrap": 41,
+     "secs": 18,
+     "wrecks": 24,
+     "dmg": 630,
+     "pumps": 0,
+     "refuelL": 18,
+     "stolenL": 60,
+     "end": "shop"
+    }
+   ],
+   "build": "mg1",
+   "totalScrap": 1049,
+   "score": 41960,
+   "reached": 15
+  },
+  {
+   "bot": "aggressive",
+   "mortal": false,
+   "rows": [
+    {
+     "lap": 1,
+     "scrap": 29,
+     "secs": 60,
+     "wrecks": 21,
+     "dmg": 0,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 2,
+     "scrap": 36,
+     "secs": 60,
+     "wrecks": 24,
+     "dmg": 0,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 3,
+     "scrap": 52,
+     "secs": 60,
+     "wrecks": 27,
+     "dmg": 8,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 4,
+     "scrap": 139,
+     "secs": 60,
+     "wrecks": 72,
+     "dmg": 17,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 5,
+     "scrap": 191,
+     "secs": 60,
+     "wrecks": 84,
+     "dmg": 9,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 6,
+     "scrap": 187,
+     "secs": 60,
+     "wrecks": 95,
+     "dmg": 29,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 7,
+     "scrap": 302,
+     "secs": 60,
+     "wrecks": 167,
+     "dmg": 61,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 8,
+     "scrap": 455,
+     "secs": 60,
+     "wrecks": 230,
+     "dmg": 65,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 9,
+     "scrap": 679,
+     "secs": 60,
+     "wrecks": 376,
+     "dmg": 125,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 10,
+     "scrap": 934,
+     "secs": 60,
+     "wrecks": 476,
+     "dmg": 96,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 11,
+     "scrap": 900,
+     "secs": 60,
+     "wrecks": 473,
+     "dmg": 176,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 12,
+     "scrap": 891,
+     "secs": 60,
+     "wrecks": 467,
+     "dmg": 119,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 13,
+     "scrap": 1169,
+     "secs": 60,
+     "wrecks": 591,
+     "dmg": 179,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 14,
+     "scrap": 1162,
+     "secs": 60,
+     "wrecks": 577,
+     "dmg": 144,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 15,
+     "scrap": 1210,
+     "secs": 60,
+     "wrecks": 597,
+     "dmg": 120,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    }
+   ],
+   "build": "mg1",
+   "totalScrap": 8336,
+   "score": 374374,
+   "reached": 15
+  },
+  {
+   "bot": "drift",
+   "mortal": false,
+   "rows": [
+    {
+     "lap": 1,
+     "scrap": 27,
+     "secs": 60,
+     "wrecks": 19,
+     "dmg": 0,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 2,
+     "scrap": 38,
+     "secs": 60,
+     "wrecks": 24,
+     "dmg": 0,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 3,
+     "scrap": 27,
+     "secs": 52,
+     "wrecks": 19,
+     "dmg": 116,
+     "pumps": 0,
+     "refuelL": 6,
+     "stolenL": 12,
+     "end": "shop"
+    },
+    {
+     "lap": 4,
+     "scrap": 69,
+     "secs": 60,
+     "wrecks": 35,
+     "dmg": 807,
+     "pumps": 0,
+     "refuelL": 12,
+     "stolenL": 12,
+     "end": "shop"
+    },
+    {
+     "lap": 5,
+     "scrap": 55,
+     "secs": 36,
+     "wrecks": 29,
+     "dmg": 1375,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 24,
+     "end": "shop"
+    },
+    {
+     "lap": 6,
+     "scrap": 82,
+     "secs": 42,
+     "wrecks": 49,
+     "dmg": 1066,
+     "pumps": 0,
+     "refuelL": 12,
+     "stolenL": 24,
+     "end": "shop"
+    },
+    {
+     "lap": 7,
+     "scrap": 34,
+     "secs": 25,
+     "wrecks": 20,
+     "dmg": 833,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 35,
+     "end": "shop"
+    },
+    {
+     "lap": 8,
+     "scrap": 56,
+     "secs": 30,
+     "wrecks": 29,
+     "dmg": 812,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 30,
+     "end": "shop"
+    },
+    {
+     "lap": 9,
+     "scrap": 140,
+     "secs": 32,
+     "wrecks": 75,
+     "dmg": 900,
+     "pumps": 0,
+     "refuelL": 54,
+     "stolenL": 82,
+     "end": "shop"
+    },
+    {
+     "lap": 10,
+     "scrap": 76,
+     "secs": 30,
+     "wrecks": 37,
+     "dmg": 1001,
+     "pumps": 0,
+     "refuelL": 24,
+     "stolenL": 54,
+     "end": "shop"
+    },
+    {
+     "lap": 11,
+     "scrap": 95,
+     "secs": 25,
+     "wrecks": 53,
+     "dmg": 681,
+     "pumps": 0,
+     "refuelL": 72,
+     "stolenL": 96,
+     "end": "shop"
+    },
+    {
+     "lap": 12,
+     "scrap": 42,
+     "secs": 19,
+     "wrecks": 27,
+     "dmg": 469,
+     "pumps": 0,
+     "refuelL": 6,
+     "stolenL": 42,
+     "end": "shop"
+    },
+    {
+     "lap": 13,
+     "scrap": 149,
+     "secs": 33,
+     "wrecks": 85,
+     "dmg": 1096,
+     "pumps": 0,
+     "refuelL": 54,
+     "stolenL": 87,
+     "end": "shop"
+    },
+    {
+     "lap": 14,
+     "scrap": 102,
+     "secs": 25,
+     "wrecks": 57,
+     "dmg": 655,
+     "pumps": 0,
+     "refuelL": 24,
+     "stolenL": 59,
+     "end": "shop"
+    },
+    {
+     "lap": 15,
+     "scrap": 95,
+     "secs": 27,
+     "wrecks": 51,
+     "dmg": 841,
+     "pumps": 0,
+     "refuelL": 54,
+     "stolenL": 87,
+     "end": "shop"
+    }
+   ],
+   "build": "mg1",
+   "totalScrap": 1087,
+   "score": 54649,
+   "reached": 15
+  },
+  {
+   "bot": "ramp",
+   "mortal": false,
+   "rows": [
+    {
+     "lap": 1,
+     "scrap": 27,
+     "secs": 60,
+     "wrecks": 19,
+     "dmg": 0,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 2,
+     "scrap": 36,
+     "secs": 60,
+     "wrecks": 24,
+     "dmg": 0,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 3,
+     "scrap": 37,
+     "secs": 54,
+     "wrecks": 19,
+     "dmg": 139,
+     "pumps": 0,
+     "refuelL": 6,
+     "stolenL": 6,
+     "end": "shop"
+    },
+    {
+     "lap": 4,
+     "scrap": 59,
+     "secs": 58,
+     "wrecks": 42,
+     "dmg": 734,
+     "pumps": 0,
+     "refuelL": 48,
+     "stolenL": 50,
+     "end": "shop"
+    },
+    {
+     "lap": 5,
+     "scrap": 27,
+     "secs": 29,
+     "wrecks": 17,
+     "dmg": 958,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 31,
+     "end": "shop"
+    },
+    {
+     "lap": 6,
+     "scrap": 52,
+     "secs": 26,
+     "wrecks": 28,
+     "dmg": 406,
+     "pumps": 0,
+     "refuelL": 6,
+     "stolenL": 40,
+     "end": "shop"
+    },
+    {
+     "lap": 7,
+     "scrap": 58,
+     "secs": 36,
+     "wrecks": 37,
+     "dmg": 517,
+     "pumps": 1,
+     "refuelL": 12,
+     "stolenL": 30,
+     "end": "shop"
+    },
+    {
+     "lap": 8,
+     "scrap": 37,
+     "secs": 27,
+     "wrecks": 29,
+     "dmg": 406,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 30,
+     "end": "shop"
+    },
+    {
+     "lap": 9,
+     "scrap": 22,
+     "secs": 18,
+     "wrecks": 19,
+     "dmg": 213,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 42,
+     "end": "shop"
+    },
+    {
+     "lap": 10,
+     "scrap": 26,
+     "secs": 32,
+     "wrecks": 15,
+     "dmg": 470,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 29,
+     "end": "shop"
+    },
+    {
+     "lap": 11,
+     "scrap": 29,
+     "secs": 24,
+     "wrecks": 19,
+     "dmg": 328,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 36,
+     "end": "shop"
+    },
+    {
+     "lap": 12,
+     "scrap": 39,
+     "secs": 17,
+     "wrecks": 20,
+     "dmg": 446,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 43,
+     "end": "shop"
+    },
+    {
+     "lap": 13,
+     "scrap": 22,
+     "secs": 18,
+     "wrecks": 14,
+     "dmg": 282,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 42,
+     "end": "shop"
+    },
+    {
+     "lap": 14,
+     "scrap": 42,
+     "secs": 18,
+     "wrecks": 23,
+     "dmg": 480,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 36,
+     "end": "shop"
+    },
+    {
+     "lap": 15,
+     "scrap": 39,
+     "secs": 19,
+     "wrecks": 21,
+     "dmg": 518,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 41,
+     "end": "shop"
+    }
+   ],
+   "build": "mg1",
+   "totalScrap": 552,
+   "score": 30621,
+   "reached": 15
+  },
+  {
+   "bot": "shop",
+   "mortal": false,
+   "rows": [
+    {
+     "lap": 1,
+     "scrap": 18,
+     "secs": 56,
+     "wrecks": 18,
+     "dmg": 0,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 2,
+     "scrap": 25,
+     "secs": 51,
+     "wrecks": 20,
+     "dmg": 74,
+     "pumps": 0,
+     "refuelL": 24,
+     "stolenL": 18,
+     "end": "shop"
+    },
+    {
+     "lap": 3,
+     "scrap": 35,
+     "secs": 51,
+     "wrecks": 21,
+     "dmg": 110,
+     "pumps": 1,
+     "refuelL": 18,
+     "stolenL": 15,
+     "end": "shop"
+    },
+    {
+     "lap": 4,
+     "scrap": 80,
+     "secs": 45,
+     "wrecks": 47,
+     "dmg": 307,
+     "pumps": 0,
+     "refuelL": 0,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 5,
+     "scrap": 133,
+     "secs": 41,
+     "wrecks": 55,
+     "dmg": 932,
+     "pumps": 0,
+     "refuelL": 18,
+     "stolenL": 24,
+     "end": "shop"
+    },
+    {
+     "lap": 6,
+     "scrap": 109,
+     "secs": 46,
+     "wrecks": 72,
+     "dmg": 261,
+     "pumps": 1,
+     "refuelL": 0,
+     "stolenL": 6,
+     "end": "shop"
+    },
+    {
+     "lap": 7,
+     "scrap": 215,
+     "secs": 46,
+     "wrecks": 120,
+     "dmg": 569,
+     "pumps": 0,
+     "refuelL": 30,
+     "stolenL": 18,
+     "end": "shop"
+    },
+    {
+     "lap": 8,
+     "scrap": 181,
+     "secs": 33,
+     "wrecks": 99,
+     "dmg": 445,
+     "pumps": 0,
+     "refuelL": 54,
+     "stolenL": 54,
+     "end": "shop"
+    },
+    {
+     "lap": 9,
+     "scrap": 184,
+     "secs": 26,
+     "wrecks": 93,
+     "dmg": 399,
+     "pumps": 0,
+     "refuelL": 30,
+     "stolenL": 48,
+     "end": "shop"
+    },
+    {
+     "lap": 10,
+     "scrap": 342,
+     "secs": 43,
+     "wrecks": 165,
+     "dmg": 1081,
+     "pumps": 0,
+     "refuelL": 72,
+     "stolenL": 52,
+     "end": "shop"
+    },
+    {
+     "lap": 11,
+     "scrap": 226,
+     "secs": 31,
+     "wrecks": 133,
+     "dmg": 695,
+     "pumps": 0,
+     "refuelL": 48,
+     "stolenL": 54,
+     "end": "shop"
+    },
+    {
+     "lap": 12,
+     "scrap": 188,
+     "secs": 22,
+     "wrecks": 98,
+     "dmg": 406,
+     "pumps": 0,
+     "refuelL": 18,
+     "stolenL": 36,
+     "end": "shop"
+    },
+    {
+     "lap": 13,
+     "scrap": 232,
+     "secs": 27,
+     "wrecks": 136,
+     "dmg": 554,
+     "pumps": 0,
+     "refuelL": 60,
+     "stolenL": 53,
+     "end": "shop"
+    },
+    {
+     "lap": 14,
+     "scrap": 213,
+     "secs": 21,
+     "wrecks": 110,
+     "dmg": 562,
+     "pumps": 0,
+     "refuelL": 42,
+     "stolenL": 66,
+     "end": "shop"
+    },
+    {
+     "lap": 15,
+     "scrap": 224,
+     "secs": 25,
+     "wrecks": 118,
+     "dmg": 753,
+     "pumps": 0,
+     "refuelL": 12,
+     "stolenL": 18,
+     "end": "shop"
+    }
+   ],
+   "build": "mg1 bullbar1 mines2 flame3 saw3 ballast3",
+   "totalScrap": 2405,
+   "score": 99757,
+   "reached": 15
+  },
+  {
+   "bot": "pump",
+   "mortal": false,
+   "rows": [
+    {
+     "lap": 1,
+     "scrap": 49,
+     "secs": 135,
+     "wrecks": 46,
+     "dmg": 31,
+     "pumps": 4,
+     "refuelL": 80,
+     "stolenL": 0,
+     "end": "shop"
+    },
+    {
+     "lap": 2,
+     "scrap": 44,
+     "secs": 83,
+     "wrecks": 34,
+     "dmg": 196,
+     "pumps": 2,
+     "refuelL": 64,
+     "stolenL": 30,
+     "end": "shop"
+    },
+    {
+     "lap": 3,
+     "scrap": 71,
+     "secs": 110,
+     "wrecks": 46,
+     "dmg": 340,
+     "pumps": 4,
+     "refuelL": 66,
+     "stolenL": 6,
+     "end": "shop"
+    },
+    {
+     "lap": 4,
+     "scrap": 123,
+     "secs": 63,
+     "wrecks": 65,
+     "dmg": 377,
+     "pumps": 2,
+     "refuelL": 38,
+     "stolenL": 27,
+     "end": "shop"
+    },
+    {
+     "lap": 5,
+     "scrap": 194,
+     "secs": 70,
+     "wrecks": 90,
+     "dmg": 1238,
+     "pumps": 2,
+     "refuelL": 38,
+     "stolenL": 18,
+     "end": "shop"
+    },
+    {
+     "lap": 6,
+     "scrap": 159,
+     "secs": 63,
+     "wrecks": 87,
+     "dmg": 599,
+     "pumps": 2,
+     "refuelL": 61,
+     "stolenL": 54,
+     "end": "shop"
+    },
+    {
+     "lap": 7,
+     "scrap": 221,
+     "secs": 50,
+     "wrecks": 97,
+     "dmg": 891,
+     "pumps": 1,
+     "refuelL": 21,
+     "stolenL": 12,
+     "end": "shop"
+    },
+    {
+     "lap": 8,
+     "scrap": 379,
+     "secs": 45,
+     "wrecks": 144,
+     "dmg": 1042,
+     "pumps": 1,
+     "refuelL": 76,
+     "stolenL": 83,
+     "end": "shop"
+    },
+    {
+     "lap": 9,
+     "scrap": 215,
+     "secs": 27,
+     "wrecks": 83,
+     "dmg": 669,
+     "pumps": 1,
+     "refuelL": 6,
+     "stolenL": 36,
+     "end": "shop"
+    },
+    {
+     "lap": 10,
+     "scrap": 287,
+     "secs": 35,
+     "wrecks": 139,
+     "dmg": 894,
+     "pumps": 1,
+     "refuelL": 47,
+     "stolenL": 60,
+     "end": "shop"
+    },
+    {
+     "lap": 11,
+     "scrap": 154,
+     "secs": 21,
+     "wrecks": 73,
+     "dmg": 381,
+     "pumps": 1,
+     "refuelL": 12,
+     "stolenL": 43,
+     "end": "shop"
+    },
+    {
+     "lap": 12,
+     "scrap": 254,
+     "secs": 28,
+     "wrecks": 114,
+     "dmg": 879,
+     "pumps": 1,
+     "refuelL": 24,
+     "stolenL": 42,
+     "end": "shop"
+    },
+    {
+     "lap": 13,
+     "scrap": 505,
+     "secs": 65,
+     "wrecks": 264,
+     "dmg": 2149,
+     "pumps": 1,
+     "refuelL": 128,
+     "stolenL": 96,
+     "end": "shop"
+    },
+    {
+     "lap": 14,
+     "scrap": 561,
+     "secs": 44,
+     "wrecks": 236,
+     "dmg": 1664,
+     "pumps": 1,
+     "refuelL": 82,
+     "stolenL": 78,
+     "end": "shop"
+    },
+    {
+     "lap": 15,
+     "scrap": 583,
+     "secs": 36,
+     "wrecks": 195,
+     "dmg": 1366,
+     "pumps": 1,
+     "refuelL": 29,
+     "stolenL": 45,
+     "end": "shop"
+    }
+   ],
+   "build": "tesla1 saw3 flame4 plow1 mines3 scrapbin2",
+   "totalScrap": 3799,
+   "score": 138007,
+   "reached": 15
+  }
+ ],
+ "mortal": [
+  {
+   "bot": "shop",
+   "reached": 2,
+   "total": 32,
+   "build": "mg1 spoiler1",
+   "lastEnd": "over",
+   "secs": 87
+  },
+  {
+   "bot": "shop",
+   "reached": 2,
+   "total": 39,
+   "build": "mg1 skirts1",
+   "lastEnd": "over",
+   "secs": 93
+  },
+  {
+   "bot": "shop",
+   "reached": 2,
+   "total": 31,
+   "build": "mg1 cooler1",
+   "lastEnd": "over",
+   "secs": 88
+  },
+  {
+   "bot": "shop",
+   "reached": 2,
+   "total": 29,
+   "build": "mg1 bullbar1",
+   "lastEnd": "over",
+   "secs": 85
+  },
+  {
+   "bot": "pump",
+   "reached": 2,
+   "total": 58,
+   "build": "tesla1 saw1",
+   "lastEnd": "over",
+   "secs": 163
+  },
+  {
+   "bot": "pump",
+   "reached": 2,
+   "total": 62,
+   "build": "mg1 mines1 saw1",
+   "lastEnd": "over",
+   "secs": 194
+  },
+  {
+   "bot": "pump",
+   "reached": 2,
+   "total": 66,
+   "build": "mg1 saw1 toolbox1",
+   "lastEnd": "over",
+   "secs": 200
+  },
+  {
+   "bot": "pump",
+   "reached": 3,
+   "total": 97,
+   "build": "mg1 saw1 rounds1 mines1 nitro1",
+   "lastEnd": "over",
+   "secs": 252
+  }
+ ],
+ "prices": [
+  {
+   "lap": 1,
+   "avgLv1": 16,
+   "cheapest": 10,
+   "priciest": 26,
+   "reroll": 3,
+   "repair": 9
+  },
+  {
+   "lap": 2,
+   "avgLv1": 19,
+   "cheapest": 12,
+   "priciest": 30,
+   "reroll": 4,
+   "repair": 11
+  },
+  {
+   "lap": 3,
+   "avgLv1": 22,
+   "cheapest": 13,
+   "priciest": 34,
+   "reroll": 6,
+   "repair": 14
+  },
+  {
+   "lap": 4,
+   "avgLv1": 24,
+   "cheapest": 15,
+   "priciest": 40,
+   "reroll": 7,
+   "repair": 16
+  },
+  {
+   "lap": 5,
+   "avgLv1": 28,
+   "cheapest": 17,
+   "priciest": 45,
+   "reroll": 8,
+   "repair": 19
+  },
+  {
+   "lap": 6,
+   "avgLv1": 32,
+   "cheapest": 20,
+   "priciest": 52,
+   "reroll": 10,
+   "repair": 22
+  },
+  {
+   "lap": 7,
+   "avgLv1": 38,
+   "cheapest": 23,
+   "priciest": 60,
+   "reroll": 12,
+   "repair": 26
+  },
+  {
+   "lap": 8,
+   "avgLv1": 43,
+   "cheapest": 27,
+   "priciest": 69,
+   "reroll": 13,
+   "repair": 29
+  },
+  {
+   "lap": 9,
+   "avgLv1": 50,
+   "cheapest": 31,
+   "priciest": 80,
+   "reroll": 15,
+   "repair": 33
+  },
+  {
+   "lap": 10,
+   "avgLv1": 57,
+   "cheapest": 35,
+   "priciest": 91,
+   "reroll": 17,
+   "repair": 38
+  },
+  {
+   "lap": 11,
+   "avgLv1": 66,
+   "cheapest": 40,
+   "priciest": 105,
+   "reroll": 19,
+   "repair": 43
+  },
+  {
+   "lap": 12,
+   "avgLv1": 75,
+   "cheapest": 47,
+   "priciest": 121,
+   "reroll": 21,
+   "repair": 49
+  },
+  {
+   "lap": 13,
+   "avgLv1": 87,
+   "cheapest": 54,
+   "priciest": 139,
+   "reroll": 24,
+   "repair": 56
+  },
+  {
+   "lap": 14,
+   "avgLv1": 100,
+   "cheapest": 62,
+   "priciest": 160,
+   "reroll": 26,
+   "repair": 63
+  },
+  {
+   "lap": 15,
+   "avgLv1": 115,
+   "cheapest": 71,
+   "priciest": 184,
+   "reroll": 29,
+   "repair": 72
+  }
+ ],
+ "errors": [
+  "[.WebGL-0x1ce4009b7a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

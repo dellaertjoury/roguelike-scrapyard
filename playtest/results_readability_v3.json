@@ -1,0 +1,604 @@
+{
+ "en": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 14
+  },
+  "768x1024_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 16
+  },
+  "390x844_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [
+    "#heatTxt \"Heat · fire rate +72%\" 130>117"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x fuelPnl (93x4)",
+    "fuelPnl x bossPnl (200x43)",
+    "fuelPnl x pnl tr (26x13)"
+   ],
+   "hudCoverPct": 28
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    756,
+    800
+   ]
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    993,
+    1024
+   ]
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    826,
+    844
+   ]
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "[.WebGL-0x155c0016dc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "fr": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 14
+  },
+  "768x1024_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 16
+  },
+  "390x844_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [
+    "#heatTxt \"Chauffe · cadence +72 %\" 152>119"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x fuelPnl (93x4)",
+    "fuelPnl x bossPnl (200x43)",
+    "fuelPnl x pnl tr (47x13)"
+   ],
+   "hudCoverPct": 29
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    756,
+    800
+   ]
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    993,
+    1024
+   ]
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    774,
+    844
+   ]
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "[.WebGL-0x2c74001c0400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "de": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 14
+  },
+  "768x1024_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 16
+  },
+  "390x844_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [
+    "#heatTxt \"Hitze · Feuerrate +72 %\" 144>119"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x fuelPnl (93x4)",
+    "fuelPnl x bossPnl (200x43)",
+    "fuelPnl x pnl tr (38x13)"
+   ],
+   "hudCoverPct": 29
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    756,
+    800
+   ]
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    993,
+    1024
+   ]
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    774,
+    844
+   ]
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "[.WebGL-0x3acc001be600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "es": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 14
+  },
+  "768x1024_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 16
+  },
+  "390x844_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [
+    "#heatTxt \"Calor · cadencia +72 %\" 144>119"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x fuelPnl (93x4)",
+    "fuelPnl x bossPnl (200x43)",
+    "fuelPnl x pnl tr (54x13)"
+   ],
+   "hudCoverPct": 29
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    756,
+    800
+   ]
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    993,
+    1024
+   ]
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    774,
+    844
+   ]
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "[.WebGL-0x1b3c001b9800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "vls": {
+  "1366x800_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_menu": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "1366x800_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 14
+  },
+  "768x1024_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [
+    "#heatTxt \"Ette · +72% rapper sjieten\" 166>159"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "fuelPnl x bossPnl (208x29)"
+   ],
+   "hudCoverPct": 16
+  },
+  "390x844_hud": {
+   "clipped": [
+    "b \"Nitro\" in .meter \"Nitro\""
+   ],
+   "overflow": [
+    "#heatTxt \"Ette · +72% rapper sjieten\" 166>121"
+   ],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [
+    "pnl tl x fuelPnl (93x4)",
+    "fuelPnl x bossPnl (200x43)",
+    "fuelPnl x pnl tr (39x13)"
+   ],
+   "hudCoverPct": 29
+  },
+  "1366x800_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    756,
+    800
+   ]
+  },
+  "768x1024_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    993,
+    1024
+   ]
+  },
+  "390x844_garage": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": [],
+   "nextLapButtonBottom": [
+    774,
+    844
+   ]
+  },
+  "1366x800_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "768x1024_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "390x844_over": {
+   "clipped": [],
+   "overflow": [],
+   "offscreenX": [],
+   "clamped": [],
+   "overlaps": []
+  },
+  "errors": [
+   "[.WebGL-0x363c0017f400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ }
+}

@@ -6,7 +6,7 @@ JS = r"""
 () => {
   const m = M, G = m.G, AW = m.AW, AH = m.AH; const res = { runs: 0, stuck: 0, pathMin: 1e9, dispMin: 1e9 };
   for (let k = 0; k < 10; k++) for (const car of [0, 1, 2]) for (const [cx, cy] of [[0, 0], [AW, 0], [0, AH], [AW, AH]]) {
-    m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.waveT = 1e9; G.P.hp = G.S.maxhp = 1e6; G.obs = []; G.ramps = [];
+    m.start(car); G.state = 'pause'; G.pend = []; G.enemies = []; G.spawnT = 1e9; G.fuel = 1e9; G.P.hp = G.S.maxhp = 1e6; G.obs = []; G.ramps = [];
     const P = G.P; P.a = Math.atan2(cy - P.y, cx - P.x); P.nitro = 1;
     step(240, 1 / 30, ['KeyW', 'ShiftLeft']);
     const x0 = P.x, y0 = P.y; let path = 0, px = P.x, py = P.y, far = 0;

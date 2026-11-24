@@ -1,22 +1,22 @@
 {
  "driving": {
-  "sp": 138,
-  "slip": 85,
-  "drift": 76,
+  "sp": 122,
+  "slip": 74,
+  "drift": 190,
   "scrollY": 0,
   "state": "play"
  },
- "moved": 222,
+ "moved": 424,
  "afterP": "pause",
  "afterP2": "play",
  "spawnClose": {
-  "spawns": 124,
+  "spawns": 146,
   "within60": 0,
   "overlapping": 0,
-  "minD": 211,
-  "offscreenAtSpawn": 38
+  "minD": 177,
+  "offscreenAtSpawn": 40
  },
  "errors": [
-  "[.WebGL-0x2a0c0016a600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  "[.WebGL-0x278400166e00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
  ]
 }

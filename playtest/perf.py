@@ -69,7 +69,7 @@ async def main():
             await g.ev("document.getElementById('again').click()"); await g.page.wait_for_timeout(400)
             await g.page.click(f'.car[data-i="{car}"]'); await g.page.wait_for_timeout(500)
             for lap in range(3):
-                await g.ev("(() => { const G = M.G; G.scrap = 9999; G.P.hp = G.S.maxhp; G.waveT = .02; G.state = 'play' })()")
+                await g.ev("(() => { const G = M.G; G.scrap = 9999; G.P.hp = G.S.maxhp; G.fuel = .01; G.state = 'play' })()")
                 await g.page.wait_for_selector('#shop:not(.hide)', timeout=30000)
                 for i in range(3):  # buy three cards (part models get rebuilt)
                     await g.ev(f"(() => {{ if (M.buy({i})) {{}} }})()")
