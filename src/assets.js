@@ -4,7 +4,7 @@ import { CARS, PARTS, PACKS, ELITES } from './data.js';
 import { LANGS } from './i18n.js';
 
 export const A = { fx: {}, elites: {}, dirt: null, menuBg: null, garageBg: null, logos: {}, cars: {}, icons: {}, ui: {}, packs: {} };
-export const UI_ICONS = ['hull', 'nitro', 'heat', 'scrap', 'lap', 'drift', 'speed', 'boss', 'lock', 'repair', 'reroll', 'fuel-gauge', 'fuel-needle'];
+export const UI_ICONS = ['hull', 'nitro', 'heat', 'scrap', 'lap', 'drift', 'speed', 'boss', 'lock', 'repair', 'reroll', 'fuel-gauge', 'fuel-needle', 'pump', 'jerrycan'];
 
 const img = src => new Promise(res => {
   const i = new Image();
@@ -19,11 +19,11 @@ export async function loadAssets(onProgress = () => { }) {
     img('assets/garage-bg.jpg').then(i => A.garageBg = i),
     img('assets/fx/fire-trail.png').then(i => { if (i) A.fx.fire = i }),
     img('assets/fx/pump-pad.png').then(i => { if (i) A.fx.pad = i }),
-    ...ELITES.map(k => img(`assets/elites/${k}.png`).then(i => { if (i) A.elites[k] = i.src })),
+    ...[...ELITES, 'thief'].map(k => img(`assets/elites/${k}.png`).then(i => { if (i) A.elites[k] = i.src })),
     ...PACKS.map(p => img(`assets/packs/${p.id}.jpg`).then(i => { if (i) A.packs[p.id] = i.src })),
     img('assets/logo.png').then(i => { if (i) A.logos.en = i.src }),
     ...LANGS.filter(l => l.id !== 'en').map(l => img(`assets/logo-${l.id}.png`).then(i => { if (i) A.logos[l.id] = i.src })),
-    ...CARS.map(c => img(`assets/cars/${c.id}.png`).then(i => { if (i) A.cars[c.id] = i.src })),
+    ...[...CARS.map(c => c.id), ...PACKS.flatMap(p => p.cars)].map(id => img(`assets/cars/${id}.png`).then(i => { if (i) A.cars[id] = i.src })),
     ...PARTS.map(it => img(`assets/icons/${it.id}.png`).then(i => { if (i) A.icons[it.id] = i.src })),
     ...UI_ICONS.map(k => img(`assets/ui/${k}.png`).then(i => { if (i) A.ui[k] = i.src }))
   ].map(p => p.then(() => onProgress(++done / jobs.length)));

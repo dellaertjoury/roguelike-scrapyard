@@ -29,6 +29,8 @@ export function hideLoading() { clearInterval(tipTimer); const el = $('loading')
 export function applyStatic() {
   document.title = t('title');
   for (const [id, key] of [['gface', 'fuel-gauge'], ['needle', 'fuel-needle']]) { const src = A.ui[key]; if (src) { $(id).classList.add('art'); $(id).style.setProperty('--art', `url(${src})`) } }
+  if (A.ui['fuel-gauge'] && A.ui['fuel-needle']) $('gface').parentElement.classList.add('art');
+  if (A.ui.pump) pbadge.src = A.ui.pump;
   for (const el of document.querySelectorAll('[data-i18n]')) set(el, t(el.dataset.i18n));
   for (const el of document.querySelectorAll('[data-ui]')) {
     const src = A.ui[el.dataset.ui];
@@ -64,7 +66,7 @@ export function buildMenu(p) {
     const [name, desc, cars] = L().packs[pk.id];
     const bg = A.packs[pk.id] ? `background-image:linear-gradient(90deg,rgba(24,26,30,.9),rgba(24,26,30,.35)),url(${A.packs[pk.id]})` : `background-image:linear-gradient(120deg,${pk.colors[0]},${pk.colors[1]})`;
     return `<div class="pack" style="${bg}" aria-disabled="true"><span class="soon">${esc(t('soon'))}</span><b>${esc(name)}</b><span class="d">${esc(desc)}</span>
-      <span class="chips">${cars.map(c => `<span>${esc(c)}</span>`).join('')}</span></div>`;
+      <span class="chips">${cars.map((c, k) => { const src = A.cars[pk.cars[k]]; return `<span class="pc">${src ? `<img src="${src}" alt="">` : ''}${esc(c)}</span>` }).join('')}</span></div>`;
   }).join('') + '</div>';
   renderLangs(); applyStatic();
 }
@@ -174,7 +176,7 @@ export function hud() {
   set($('waveLbl'), t('lap', { n: G.wave }));
   // fuel gauge: needle from E (-90°) to F (+90°)
   const f = Math.max(0, G.fuel) / G.tank;
-  $('needle').style.transform = `rotate(${-90 + f * 180}deg)`;
+  $('needle').style.setProperty('--rot', `${(A.ui['fuel-needle'] ? -84 : -90) + f * (A.ui['fuel-needle'] ? 168 : 180)}deg`);
   set($('fuelTxt'), G.fuel >= 10 ? String(Math.ceil(G.fuel)) : fmtL(Math.max(0, G.fuel)));
   $('fuelPnl').classList.toggle('low', G.fuel < 10 && !G.filling);
   $('fuelPnl').classList.toggle('filling', !!G.filling);
@@ -198,8 +200,9 @@ export function hud() {
 const fx = $('fx'), pool = [], arrows = [];
 for (let i = 0; i < 40; i++) { const d = document.createElement('div'); fx.appendChild(d); pool.push(d) }
 for (let i = 0; i < 14; i++) { const d = document.createElement('i'); d.className = 'edge'; fx.appendChild(d); arrows.push(d) }
+const pbadge = document.createElement('img'); pbadge.className = 'pbadge'; pbadge.alt = ''; fx.appendChild(pbadge);
 export function texts(project) {
-  let i = 0, k = 0;
+  let i = 0, k = 0; pbadge.style.display = 'none';
   if (project) {
     for (const tx of G.texts) {
       if (i >= pool.length) break;
@@ -222,6 +225,7 @@ export function texts(project) {
       const dx = p.x - cx, dy = p.y - cy, sc = Math.min((cx - m) / Math.abs(dx || 1e-6), (cy - m) / Math.abs(dy || 1e-6));
       const a = arrows[k++]; a.style.display = 'block'; a.classList.toggle('el', el === true); a.classList.toggle('pu', el === 'pump');
       a.style.transform = `translate(${cx + dx * sc}px,${cy + dy * sc}px) translate(-50%,-50%) rotate(${Math.atan2(dy, dx)}rad)`;
+      if (el === 'pump' && pbadge.src) { const len = Math.hypot(dx, dy) || 1; pbadge.style.display = 'block'; pbadge.style.transform = `translate(${cx + dx * sc - dx / len * 34}px,${cy + dy * sc - dy / len * 34}px) translate(-50%,-50%)` }
     }
   }
   for (; i < pool.length; i++) pool[i].style.display = 'none';

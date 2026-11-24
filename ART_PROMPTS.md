@@ -6,7 +6,7 @@ Tips: genereer met een vaste seed of met je logo als stijlreferentie (Midjourney
 
 Benzine: de wijzerplaat en naald vervangen de ingebouwde CSS-meter zodra ze in `assets/ui/` staan; de vloerdecal vervangt de grijze betonplaat onder de pomp.
 
-Al gemaakt en in het spel: `logo.png`, `menu-bg.jpg`, `ground-dirt.jpg`, `og.jpg`, `favicon.png` en de drie auto's.
+Al gemaakt en in het spel: alle logo's, achtergronden (behalve `garage-bg.jpg`), de arena-vloer, alle auto's en pakketten, de 22 onderdeel-iconen, de HUD-iconen, de elite- en thief-portretten, het vuurspoor, de pompvloer, de pomp, de jerrycan en de benzinemeter met naald. Nog open: `garage-bg.jpg`.
 
 ```text
 === assets/logo-fr.png · 1600×600 · transparante achtergrond (achtergrond verwijderen) ===

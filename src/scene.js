@@ -493,6 +493,11 @@ const soft = pool(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), addMat(gl
 const rings = pool(new THREE.RingGeometry(.88, 1, 48).rotateX(-Math.PI / 2), addMat(null), 120);
 let fireDecal = null; // optional painted flame sprite (assets/fx/fire-trail.png)
 export function initFx() {
+  if (A.ui.jerrycan && !canSprites) {
+    const tx = new THREE.TextureLoader().load(A.ui.jerrycan); tx.colorSpace = THREE.SRGBColorSpace;
+    const mt = new THREE.SpriteMaterial({ map: tx, depthWrite: false });
+    canSprites = Array.from({ length: 30 }, () => { const sp = new THREE.Sprite(mt); sp.scale.set(40, 40, 1); sp.visible = false; scene.add(sp); return sp });
+  }
   if (A.fx.pad && !padDecal) { const tx = new THREE.Texture(A.fx.pad); tx.needsUpdate = true; tx.colorSpace = THREE.SRGBColorSpace;
     padDecal = new THREE.Mesh(new THREE.PlaneGeometry(PUMP_R * 2.3, PUMP_R * 2.3).rotateX(-Math.PI / 2), new THREE.MeshLambertMaterial({ map: tx, transparent: true, depthWrite: false })); padDecal.position.y = .9; padDecal.receiveShadow = true; pumpG.add(padDecal); pumpG.getObjectByName('pad').visible = false }
   if (A.fx.fire && !fireDecal) { const tx = new THREE.Texture(A.fx.fire); tx.needsUpdate = true; tx.colorSpace = THREE.SRGBColorSpace;
@@ -513,6 +518,7 @@ const pumpG = new THREE.Group(); pumpG.visible = false; scene.add(pumpG);
 }
 let padDecal = null;
 const canPool = pool(new THREE.BoxGeometry(9, 12, 6), lam(0xd23a2a), 30); canPool.castShadow = true;
+let canSprites = null; // painted jerrycan (assets/ui/jerrycan.png) as camera-facing sprites
 function put(m, i, x, y, z, sx, sy, sz, ry = 0, rx = 0, hexc) {
   dummy.position.set(x, y, z); dummy.rotation.set(rx, ry, 0); dummy.scale.set(sx, sy, sz); dummy.updateMatrix();
   m.setMatrixAt(i, dummy.matrix); if (hexc !== undefined) m.setColorAt(i, tmpC.setHex(hexc));
@@ -662,10 +668,12 @@ export function render(dt) {
   let ncan = 0;
   for (const c of G.cans) {
     if (ncan >= 30) break;
-    put(canPool, ncan++, c.x, 8 + Math.sin(G.time * 4 + c.x) * 2, c.y, 1, 1, 1, G.time * 2 + c.x);
+    const bob = 8 + Math.sin(G.time * 4 + c.x) * 2;
+    if (canSprites) { canSprites[ncan].visible = true; canSprites[ncan].position.set(c.x, bob + 10, c.y); ncan++ }
+    else put(canPool, ncan++, c.x, bob, c.y, 1, 1, 1, G.time * 2 + c.x);
     if (nring < 120) put(rings, nring++, c.x, 1.2, c.y, 22 + Math.sin(G.time * 6) * 3, 1, 22 + Math.sin(G.time * 6) * 3, 0, 0, 0x7fdcaa);
   }
-  finish(canPool, ncan);
+  if (canSprites) { for (let k = ncan; k < 30; k++) canSprites[k].visible = false; finish(canPool, 0) } else finish(canPool, ncan);
   // spawn markers: red X, a ring that tightens as the car is about to appear, and a red glow
   for (const s of G.pend) {
     const pulse = .75 + .25 * Math.abs(Math.sin(G.time * 10)), base = s.elite ? 38 : 16, r = base * pulse, k = s.t / s.max;
@@ -709,7 +717,7 @@ export function attract(dt) {
   const ca = demoT * .05;
   placeCamera(AW / 2 + Math.cos(ca) * 120, AH / 2 + Math.sin(ca) * 80, 0);
   let nb = 0; for (const p of G.parts) { const s = p.size * Math.min(1, p.life / p.max * 2.5); put(blobs, nb++, p.x, p.z, p.y, s, s, s, p.rot, p.rot, p.c) }
-  finish(blobs, nb); finish(glows, 0); finish(streaks, 0); finish(scrapPool, 0); finish(minePool, 0); finish(canPool, 0); pumpG.visible = false; finish(soft, 0); finish(rings, 0); finish(eliteSaws, 0); if (fireDecal) finish(fireDecal, 0);
+  finish(blobs, nb); finish(glows, 0); finish(streaks, 0); finish(scrapPool, 0); finish(minePool, 0); finish(canPool, 0); if (canSprites) for (const sp of canSprites) sp.visible = false; pumpG.visible = false; finish(soft, 0); finish(rings, 0); finish(eliteSaws, 0); if (fireDecal) finish(fireDecal, 0);
   renderer.render(scene, camera);
 }
 export function hideDemo() { for (const o of demo) o.root.visible = false; G.parts = [] }

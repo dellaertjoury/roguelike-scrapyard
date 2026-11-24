@@ -128,6 +128,7 @@ export function nextWave() {
   G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play';
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
   G.banner = { s: ['lap', { n: G.wave }], elite, sub: elite ? ['eliteSub', { name: L().elites[elite][0], hint: L().elites[elite][1] }] : ['tankFull', { l: G.tank }], id: Math.random() };
+  if (G.wave === 2) Object.assign(G.banner, { elite: 'thief', sub: ['thiefIntro'] }); // fuel thieves show up from lap 2
   if (elite) queue(elite);
   // gentle start: 1 car on lap 1, slowly more after that
   for (let i = 0; i < Math.min(5, 1 + Math.floor(G.wave / 2)); i++) queue('rust');
