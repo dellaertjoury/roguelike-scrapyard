@@ -114,10 +114,10 @@ export function makeObs() {
   }
   // traffic cones, just for fun: a few slalom rows; they get kicked around but never block anything
   const cones = []; n = 0;
-  while (cones.length < 7 && n++ < 300) {
+  while (cones.length < 4 && n++ < 300) {
     const x = rnd(260, AW - 260), y = rnd(260, AH - 260), a = rnd(0, TAU), k = 3 + (Math.random() * 3 | 0);
     if (obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 120) || ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < 220) || Math.hypot(x - GATE.x, y - GATE.y1) < 200) continue;
-    for (let i = 0; i < k && cones.length < 7; i++) cones.push({ hx: x + Math.cos(a) * i * 46, hy: y + Math.sin(a) * i * 46 });
+    for (let i = 0; i < k && cones.length < 4; i++) cones.push({ hx: x + Math.cos(a) * i * 46, hy: y + Math.sin(a) * i * 46 });
   }
   G.cones = cones; resetCones();
   G.obs = obs; G.ramps = ramps; G.obsVersion++;
@@ -173,7 +173,6 @@ export function nextWave() {
   if (G.wave === 1) G.banner.elite = 'rust';
   if (G.wave === 2) Object.assign(G.banner, { elite: 'thief', sub: ['thiefIntro'] });
   if (G.wave === 3) Object.assign(G.banner, { elite: 'spit', sub: ['spitIntro'] });
-  if (G.wave === 4) Object.assign(G.banner, { elite: 'brute', sub: ['bruteIntro'] });
   G.eliteDue = elite; // queued at GO, like every other spawn
   // gentle start: 1 car on lap 1, slowly more after that
   G.openers = Math.min(5, 1 + Math.floor(G.wave / 2)); // the lap's first wreckers are queued at GO
@@ -202,7 +201,10 @@ function spawn(type, x, y) {
     hitcd: 0, sawcd: 0, burncd: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0, seed: Math.random() * 1e4 | 0, follows: Math.random() < .6, rev: 0,
     col: TYPE_COL[type] ? TYPE_COL[type][Math.random() * TYPE_COL[type].length | 0] : ECOL[Math.random() * ECOL.length | 0], num: 1 + (Math.random() * 98 | 0)
   }, D));
-  if (D.elite) G.enemies[G.enemies.length - 1].cd = 2;
+  const e = G.enemies[G.enemies.length - 1];
+  if (D.elite) e.cd = 2;
+  // regular cars are pegged to YOUR car: just a bit slower than your top speed, so you can outrun them but not idle
+  else if (SPEED_K[type]) e.spd = G.S.top * (SPEED_K[type] + Math.min(.05, G.wave * .004));
   puff(x, y, 12, { c: 0xc8a878, s0: 40, s1: 160, l0: .5, l1: 1, z0: 8, z1: 14, grow: 14, z: 6, vz0: 10, vz1: 40 });
 }
 function hurt(e, d, silent) {
@@ -258,6 +260,7 @@ function bankDrift() {
 // is used up, then it closes and another opens 15 s later. Fuel keeps burning while you fill, so a pump
 // is worth exactly its reserve (+30 s of lap) and there is no way to freeze the lap clock.
 // paint per enemy type, after the portraits: olive wreckers, teal spitters, mustard brutes (a few shades each)
+const SPEED_K = { rust: .86, spit: .78, thief: .9, brute: .74 }; // share of the player's top speed
 const TYPE_COL = { rust: ['#7f8f3a', '#6f8034', '#8d9a4a'], spit: ['#3f8a8f', '#367a80', '#4b9499'], brute: ['#e0a92a', '#d49a22'] };
 export const START_T = 3; // 3-2-1 countdown: no fuel burn, spawns, throttle or guns until GO
 // a pump holds 30 L (= 30 s of lap) and pours it straight in while you stand on the pad: 6 L/s, so ~5 s to drain
@@ -457,7 +460,7 @@ function drive(e, want, spd, dt, dPlayer) {
   else e.stuckT = 0;
   const diff = angDiff(want, e.a), sharp = Math.abs(diff) > (e.type === 'rust' ? .3 : .5), speedK = Math.min(1, Math.abs(fwd0) / 70);
   const drifting = !(e.rev > 0) && sharp && fwd0 > spd * .45;
-  const turn = e.turn * (drifting ? 1.5 : 1) * Math.max(.35, speedK);
+  const turn = e.turn * 1.3 * (drifting ? 1.5 : 1) * Math.max(.6, speedK);
   e.a += clamp(diff, -turn * dt, turn * dt); // backing up while swinging the nose round: a three-point turn
   // the body has turned; the momentum hasn't: split velocity along the NEW heading, so a fast turn leaves sideways slip
   const c2 = Math.cos(e.a), s2 = Math.sin(e.a);
@@ -801,7 +804,7 @@ export function update(dt) {
     const n = 1 + Math.floor((G.wave - 1) / 3) + (G.wave >= 4 && Math.random() < .3 ? 1 : 0), cap = Math.min(60, 4 + G.wave * 3);
     for (let i = 0; i < n && G.enemies.length + G.pend.length < cap; i++) {
       const r = Math.random();
-      queue(G.wave >= 2 && r > .86 ? 'thief' : G.wave >= 4 && r < .08 + G.wave * .012 ? 'brute' : G.wave >= 3 && r < .33 ? 'spit' : 'rust');
+      queue(G.wave >= 2 && r > .85 ? 'thief' : G.wave >= 3 && r < .35 ? 'spit' : 'rust'); // three kinds for now: rammers, gunners, fuel thieves
     }
   }
   if (live) for (const s of G.pend) {
@@ -825,7 +828,7 @@ export function update(dt) {
   for (const e of G.enemies) {
     const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1; let spd = e.spd;
     // aim where you will be, not where you are: lead grows with distance (wreckers lead more than the rest)
-    const lead = clamp(d / Math.max(60, e.spd), 0, 1.1) * (e.type === 'rust' ? .9 : e.type === 'brute' ? .6 : .35);
+    const lead = clamp(d / Math.max(60, e.spd), 0, .8) * (e.type === 'rust' ? .5 : .3);
     let want = Math.atan2(P.y + P.vy * lead - e.y, P.x + P.vx * lead - e.x);
     e.ramping = false;
     const cr = G.chaseRamp; // you just took a ramp: some cars line up on its run-up and jump after you
@@ -846,7 +849,7 @@ export function update(dt) {
       } else if (d < HOSE_R && P.z < 10 && G.fuel > 0 && G.enemies.filter(o => o.hose).length < 2) { e.hose = true; e.siph = 0; e.hoseT = 0 }
     }
     if (e.type === 'spit') {
-      if (d < 300) want += Math.PI * .55;
+      if (d < 220) want += Math.PI * .3; // gunners hang back a little, but keep you in range
       e.cd -= dt;
       if (e.cd <= 0 && d < 600) {
         e.cd = rnd(1.8, 2.8); const a = Math.atan2(dy, dx);
@@ -855,9 +858,9 @@ export function update(dt) {
       }
     }
     if (e.elite) spd *= eliteMove(e, dt, d);
-    else if (e.type === 'brute') {
-      if (e.charge > 0) { e.charge -= dt; spd *= 2.2; if (Math.random() < .5) puff(e.x, e.y, 1, { c: 0xc8a878, s0: 10, s1: 40, l0: .5, l1: .9, z0: 8, z1: 14, grow: 14, z: 4, vz0: 10, vz1: 30 }) }
-      else { e.cd -= dt; if (e.cd <= 0 && d < 520 && Math.abs(angDiff(Math.atan2(dy, dx), e.a)) < .5) { e.charge = 1.1; e.cd = rnd(3, 5); txt(e.x, e.y - e.r, '!', '#ff6b5a', 26, .6) } }
+    else if (e.type === 'brute' || e.type === 'rust') { // rammers line up and floor it into you
+      if (e.charge > 0) { e.charge -= dt; spd *= e.type === 'rust' ? 1.35 : 2.2; if (Math.random() < .5) puff(e.x, e.y, 1, { c: 0xc8a878, s0: 10, s1: 40, l0: .5, l1: .9, z0: 8, z1: 14, grow: 14, z: 4, vz0: 10, vz1: 30 }) }
+      else { e.cd -= dt; if (e.cd <= 0 && d < (e.type === 'rust' ? 360 : 520) && Math.abs(angDiff(Math.atan2(dy, dx), e.a)) < .5) { e.charge = e.type === 'rust' ? .8 : 1.1; e.cd = rnd(3, 5); txt(e.x, e.y - e.r, '!', '#ff6b5a', 26, .6) } }
     }
     if (!e.air) {
       if (e.elite) { // elites keep their scripted moves
@@ -981,8 +984,9 @@ export function update(dt) {
   /* scrap pickup */
   for (const s of G.scraps) {
     s.t += dt; const dx = P.x - s.x, dy = P.y - s.y, d = Math.hypot(dx, dy) || 1;
-    if (d < S.magnet && s.t > .25) { const p = 900 / Math.max(d, 30); s.vx += dx / d * p * dt * 60; s.vy += dy / d * p * dt * 60 }
-    s.vx *= 1 - Math.min(1, 3 * dt); s.vy *= 1 - Math.min(1, 3 * dt); s.x += s.vx * dt; s.y += s.vy * dt;
+    if (d < S.magnet && s.t > .25) { s.mag = true }
+    if (s.mag) { const v = 320 + P.sp * 1.4; s.vx = dx / d * v; s.vy = dy / d * v } // once caught, it homes in faster than you can drive
+    else { s.vx *= 1 - Math.min(1, 3 * dt); s.vy *= 1 - Math.min(1, 3 * dt) } s.x += s.vx * dt; s.y += s.vy * dt;
     if (d < P.r + 10 && s.t > .25) { G.scrap += s.v; s.got = true }
   }
   G.scraps = G.scraps.filter(s => !s.got);

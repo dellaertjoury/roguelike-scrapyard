@@ -399,7 +399,7 @@ export function buildCar({ id, len: L, wid: W, color, kind, shape }) {
   if (sk) {
     // one full-height block (body + cabin): the top image covers its roof, the side image both flanks (with windows,
     // cut-out arches show the wheels). Width follows the painting's proportions, within reason.
-    W = clamp(L / (sk.top.image.width / sk.top.image.height), W * .75, W * 1.05);
+    W = clamp(L / (sk.top.image.width / sk.top.image.height), W * .98, W * 1.12); // keep cars chunky
     const H = bh + cabH, sideM = new THREE.MeshLambertMaterial({ map: sk.side, alphaTest: .45 }); sideM.color = body.color; sideM.emissive = body.emissive;
     body.alphaTest = .45; body.needsUpdate = true;
     const endM = lam(0x3a3835);
@@ -455,7 +455,7 @@ export function buildCar({ id, len: L, wid: W, color, kind, shape }) {
     for (const z of [0]) { const br = mesh(new THREE.BoxGeometry(16, 2.6, 2.6), barrelM); br.position.set(9, 3.5, z); br.name = 'barrel'; turret.add(br) }
     tilt.add(turret);
   }
-  if (kind === 'brute' || kind === 'harvester') {
+  if (kind === 'brute' || kind === 'harvester' || kind === 'rust') { // ram bar
     const bar = mesh(new THREE.BoxGeometry(5, bh * .9, W * 1.12), lam(0x9a9c9e)); bar.position.set(L / 2 + 4, by, 0); tilt.add(bar);
   }
   if (kind === 'monster') { // lifted body on struts, light bar
@@ -723,7 +723,7 @@ const pumpG = new THREE.Group(); pumpG.visible = false; scene.add(pumpG);
   const plateTex = stripeTex(128, 96, (c, w, h) => { c.fillStyle = '#d8261c'; c.fillRect(0, 0, w, h); c.strokeStyle = '#f4efe2'; c.lineWidth = 5; c.strokeRect(6, 6, w - 12, h - 12); c.fillStyle = '#f4efe2'; c.textAlign = 'center'; c.font = '900 36px Rubik, Impact, sans-serif'; c.fillText('GAS', w / 2, 48); c.font = '800 18px Rubik, Impact, sans-serif'; c.fillText('STATION', w / 2, 76) });
   const plate = new THREE.Mesh(new THREE.PlaneGeometry(8, 6), new THREE.MeshLambertMaterial({ map: plateTex })); plate.rotation.y = Math.PI / 2; plate.position.set(7.35, 9, 0); mdl.add(plate);
   const globe = new THREE.Group(); globe.position.y = 44; globe.name = 'globe'; mdl.add(globe);
-  const ball = new THREE.Mesh(new THREE.SphereGeometry(8, 14, 10), new THREE.MeshBasicMaterial({ color: 0xfff6dc })); globe.add(ball);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(8, 14, 10), new THREE.MeshBasicMaterial({ color: 0x7fe08a })); ball.name = 'globeBall'; globe.add(ball);
   for (const sx of [1, -1]) { const disc = new THREE.Mesh(new THREE.CircleGeometry(7, 24), new THREE.MeshBasicMaterial({ map: logoTex })); disc.position.z = sx * 8.05; if (sx < 0) disc.rotation.y = Math.PI; globe.add(disc) }
   const neck = mesh(new THREE.CylinderGeometry(2, 2.6, 2.4, 8), red); neck.position.y = 35.6; neck.scale.y = 1.4; mdl.add(neck);
   const noz = mesh(new THREE.BoxGeometry(2.6, 5, 2.2), chrome); noz.position.set(0, 20, 6.8); mdl.add(noz);
@@ -887,7 +887,12 @@ export function render(dt) {
   }
   // gas pump: zone ring, fill progress ring, and the reserve shown by the screen colour
   const pu = G.pump; pumpG.visible = !!pu;
-  if (pu) pumpG.getObjectByName('globe').rotation.y = G.time * 1.6; // the GAS globe spins
+  if (pu) { // the GAS globe spins: green when open, pulsing blue while you fill up, red once it's dry
+    const gl = pumpG.getObjectByName('globe'); gl.rotation.y = G.time * (G.filling ? 5 : 1.6);
+    const pulse = .5 + .5 * Math.sin(G.time * 10), col = pu.empty ? 0xff3a2a : G.filling ? (pulse > .5 ? 0x8fd8ff : 0x3fa8ff) : 0x7fe08a;
+    pumpG.getObjectByName('globeBall').material.color.setHex(col);
+    if (nsoft < 499) { const r = G.filling ? 70 + pulse * 20 : pu.empty ? 44 : 52; put(soft, nsoft++, pu.x, 58, pu.y, r, 1, r, 0, 0, pu.empty ? 0x5a0a04 : G.filling ? 0x0a3a6a : 0x0a4a1c) } // halo
+  }
   // the next pump's spot: a pulsing green ring and glow before it opens
   const nx = G.pumpNext;
   if (nx && !pu && nring < 118) {

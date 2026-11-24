@@ -14,6 +14,7 @@ Drifting heats your weapons (up to +80% fire rate), ramming at speed wrecks cars
 - **Fuel thieves** (green, from lap 2) hook a hose onto your car when they get close and drain 3 L/s, up to 6 L each; the screen edges pulse red while it happens. Break away or wreck them: a wrecked thief drops a jerrycan with your fuel, which evaporates after 3 s.
 - **Pit entry**: every lap starts in the garage below the arena; during the 3-2-1 countdown the car rolls up the driveway and the gate shuts behind it. Nothing spawns before GO.
 - **Wrecking ball**: from lap 2 a tower crane in the top-left corner sweeps a wrecking ball across the arena every 22-34 s, after a 3 s road-sign warning and a red arc on the ground. It wrecks most cars it touches.
+- **Three enemy kinds** for now: rammers (ram bar, line up and charge), gunners (roof turret, red slugs) and fuel thieves. Their speed is set just under your car's top speed.
 - **Smarter enemies** drive like cars: they lead their target, slide through hard turns (with smoke and skid marks), steer around tyre piles and walls, back out with a three-point turn when stuck, and some line up on a ramp to jump after you.
 - **Traffic cones** in slalom rows: knock them flying, they bounce off tyre piles and walls, and they're back in place next lap.
 - **Ramps** to jump over the pack. Land on a car to crush it.
