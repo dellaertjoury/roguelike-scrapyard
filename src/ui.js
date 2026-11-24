@@ -1,5 +1,5 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
-import { G, START_T, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
+import { G, CRANE, START_T, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
 import { CARS, PART, SLOTS, TAGC, PACKS } from './data.js';
 import { t, L } from './i18n.js';
 import { A } from './assets.js';
@@ -270,6 +270,11 @@ function clusterHud(P) {
 }
 
 /* ---------- HUD ---------- */
+// shrink a sign title until it fits its plate, so it always sits centred instead of spilling out one side
+function fitSign(el) {
+  el.style.fontSize = ''; let fs = parseFloat(getComputedStyle(el).fontSize);
+  while (el.scrollWidth > el.clientWidth + 1 && fs > 18) { fs -= 2; el.style.fontSize = fs + 'px' }
+}
 let bannerId = null; const hudMem = { scrap: null, hp: null };
 export function hud() {
   const { P, S, drift } = G; if (!P) return;
@@ -279,7 +284,7 @@ export function hud() {
   $('heatBar').style.width = (drift.heat * 100) + '%';
   set($('heatTxt'), drift.heat > .05 ? `+${Math.round(drift.heat * 80)}% ${t('fireRate')}` : '');
   clusterHud(P);
-  const cs = $('craneSign'), cw = G.crane && (G.crane.st === 'warn' || G.crane.st === 'swing') && G.state === 'play';
+  const cs = $('craneSign'), cw = G.crane && G.crane.st === 'warn' && G.crane.t > CRANE.warn - 2 && G.state === 'play'; // the sign shows for the first 2 s of the warning
   cs.classList.toggle('on', !!cw);
   $('vign').classList.toggle('on', !!G.siphon && G.state === 'play');
   // countdown: a round road sign 3-2-1, then a green GO disc
@@ -304,6 +309,7 @@ export function hud() {
   if (G.banner && G.banner.id !== bannerId) {
     bannerId = G.banner.id; const b = $('banner');
     b.querySelector('b').textContent = tr(G.banner.s); b.querySelector('span').textContent = tr(G.banner.sub);
+    fitSign(b.querySelector('b'));
     const key = Array.isArray(G.banner.s) ? G.banner.s[0] : '';
     const subKey = Array.isArray(G.banner.sub) ? G.banner.sub[0] : ''; // sign style: yellow caution for elites and new enemies, green when the garage opens
     b.classList.toggle('caution', ['eliteSub', 'thiefIntro', 'spitIntro', 'bruteIntro'].includes(subKey)); b.classList.toggle('info', key === 'outOfFuel' || key === 'lapQuit');

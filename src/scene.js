@@ -888,10 +888,12 @@ export function render(dt) {
   // gas pump: zone ring, fill progress ring, and the reserve shown by the screen colour
   const pu = G.pump; pumpG.visible = !!pu;
   if (pu) { // the GAS globe spins: green when open, pulsing blue while you fill up, red once it's dry
-    const gl = pumpG.getObjectByName('globe'); gl.rotation.y = G.time * (G.filling ? 5 : 1.6);
-    const pulse = .5 + .5 * Math.sin(G.time * 10), col = pu.empty ? 0xff3a2a : G.filling ? (pulse > .5 ? 0x8fd8ff : 0x3fa8ff) : 0x7fe08a;
-    pumpG.getObjectByName('globeBall').material.color.setHex(col);
-    if (nsoft < 499) { const r = G.filling ? 70 + pulse * 20 : pu.empty ? 44 : 52; put(soft, nsoft++, pu.x, 58, pu.y, r, 1, r, 0, 0, pu.empty ? 0x5a0a04 : G.filling ? 0x0a3a6a : 0x0a4a1c) } // halo
+    // colour eases between states (no hard switching), and filling pulses brightness, not hue
+    G._fillVis = (G._fillVis || 0) + ((G.filling ? 1 : 0) - (G._fillVis || 0)) * Math.min(1, dt * 4);
+    const fv = G._fillVis, gl = pumpG.getObjectByName('globe'); gl.rotation.y += dt * (1.6 + fv * 3.4);
+    const pulse = .5 + .5 * Math.sin(G.time * 6), bm = pumpG.getObjectByName('globeBall').material;
+    if (pu.empty) bm.color.setHex(0xff3a2a); else { bm.color.setHex(0x7fe08a).lerp(tmpC.setHex(0x4fb4ff), fv); bm.color.multiplyScalar(1 + fv * pulse * .35) }
+    if (nsoft < 499) { const r = 52 + fv * (18 + pulse * 16); put(soft, nsoft++, pu.x, 58, pu.y, r, 1, r, 0, 0, pu.empty ? 0x5a0a04 : fv > .5 ? 0x0a3a6a : 0x0a4a1c) } // halo
   }
   // the next pump's spot: a pulsing green ring and glow before it opens
   const nx = G.pumpNext;

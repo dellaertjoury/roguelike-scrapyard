@@ -301,7 +301,9 @@ function openPump() {
 function fuelStep(dt) {
   const P = G.P, pu = G.pump;
   if (!pu) { G.pumpT -= dt; if (G.pumpT < PUMP_WARN && !G.pumpNext) G.pumpNext = pumpSpot(); if (G.pumpT <= 0) openPump() }
-  const filling = pu && !pu.empty && G.fuel < G.tank - .5 && P.z < 6 && Math.hypot(P.x - pu.x, P.y - pu.y) < PUMP_R;
+  // hysteresis: once the tank is full the hose stops until it has dropped 2 L, so 'filling' doesn't flick on and off every frame
+  const onPad = pu && !pu.empty && P.z < 6 && Math.hypot(P.x - pu.x, P.y - pu.y) < PUMP_R;
+  const filling = onPad && G.fuel < G.tank - (G.filling ? .05 : 2);
   G.filling = !!filling;
   if (filling) {
     const l = Math.min(PUMP_FLOW * dt, pu.res, G.tank - G.fuel); G.fuel += l; pu.res -= l; pu.got += l;
