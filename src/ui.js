@@ -1,5 +1,5 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
-import { G, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, repair, repairCost } from './game.js';
+import { G, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
 import { CARS, PART, SLOTS, TAGC, PACKS } from './data.js';
 import { LANGS, t, L, lang, setLang } from './i18n.js';
 import { A } from './assets.js';
@@ -28,6 +28,7 @@ export function hideLoading() { clearInterval(tipTimer); const el = $('loading')
 /* ---------- static text, icons, language ---------- */
 export function applyStatic() {
   document.title = t('title');
+  for (const [id, key] of [['gface', 'fuel-gauge'], ['needle', 'fuel-needle']]) { const src = A.ui[key]; if (src) { $(id).classList.add('art'); $(id).style.setProperty('--art', `url(${src})`) } }
   for (const el of document.querySelectorAll('[data-i18n]')) set(el, t(el.dataset.i18n));
   for (const el of document.querySelectorAll('[data-ui]')) {
     const src = A.ui[el.dataset.ui];
@@ -80,7 +81,7 @@ const lockSvg = on => `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidd
 const BP = { front: [180, 58], hood: [180, 118], roof: [180, 218], sides: [118, 218], trunk: [180, 318], rear: [180, 382] };
 function renderBlueprint() {
   const marks = SLOTS.map((s, i) => { const [x, y] = BP[s]; return `<g class="mk${G.build[s] ? ' on' : ''}" data-slot="${s}"><circle cx="${x}" cy="${y}" r="13"/><text x="${x}" y="${y + 5}">${i + 1}</text></g>` }).join('')
-    + `<g class="mk${G.build.sides ? ' on' : ''}" data-slot="sides"><circle cx="242" cy="218" r="13"/><text x="242" y="223">5</text></g>`;
+    + `<g class="mk${G.build.sides ? ' on' : ''}" data-slot="sides"><circle cx="242" cy="218" r="13"/><text x="242" y="223">6</text></g>`;
   const svg = `<svg viewBox="80 40 200 360" aria-hidden="true">
     <g class="car-o"><rect x="113" y="100" width="14" height="48" rx="4"/><rect x="233" y="100" width="14" height="48" rx="4"/>
     <rect x="113" y="290" width="14" height="48" rx="4"/><rect x="233" y="290" width="14" height="48" rx="4"/>
@@ -160,8 +161,6 @@ export function wire(onStart, onMenu, onLang) {
 }
 
 /* ---------- HUD ---------- */
-const dashes = $('dashes');
-dashes.innerHTML = '<i></i>'.repeat(10);
 let bannerId = null;
 export function hud() {
   const { P, S, drift } = G; if (!P) return;
@@ -173,11 +172,12 @@ export function hud() {
   $('heatBar').style.width = (drift.heat * 100) + '%';
   set($('heatTxt'), drift.heat > .05 ? t('heatPct', { p: Math.round(drift.heat * 80) }) : t('heat'));
   set($('waveLbl'), t('lap', { n: G.wave }));
-  const tm = Math.max(0, G.waveT);
-  set($('timer'), `${Math.floor(tm / 60)}:${(tm % 60).toFixed(2).padStart(5, '0')}`);
-  $('timer').classList.toggle('warn', tm < 6);
-  const filled = Math.round((1 - tm / G.waveLen) * 10);
-  [...dashes.children].forEach((d, i) => d.classList.toggle('on', i < filled));
+  // fuel gauge: needle from E (-90°) to F (+90°)
+  const f = Math.max(0, G.fuel) / G.tank;
+  $('needle').style.transform = `rotate(${-90 + f * 180}deg)`;
+  set($('fuelTxt'), G.fuel >= 10 ? String(Math.ceil(G.fuel)) : fmtL(Math.max(0, G.fuel)));
+  $('fuelPnl').classList.toggle('low', G.fuel < 10 && !G.filling);
+  $('fuelPnl').classList.toggle('filling', !!G.filling);
   set($('scrapTxt'), fmt(G.scrap)); set($('wreckTxt'), t('wrecks', { n: fmt(G.wrecks) }));
   set($('spdTxt'), String(Math.round(P.sp * .36)));
   set($('angTxt'), P.air ? `↑ ${P.airT.toFixed(1)}s` : `${P.slipDeg}°`);
@@ -215,11 +215,12 @@ export function texts(project) {
     const W = fx.clientWidth, H = fx.clientHeight, m = 26, cx = W / 2, cy = H / 2;
     const targets = G.pend.map(s => [s.x, s.y, s.elite]);
     for (const e of G.enemies) if (e.elite) targets.push([e.x, e.y, true]);
+    if (G.pump) targets.unshift([G.pump.x, G.pump.y, 'pump']);
     for (const [x, y, el] of targets) {
       if (k >= arrows.length) break;
       const p = project(x, y, 0); if (p.x > m && p.x < W - m && p.y > m && p.y < H - m) continue;
       const dx = p.x - cx, dy = p.y - cy, sc = Math.min((cx - m) / Math.abs(dx || 1e-6), (cy - m) / Math.abs(dy || 1e-6));
-      const a = arrows[k++]; a.style.display = 'block'; a.classList.toggle('el', !!el);
+      const a = arrows[k++]; a.style.display = 'block'; a.classList.toggle('el', el === true); a.classList.toggle('pu', el === 'pump');
       a.style.transform = `translate(${cx + dx * sc}px,${cy + dy * sc}px) translate(-50%,-50%) rotate(${Math.atan2(dy, dx)}rad)`;
     }
   }

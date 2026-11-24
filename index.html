@@ -25,7 +25,7 @@
 html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.45 Inter,system-ui,sans-serif;overflow:hidden}
 #stage{position:fixed;inset:0;user-select:none}
 #gl{position:absolute;inset:0}#gl canvas{width:100%;height:100%;display:block}
-#fx{position:absolute;inset:0;pointer-events:none;overflow:hidden}
+#fx{position:absolute;inset:0;pointer-events:none;overflow:hidden;z-index:1} /* above the HUD so edge arrows are never hidden */
 #fx div{position:absolute;left:0;top:0;display:none;font:700 16px Inter,sans-serif;text-shadow:0 2px 0 rgba(0,0,0,.45);white-space:nowrap}
 .hide{display:none!important}
 .lbl{font:700 11px/1 Inter,sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--mute)}
@@ -58,11 +58,19 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 .meter span{position:absolute;inset:0;display:flex;align-items:center;justify-content:space-between;padding:0 8px;font:700 11px Inter,sans-serif;letter-spacing:.06em;text-transform:uppercase}
 .meter.sm span{font-size:10px}
 .tc{left:50%;top:16px;transform:translateX(-50%);text-align:center;min-width:200px}
-.timer{font:600 clamp(28px,4vw,42px)/1.1 Inter,sans-serif;font-variant-numeric:tabular-nums;margin-top:6px}
-.timer.warn{color:var(--haz)}
-#dashes{display:flex;gap:5px;justify-content:center;margin-top:8px}
-#dashes i{width:14px;height:3px;border-radius:2px;background:rgba(255,255,255,.22)}#dashes i.on{background:#fff}
-#bossPnl{left:50%;top:136px;transform:translateX(-50%);width:min(440px,70vw);display:grid;gap:6px}
+/* fuel gauge: CSS dial by default, painted dial and needle if assets/ui/fuel-gauge.png and fuel-needle.png exist */
+.gauge{position:relative;width:150px;height:80px;margin:8px auto 2px}
+.gface{position:absolute;inset:0;border-radius:150px 150px 0 0;background:conic-gradient(from -90deg at 50% 100%,#e24a32 0 28deg,#ffc23d 28deg 56deg,#7fdcaa 56deg 180deg,transparent 180deg);-webkit-mask:radial-gradient(circle at 50% 100%,transparent 60%,#000 61%);mask:radial-gradient(circle at 50% 100%,transparent 60%,#000 61%)}
+.gface.art{background:center/contain no-repeat var(--art);-webkit-mask:none;mask:none;border-radius:0}
+.needle{position:absolute;left:50%;bottom:0;width:4px;height:66px;margin-left:-2px;background:#fff;border-radius:3px;transform-origin:50% 100%;transition:transform .15s;box-shadow:0 0 6px rgba(0,0,0,.5)}
+.needle.art{width:22px;margin-left:-11px;background:center/contain no-repeat var(--art);box-shadow:none;border-radius:0}
+.gauge::after{content:"";position:absolute;left:50%;bottom:-7px;width:14px;height:14px;margin-left:-7px;border-radius:50%;background:#2a2c30;border:3px solid #fff}
+.ge,.gf{position:absolute;bottom:2px;font:800 12px Rubik,sans-serif;color:var(--mute)}.ge{left:2px;color:#ff7a6a}.gf{right:2px}
+.fuelnum{font:600 14px Inter,sans-serif;color:var(--mute);margin-top:8px}.fuelnum b{font:700 24px Inter,sans-serif;color:#fff;font-variant-numeric:tabular-nums}
+.tc.low .fuelnum b{color:#ff5a4a;animation:blink .6s steps(2) infinite}.tc.low{box-shadow:0 0 0 2px #e24a32,0 8px 24px rgba(0,0,0,.25)}
+.tc.filling{box-shadow:0 0 0 2px #7fdcaa,0 0 24px rgba(127,220,170,.5)}.tc.filling .fuelnum b{color:#7fdcaa}
+@keyframes blink{50%{opacity:.35}}
+#bossPnl{left:50%;top:170px;transform:translateX(-50%);width:min(440px,70vw);display:grid;gap:6px}
 #bossPnl .meter i{background:#e0b040}
 .tr{right:16px;top:16px;text-align:right;min-width:120px}
 .num{font:600 clamp(26px,3.4vw,36px)/1.1 Inter,sans-serif;font-variant-numeric:tabular-nums;margin-top:4px}
@@ -74,7 +82,7 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 .br{right:16px;bottom:16px;text-align:right;min-width:130px;transition:box-shadow .2s,background .2s,transform .2s}
 .br.hot{background:linear-gradient(135deg,rgba(232,85,58,.9),rgba(255,160,40,.85));box-shadow:0 0 0 2px #ffc23d,0 0 28px rgba(255,140,40,.7);transform:scale(1.06)}
 .br.hot .lbl,.br.hot small{color:#fff}
-#banner{position:absolute;left:0;right:0;top:20%;text-align:center;opacity:0}
+#banner{position:absolute;left:0;right:0;top:30%;text-align:center;opacity:0}
 #banner img{display:block;margin:0 auto 10px;width:min(420px,70vw);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
 #banner b{display:block;font:800 clamp(36px,7vw,72px)/1 Rubik,sans-serif;text-transform:uppercase;text-shadow:0 4px 0 rgba(0,0,0,.25)}
 #banner span{font:600 18px Inter,sans-serif;text-shadow:0 2px 0 rgba(0,0,0,.35)}
@@ -169,6 +177,7 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 .wrecked{font:800 clamp(48px,9vw,96px)/1 Rubik,sans-serif;color:var(--rust);margin:0;text-shadow:0 6px 0 rgba(0,0,0,.3)}
 .pb{color:var(--haz)}
 .edge{position:absolute;left:0;top:0;display:none;width:0;height:0;border-top:9px solid transparent;border-bottom:9px solid transparent;border-left:16px solid #ff4a30;filter:drop-shadow(0 0 6px rgba(255,60,30,.8))}
+.edge.pu{border-left-color:#7fdcaa;filter:drop-shadow(0 0 8px rgba(127,220,170,.9))}
 .edge.el{border-top-width:13px;border-bottom-width:13px;border-left:22px solid var(--haz);filter:drop-shadow(0 0 8px rgba(255,194,61,.9))}
 .meter span b{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 #touch{display:none;position:absolute;inset:0;pointer-events:none}
@@ -178,15 +187,15 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 #touch .tr2{position:absolute;right:16px;bottom:20px;display:grid;grid-template-columns:auto auto;gap:12px;align-items:end}
 #touch .b{width:74px;height:74px;font-size:26px}#touch .gas{width:92px;height:92px;background:rgba(232,85,58,.6)}
 #touch .s{width:60px;height:60px;font-size:12px}#touch .nitro{background:rgba(95,200,240,.5)}
-#tPause{position:absolute;left:50%;bottom:20px;transform:translateX(-50%);width:48px;height:48px;font-size:14px}
-@media(pointer:coarse){#touch{display:block}.bl{display:none}.br{bottom:auto;top:120px}}
+#tPause{position:absolute;left:16px;bottom:116px;width:48px;height:48px;font-size:14px}
+@media(pointer:coarse){#touch{display:block}.bl{display:none}.br{bottom:200px}}
 @media(max-width:900px){.tl{width:min(240px,30vw)}.tc{min-width:170px}}
 @media(max-width:700px){.tl{width:46vw;padding:8px 10px;gap:5px}.tr{min-width:0;padding:8px 12px}.num{font-size:22px}
-  .tc{top:84px;min-width:0;padding:6px 12px}.timer{font-size:22px;margin-top:2px}#dashes{margin-top:4px}#dashes i{width:9px}
-  #bossPnl{top:150px}.meter span{font-size:9.5px;padding:0 6px}.br{padding:8px 12px;min-width:0}.big{font-size:36px}}
+  .tc{top:84px;min-width:0;padding:6px 12px}.gauge{width:104px;height:56px}.needle{height:46px}.fuelnum{margin-top:6px;font-size:12px}.fuelnum b{font-size:18px}
+  #bossPnl{top:206px}#banner{top:40%}.meter span{font-size:9.5px;padding:0 6px}.br{padding:8px 12px;min-width:0}.big{font-size:36px}}
 @media(max-width:1000px){.garage{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.garage .panel{grid-column:1/-1}}
 @media(max-width:820px){.grid3{grid-template-columns:minmax(0,1fr)}.car{display:grid;grid-template-columns:150px minmax(0,1fr);column-gap:12px}.car img{grid-row:span 7}.garage{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:600px){.grid2{grid-template-columns:minmax(0,1fr)}.car{grid-template-columns:minmax(0,1fr)}.car img{grid-row:auto}.tc{min-width:0;padding:8px 12px}.tl{width:44vw;padding:10px}.bl,.br{padding:8px 12px;min-width:0}#bossPnl{top:116px}.lockbtn span{display:none}}
+@media(max-width:600px){.gfoot .btn{padding:10px 14px;font-size:14px;min-height:44px}.gfoot{gap:8px}.grid2{grid-template-columns:minmax(0,1fr)}.car{grid-template-columns:minmax(0,1fr)}.car img{grid-row:auto}.tc{min-width:0;padding:8px 12px}.tl{width:44vw;padding:10px}.bl,.br{padding:8px 12px;min-width:0}.lockbtn span{display:none}}
 @media(prefers-reduced-motion:reduce){.car,.card,.br{transition:none}#banner.go{animation-duration:.01s;opacity:1}.ld .tyre{animation:none}}
 </style>
 <script type="importmap">
@@ -204,10 +213,10 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
       <div class="meter sm nitro"><i id="nitroBar"></i><span><b data-ui="nitro" data-i18n="nitro">Nitro</b></span></div>
       <div class="meter sm heat"><i id="heatBar"></i><span data-ui="heat"><b id="heatTxt">Heat</b></span></div>
     </div>
-    <div class="pnl tc">
+    <div class="pnl tc" id="fuelPnl">
       <div class="lbl" data-ui="lap"><span id="waveLbl">Lap 1</span></div>
-      <div class="timer" id="timer">0:00.00</div>
-      <div id="dashes"></div>
+      <div class="gauge"><div class="gface" id="gface"></div><i class="needle" id="needle"></i><span class="ge">E</span><span class="gf">F</span></div>
+      <div class="fuelnum"><b id="fuelTxt">60</b> L · <span data-i18n="fuel">Fuel</span></div>
     </div>
     <div class="pnl hide" id="bossPnl"><div class="lbl" data-ui="boss"><span id="eliteName"></span></div><div class="meter"><i id="bossBar"></i></div></div>
     <div class="pnl tr"><div class="lbl" data-ui="scrap"><span data-i18n="scrap">Scrap</span></div><div class="num" id="scrapTxt">0</div><div class="small" id="wreckTxt">0 wrecks</div></div>

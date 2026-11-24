@@ -51,7 +51,7 @@ document.addEventListener('visibilitychange', () => { if (document.hidden) pause
 let last = performance.now();
 function frame(now) {
   // real elapsed time, run in steps of at most 1/30 s: slow devices stay at normal speed instead of slow motion
-  const raw = Math.min(.1, (now - last) / 1000); last = now;
+  const raw = Math.min(.25, (now - last) / 1000); last = now; // keeps real-time speed down to ~4 fps
   try {
     const live = ['play', 'clear', 'dead'].includes(G.state);
     if (G.state === 'menu') SC.attract(raw);

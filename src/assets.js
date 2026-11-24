@@ -4,7 +4,7 @@ import { CARS, PARTS, PACKS, ELITES } from './data.js';
 import { LANGS } from './i18n.js';
 
 export const A = { fx: {}, elites: {}, dirt: null, menuBg: null, garageBg: null, logos: {}, cars: {}, icons: {}, ui: {}, packs: {} };
-export const UI_ICONS = ['hull', 'nitro', 'heat', 'scrap', 'lap', 'drift', 'speed', 'boss', 'lock', 'repair', 'reroll'];
+export const UI_ICONS = ['hull', 'nitro', 'heat', 'scrap', 'lap', 'drift', 'speed', 'boss', 'lock', 'repair', 'reroll', 'fuel-gauge', 'fuel-needle'];
 
 const img = src => new Promise(res => {
   const i = new Image();
@@ -18,6 +18,7 @@ export async function loadAssets(onProgress = () => { }) {
     img('assets/menu-bg.jpg').then(i => A.menuBg = i),
     img('assets/garage-bg.jpg').then(i => A.garageBg = i),
     img('assets/fx/fire-trail.png').then(i => { if (i) A.fx.fire = i }),
+    img('assets/fx/pump-pad.png').then(i => { if (i) A.fx.pad = i }),
     ...ELITES.map(k => img(`assets/elites/${k}.png`).then(i => { if (i) A.elites[k] = i.src })),
     ...PACKS.map(p => img(`assets/packs/${p.id}.jpg`).then(i => { if (i) A.packs[p.id] = i.src })),
     img('assets/logo.png').then(i => { if (i) A.logos.en = i.src }),

@@ -4,6 +4,8 @@ Elke prompt hieronder is compleet: de stijl zit er al in, je kopieert gewoon het
 
 Tips: genereer met een vaste seed of met je logo als stijlreferentie (Midjourney `--sref`), zodat alles bij elkaar past. Waar *transparant* staat: genereer op de effen achtergrond uit de prompt en verwijder die daarna (Photoshop, remove.bg of `rembg`).
 
+Benzine: de wijzerplaat en naald vervangen de ingebouwde CSS-meter zodra ze in `assets/ui/` staan; de vloerdecal vervangt de grijze betonplaat onder de pomp.
+
 Al gemaakt en in het spel: `logo.png`, `menu-bg.jpg`, `ground-dirt.jpg`, `og.jpg`, `favicon.png` en de drie auto's.
 
 ```text
@@ -141,4 +143,21 @@ Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-lik
 
 === assets/ui/boss.png · 128×128 · HUD-icoon, transparante achtergrond (magenta verwijderen) ===
 Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Small game HUD icon of a skull with a cracked helmet, simple bold chunky shape readable at 18 pixels, white with a hazard-yellow accent, centred on a plain flat magenta #FF00FF background for easy removal, square
+=== assets/ui/fuel-gauge.png · 512×280 · wijzerplaat van de benzinemeter, transparant (achtergrond verwijderen), zonder naald ===
+Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark. Game HUD fuel gauge dial face, a half-circle dashboard gauge seen straight on, chunky dark charcoal rim with small rivets, a curved scale from a red zone on the left marked with a bold "E" through hazard yellow to green on the right marked with a bold "F", thick clear tick marks, a small fuel-pump symbol in the centre, no needle, flat-lit and readable at small size, centred on a plain flat magenta #FF00FF background for easy removal, the pivot point exactly at the bottom centre of the half-circle
+
+=== assets/ui/fuel-needle.png · 64×256 · naald van de benzinemeter, transparant; moet recht naar boven wijzen met het draaipunt onderaan in het midden ===
+Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text. Game HUD gauge needle, a single tapered needle pointing straight up, bright white with a rust-orange tip and a round dark hub at the very bottom centre, seen straight on, centred on a plain flat magenta #FF00FF background for easy removal, tall narrow image
+
+=== assets/fx/pump-pad.png · 1024×1024 · vloerdecal onder de pomp, transparant rond de cirkel; van recht boven ===
+Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text. Game ground decal seen from directly above: a round concrete refuelling pad on a dirt arena, a thick hazard-yellow and black striped ring around the edge, a few dark oil stains, tyre marks crossing it, a painted white fuel-nozzle symbol, flat even lighting with no cast shadows, isolated on a plain flat magenta #FF00FF background for easy removal, square
+
+=== assets/ui/pump.png · 256×256 · icoon van de pomp (voor tips en later) ===
+Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Game icon of a chunky retro gas pump with a red body, a white top with a small green display, a black hose and silver nozzle hooked on its side, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
+
+=== assets/ui/jerrycan.png · 256×256 · icoon van de jerrycan die fuel thieves laten vallen (voor later) ===
+Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Game icon of a dented red metal jerrycan with a triple handle and a green glow around it, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
+
+=== assets/elites/thief.png · 960×520 · portret van de fuel thief, voor tips of een uitleg-kaart (voor later) ===
+Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Vehicle portrait: a small lime-green beat-up hatchback converted into a fuel thief, a bulging green siphon tank strapped to its roof, a long black hose trailing from the back with a nozzle, sneaky low stance, a few stolen jerrycans bungee-corded to the side, three-quarter front view from slightly above on a dirt arena floor, 24:13
 ```
