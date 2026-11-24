@@ -880,8 +880,13 @@ export function render(dt) {
       if (nb < 1200) put(blobs, nb++, hx, hz, hy, 4.5, 4.5, 4.5, G.time * 4, 0, 0x55585e);
     }
   }
-  for (const b of G.ebul) if (ns < 1600) streak(ns++, b.x, b.y, 16, b.x - b.vx * .018, b.y - b.vy * .018, 16, 2.4, 0xff3a2a); // enemy shots: same tracer as yours, in red
   for (const m of G.mines) if (ng < 1200) put(glows, ng++, m.x, 5.5, m.y, 2.6, 2.6, 2.6, 0, 0, m.arm > 0 ? 0x888888 : (Math.sin(m.t * 10) > 0 ? 0xff3a2a : 0x6a1a10));
+  // enemy shots: big flashy purple plasma balls with a fading tail, flickering magenta/violet so they pop on the dirt
+  for (const b of G.ebul) {
+    const f = Math.sin(G.time * 30 + b.x * .05) > 0, k = 1 + .15 * Math.sin(G.time * 24 + b.y * .05);
+    if (ns < 1600) streak(ns++, b.x, b.y, 16, b.x - b.vx * .07, b.y - b.vy * .07, 16, 7, 0x8a2be2);
+    if (ng < 1199) { put(glows, ng++, b.x, 16, b.y, 10 * k, 10 * k, 10 * k, G.time * 9, 0, f ? 0xd63cff : 0xa020f0); put(glows, ng++, b.x, 25, b.y, 4.5, 4.5, 4.5, 0, 0, 0xf6d8ff) }
+  }
   for (const b of G.bullets) if (ns < 1600) streak(ns++, b.x, b.y, 16, b.x - b.vx * .018, b.y - b.vy * .018, 16, 2.4, 0xffffff); // your shots: white
   for (const z of G.zaps) {
     let px = z.x1, py = z.y1;

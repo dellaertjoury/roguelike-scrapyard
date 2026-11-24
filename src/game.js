@@ -521,12 +521,12 @@ function craneStep(dt, live) {
     G.shake = Math.max(G.shake, 3);
     if (Math.random() < .5) puff(bx, by, 1, { c: 0xdccbad, s0: 20, s1: 80, l0: .5, l1: .9, z0: 8, z1: 14, grow: 14, z: 4, vz0: 10, vz1: 40 });
     const smack = (o, r) => { const d = Math.hypot(o.x - bx, o.y - by); return d < r + CRANE.ball && !C.hit.has(o) && (o.z || 0) < 60 };
-    if (smack(P, P.r)) { C.hit.add(P); hitPlayer(CRANE_DMG); const sp = Math.hypot(tx, ty) || 1; P.vx += tx / sp * 560; P.vy += ty / sp * 560; boom(P.x, P.y, 18); G.shake = 16 }
+    if (smack(P, P.r)) { C.hit.add(P); hitPlayer(CRANE_DMG); const sp = Math.hypot(tx, ty) || 1; P.vx += tx / sp * 1050; P.vy += ty / sp * 1050; P.slideT = .9; boom(P.x, P.y, 22); G.shake = 22 /* big knockback; loose grip for .9 s so you slide far */ }
     for (const e of G.enemies) if (!e.dead && smack(e, e.r)) { C.hit.add(e); const sp = Math.hypot(tx, ty) || 1; e.vx += tx / sp * 600; e.vy += ty / sp * 600; hurt(e, e.elite ? 120 : 400) }
     if (k >= 1) { C.st = 'idle'; C.side = C.to; C.t = rnd(22, 34) }
   }
 }
-const CRANE_DMG = 26;
+const CRANE_DMG = 45;
 
 /* ---------- pit entry ---------- */
 // The countdown drives the car up the driveway, through the gate and into the arena: it arrives as the
@@ -873,7 +873,7 @@ export function update(dt) {
       if (e.cd <= 0 && d < 600) {
         // same round as your MG (700 u/s), red, fired about once a second with a little spread; each hit is lighter to match
         e.cd = rnd(.7, 1.1); const a = Math.atan2(dy, dx) + rnd(-.07, .07);
-        G.ebul.push({ x: e.x + Math.cos(a) * 20, y: e.y + Math.sin(a) * 20, vx: Math.cos(a) * 700 + e.vx * .3, vy: Math.sin(a) * 700 + e.vy * .3, life: .9, dmg: e.dmg * .55 });
+        G.ebul.push({ x: e.x + Math.cos(a) * 20, y: e.y + Math.sin(a) * 20, vx: Math.cos(a) * 430 + e.vx * .3, vy: Math.sin(a) * 430 + e.vy * .3, life: 1.5, dmg: e.dmg * .55 });
         puff(e.x + Math.cos(a) * 22, e.y + Math.sin(a) * 22, 4, { c: 0xff5a40, glow: true, a, sp: .4, s0: 60, s1: 160, l0: .1, l1: .25, z0: 3, z1: 5, z: 14 });
       }
     }
@@ -995,7 +995,7 @@ export function update(dt) {
   G.bullets = G.bullets.filter(b => b.life > 0);
   for (const b of G.ebul) {
     b.life -= dt; b.x += b.vx * dt; b.y += b.vy * dt;
-    if (P.z < 20 && Math.hypot(P.x - b.x, P.y - b.y) < P.r + 3) { hitPlayer(b.dmg); b.life = 0 }
+    if (P.z < 20 && Math.hypot(P.x - b.x, P.y - b.y) < P.r + 7) { hitPlayer(b.dmg); b.life = 0 }
     if (G.obs.some(o => Math.hypot(o.x - b.x, o.y - b.y) < o.r)) b.life = 0;
   }
   G.ebul = G.ebul.filter(b => b.life > 0);
