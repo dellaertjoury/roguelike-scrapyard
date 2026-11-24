@@ -600,6 +600,13 @@ function partMesh(o, id, l, P) {
       box(5, 3, 4, M.yellow, -4, 4.5, 0, tu);
       g.add(tu); o.turret = tu; break;
     }
+    case 'mg2': { // second turret on the boot, same gun as the roof one
+      const tu = new THREE.Group(); tu.position.set(-L * .3, top + 1, 0);
+      cyl(5, 6, 3.5, 8, M.dark, 0, 1.8, 0, tu);
+      for (const z of l >= 3 ? [-2.2, 2.2] : [0]) box(14 + l, 2.4, 2.4, M.gun, 8, 3.2, z, tu);
+      box(4.5, 2.8, 3.6, M.yellow, -3.5, 4, 0, tu);
+      g.add(tu); o.turret2 = tu; break;
+    }
     case 'tesla': { // behind the MG turret
       const x = cabX - cabL * .48; cyl(5, 6, 2.5, 8, M.dark, x, roofY + 1.2, 0, g);
       const h = 8 + l * 2; cyl(2.2, 2.2, h, 8, M.copper, x, roofY + 2.5 + h / 2, 0, g);
@@ -724,7 +731,7 @@ function syncParts(o, P) {
   const sig = ALL_SLOTS.map(s => G.build[s] ? G.build[s].id + G.build[s].lvl : '-').join('|') + P.car.id;
   if (o.partSig !== sig) {
     if (o.parts) { o.tilt.remove(o.parts); dispose(o.parts) }
-    o.turret = null; o.blades = []; o.pipeGlow = null; o.skirtGlow = null;
+    o.turret = null; o.turret2 = null; o.blades = []; o.pipeGlow = null; o.skirtGlow = null;
     for (const w of o.wheels) w.scale.z = 1;
     const g = new THREE.Group();
     for (const s of ALL_SLOTS) { const b = G.build[s]; if (b) g.add(partMesh(o, b.id, b.lvl, P)) }
@@ -884,6 +891,7 @@ export function render(dt) {
     syncParts(player, P);
     if (player.turret) player.turret.rotation.y = -(P.gunA - P.a);
     player.turret && (player.turret.visible = G.W.mg > 0);
+    if (player.turret2) player.turret2.rotation.y = -((P.gunA2 ?? P.a) - P.a);
     const dmg = 1 - P.hp / G.S.maxhp;
     player.body.color.copy(player.base).lerp(DARK, dmg * .45);
   }
@@ -946,11 +954,14 @@ export function render(dt) {
     }
   }
   for (const m of G.mines) if (ng < 1200) put(glows, ng++, m.x, 5.5, m.y, 2.6, 2.6, 2.6, 0, 0, m.arm > 0 ? 0x888888 : (Math.sin(m.t * 10) > 0 ? 0xff3a2a : 0x6a1a10));
-  // enemy shots: big flashy purple plasma balls with a fading tail, flickering magenta/violet so they pop on the dirt
+  // enemy shots: glowing purple nails: a bright thin shaft with a hot pink tip, wrapped in a soft violet glow streak
   for (const b of G.ebul) {
-    const f = Math.sin(G.time * 30 + b.x * .05) > 0, k = 1 + .15 * Math.sin(G.time * 24 + b.y * .05);
-    if (ns < 1600) streak(ns++, b.x, b.y, 16, b.x - b.vx * .07, b.y - b.vy * .07, 16, 7, 0x8a2be2);
-    if (ng < 1199) { put(glows, ng++, b.x, 16, b.y, 10 * k, 10 * k, 10 * k, G.time * 9, 0, f ? 0xd63cff : 0xa020f0); put(glows, ng++, b.x, 25, b.y, 4.5, 4.5, 4.5, 0, 0, 0xf6d8ff) }
+    const sp = Math.hypot(b.vx, b.vy) || 1, ux = b.vx / sp, uy = b.vy / sp, f = .75 + .25 * Math.sin(G.time * 40 + b.x * .07);
+    if (ns < 1598) {
+      streak(ns++, b.x + ux * 2, b.y + uy * 2, 16, b.x - ux * 30, b.y - uy * 30, 16, 5.5 * f, 0x7a1fd6);  // glow
+      streak(ns++, b.x + ux * 4, b.y + uy * 4, 16.5, b.x - ux * 20, b.y - uy * 20, 16.5, 2, 0xf0c8ff); // the nail
+    }
+    if (ng < 1200) put(glows, ng++, b.x + ux * 4, 17, b.y + uy * 4, 3.4, 2, 3.4, 0, 0, 0xff6af0);         // the tip
   }
   for (const b of G.bullets) if (ns < 1600) streak(ns++, b.x, b.y, 16, b.x - b.vx * .018, b.y - b.vy * .018, 16, 2.4, 0xffffff); // your shots: white
   for (const z of G.zaps) {

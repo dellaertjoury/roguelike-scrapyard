@@ -30,6 +30,7 @@ export const BASE = { tank: 30, pumpChance: .45,
 // Weapon numbers per level; names and descriptions come from i18n.js.
 export const WSTAT = {
   mg: l => [6 + l * 3],
+  mg2: l => [6 + l * 3],
   mines: l => [30 + l * 20, (4.6 - l * .5).toFixed(1)],
   tesla: l => [10 + l * 7, l + 1],
   flame: l => [4 + l * 2],
@@ -41,9 +42,10 @@ export const WSTAT = {
 // Weapons (w) give the weapon level; other parts apply f(S, level) to the stats.
 export const SLOTS = ['roof', 'hood', 'front', 'rear', 'trunk', 'sides'];
 // the roof MG sits on its own fixed turret mount, so roof parts never cost you the gun
-export const ALL_SLOTS = ['turret', ...SLOTS];
+export const ALL_SLOTS = ['turret', 'turret2', ...SLOTS]; // turret2: a second gun mount on the boot
 export const PARTS = [
   { id: 'mg', slot: 'turret', w: 'mg', tag: 'Weapon', cost: 18, max: 4 },
+  { id: 'mg2', slot: 'turret2', w: 'mg2', tag: 'Weapon', cost: 34, max: 4 },
   { id: 'tesla', slot: 'roof', w: 'tesla', tag: 'Weapon', cost: 26, max: 4 },
   { id: 'magnet', slot: 'rear', tag: 'Utility', cost: 10, max: 3, f: (S, l) => { S.magnet += 55 * l } },
   { id: 'cage', slot: 'roof', tag: 'Armour', cost: 14, max: 3, f: (S, l) => { S.maxhp += 25 * l; S.armor += .04 * l } },

@@ -52,9 +52,9 @@ export function buildMenu(p) {
   const C = L().cars;
   $('cars').innerHTML = CARS.map((c, i) => `
     <button class="car" data-i="${i}">
-      <img src="${A.cars[c.id] || portraits[i]}" alt="">
+      <span class="bay"><span class="no"><small>BOX</small>0${i + 1}</span><img src="${A.cars[c.id] || portraits[i]}" alt=""></span>
       <b>${esc(C[c.id][0])}</b>
-      <span class="d">${esc(C[c.id][1])}</span>
+      <span class="d desc">${esc(C[c.id][1])}</span>
       ${L().stat.map((l, k) => `<span class="bar"><span>${esc(l)}</span><i style="--w:${c.bars[k]}%"></i></span>`).join('')}
       <span class="d">${esc(t('startsWith', { w: Object.values(c.build).map(b => partName(b[0])).join(', ') }))}</span>
     </button>`).join('');
@@ -84,7 +84,7 @@ const VW = 600;
 // [marker x, marker y, label x, label y, label side]
 const BPV = {
   top: { h: 240, slots: { front: [162, 115, 130, 22, 'c'], rear: [438, 115, 470, 22, 'c'], trunk: [395, 115, 300, 218, 'c'] } },
-  side: { h: 250, slots: { turret: [282, 46, 200, 22, 'r'], roof: [338, 62, 400, 22, 'l'], hood: [182, 120, 130, 228, 'c'], sides: [300, 168, 370, 228, 'c'] } }
+  side: { h: 250, slots: { turret: [282, 46, 190, 22, 'r'], roof: [338, 62, 305, 22, 'c'], turret2: [418, 100, 600, 22, 'r'], hood: [182, 120, 130, 228, 'c'], sides: [300, 168, 370, 228, 'c'] } }
 };
 // the top view is drawn front-right and mirrored, the side view is drawn front-left; both end with the spoiler on the right; deliberately a bit
 // scrappy: a crooked door, a riveted patch, a dented panel, a bent bumper and a spoiler bolted on at an angle

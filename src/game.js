@@ -200,7 +200,7 @@ export function start(i) {
   recompute();
   G.P = { x: AW / 2, y: AH / 2, a: -Math.PI / 2, vx: 0, vy: 0, hp: 0, inv: 0, nitro: .6, car: c, len: c.len, wid: c.wid, r: (c.len + c.wid) / 4 + 2, wl: null, boost: false, gunA: -Math.PI / 2, lat: 0, fwd: 0, steer: 0, slipDeg: 0, sp: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0 };
   G.P.hp = G.S.maxhp;
-  G.CD = { mg: 0, mines: 0, tesla: 0, flame: 0 };
+  G.CD = { mg: 0, mg2: 0, mines: 0, tesla: 0, flame: 0 };
   for (const k of ['enemies', 'bullets', 'ebul', 'mines', 'fires', 'scraps', 'parts', 'texts', 'pend', 'zaps']) G[k] = [];
   Object.assign(G, { wave: 0, scrap: 0, score: 0, wrecks: 0, bestDrift: 0, offer: [] });
   Object.assign(G.drift, { on: false, pts: 0, mult: 1, heat: 0, off: 0 });
@@ -219,7 +219,7 @@ export function nextWave() {
   if (G.wave === 3) Object.assign(G.banner, { elite: 'spit', sub: ['spitIntro'] });
   G.eliteDue = elite; // queued at GO, like every other spawn
   // gentle start: 1 car on lap 1, slowly more after that
-  G.openers = Math.min(5, 1 + Math.floor(G.wave / 2)); // the lap's first wreckers are queued at GO
+  G.openers = Math.min(5, Math.floor(G.wave / 2)); // the lap's first wreckers are queued at GO
   G.on.play && G.on.play();
 }
 function spawnSpot() {
@@ -304,7 +304,7 @@ function bankDrift() {
 // is used up, then it closes and another opens 15 s later. Fuel keeps burning while you fill, so a pump
 // is worth exactly its reserve (+30 s of lap) and there is no way to freeze the lap clock.
 // paint per enemy type, after the portraits: olive wreckers, teal spitters, mustard brutes (a few shades each)
-const SPEED_K = { rust: .74, spit: .66, thief: .78, brute: .64 }; // share of the player's top speed
+const SPEED_K = { rust: .69, spit: .62, thief: .73, brute: .6 }; // share of the player's top speed
 const TYPE_COL = { rust: ['#7f8f3a', '#6f8034', '#8d9a4a'], spit: ['#3f8a8f', '#367a80', '#4b9499'], brute: ['#e0a92a', '#d49a22'] };
 export const START_T = 3; // 3-2-1 countdown: no fuel burn, spawns, throttle or guns until GO
 // a pump holds 30 L (= 30 s of lap) and pours it straight in while you stand on the pad: 6 L/s, so ~5 s to drain
@@ -369,7 +369,7 @@ function fuelStep(dt) {
 // so replacing a part cleanly removes the old one's effect.
 export function recompute() {
   const oldMax = G.S ? G.S.maxhp : 0;
-  const S = Object.assign({}, BASE, G.car.st), W = { mg: 0, mines: 0, tesla: 0, flame: 0, saw: 0 };
+  const S = Object.assign({}, BASE, G.car.st), W = { mg: 0, mg2: 0, mines: 0, tesla: 0, flame: 0, saw: 0 };
   for (const slot of ALL_SLOTS) {
     const b = G.build[slot]; if (!b) continue;
     const d = PART[b.id]; if (d.w) W[d.w] = b.lvl; else d.f(S, b.lvl);
@@ -380,7 +380,7 @@ export function recompute() {
 export const lvlOf = it => { const b = G.build[PART[it.id].slot]; return b && b.id === it.id ? b.lvl : 0 };
 // prices compound 15% per lap so late-lap income doesn't buy everything at once
 export const priceScale = () => Math.pow(1.15, G.wave - 1);
-export const SCRAP_VAL = 2; // every scrap piece picked up is worth this much
+export const SCRAP_VAL = 3; // every scrap piece picked up is worth this much
 // Garage finds come in tiers: a tier-2/3 card fits the part straight at Lv 2/3 (or +1 if you already have that much).
 // The chance of higher tiers grows with the lap number.
 export const tierOdds = (w = G.wave) => { const t3 = Math.min(.3, Math.max(0, (w - 3) * .045)), t2 = Math.min(.45, Math.max(0, (w - 1) * .06)); return [t2, t3] };
@@ -866,8 +866,8 @@ export function update(dt) {
   if (live) { fuelStep(dt); G.spawnT -= dt }
   if (live && G.spawnT <= 0 && G.fuel > 2) {
     // slower enemies, but more of them: a car every ~2.5 s from lap 1, bigger groups and a higher cap as laps go up
-    G.spawnT = Math.max(.42, 2.6 - G.wave * .26) * rnd(.8, 1.2);
-    const n = 1 + Math.floor(G.wave / 3) + (G.wave >= 3 && Math.random() < .35 ? 1 : 0), cap = Math.min(72, 6 + G.wave * 4);
+    G.spawnT = Math.max(.42, 3.6 - G.wave * .34) * rnd(.8, 1.2); // calm first laps, then busier
+    const n = 1 + Math.floor(G.wave / 3) + (G.wave >= 3 && Math.random() < .35 ? 1 : 0), cap = Math.min(72, 2 + G.wave * 4);
     for (let i = 0; i < n && G.enemies.length + G.pend.length < cap; i++) {
       const r = Math.random();
       queue(G.wave >= 2 && r > .85 ? 'thief' : G.wave >= 3 && r < .35 ? 'spit' : 'rust'); // three kinds for now: rammers, gunners, fuel thieves
@@ -920,7 +920,7 @@ export function update(dt) {
       if (e.cd <= 0 && d < 600) {
         // same round as your MG (700 u/s), red, fired about once a second with a little spread; each hit is lighter to match
         e.cd = rnd(.7, 1.1); const a = Math.atan2(dy, dx) + rnd(-.07, .07);
-        G.ebul.push({ x: e.x + Math.cos(a) * 20, y: e.y + Math.sin(a) * 20, vx: Math.cos(a) * 430 + e.vx * .3, vy: Math.sin(a) * 430 + e.vy * .3, life: 1.5, dmg: e.dmg * .55 });
+        G.ebul.push({ x: e.x + Math.cos(a) * 20, y: e.y + Math.sin(a) * 20, vx: Math.cos(a) * 470 + e.vx * .3, vy: Math.sin(a) * 470 + e.vy * .3, life: 1.4, dmg: e.dmg * .55 });
         puff(e.x + Math.cos(a) * 22, e.y + Math.sin(a) * 22, 4, { c: 0xff5a40, glow: true, a, sp: .4, s0: 60, s1: 160, l0: .1, l1: .25, z0: 3, z1: 5, z: 14 });
       }
     }
@@ -991,6 +991,20 @@ export function update(dt) {
       puff(P.x + Math.cos(P.gunA) * 20, P.y + Math.sin(P.gunA) * 20, 2, { c: 0xffe08c, glow: true, a: P.gunA, sp: .3, s0: 60, s1: 160, l0: .05, l1: .1, z0: 3, z1: 5, z: 22 });
     }
   }
+  // second turret on the boot: its own gun and cooldown; it picks a different car than the roof gun when it can
+  if (W.mg2 && live) {
+    CD.mg2 -= dt; const t1 = W.mg ? nearest(P.x, P.y, 520) : null, t = nearest(P.x, P.y, 520, t1 ? new Set([t1]) : null) || t1;
+    if (t) P.gunA2 = (P.gunA2 ?? P.a) + angDiff(Math.atan2(t.y - P.y, t.x - P.x), P.gunA2 ?? P.a) * Math.min(1, dt * 14);
+    if (t && CD.mg2 <= 0) {
+      CD.mg2 = .42 / (1 + .2 * (W.mg2 - 1)) / rateMul;
+      const bx = P.x - Math.cos(P.a) * P.len * .3, by = P.y - Math.sin(P.a) * P.len * .3;
+      for (const b of W.mg2 >= 3 ? [1, -1] : [0]) {
+        const off = b * 5, a = P.gunA2 + rnd(-.04, .04), ox = -Math.sin(P.gunA2) * off, oy = Math.cos(P.gunA2) * off;
+        G.bullets.push({ x: bx + ox + Math.cos(a) * 14, y: by + oy + Math.sin(a) * 14, vx: Math.cos(a) * 700 + P.vx * .3, vy: Math.sin(a) * 700 + P.vy * .3, life: .8, dmg: (6 + W.mg2 * 3) * S.dmg });
+      }
+      puff(bx + Math.cos(P.gunA2) * 18, by + Math.sin(P.gunA2) * 18, 2, { c: 0xffe08c, glow: true, a: P.gunA2, sp: .3, s0: 60, s1: 160, l0: .05, l1: .1, z0: 3, z1: 5, z: 20 });
+    }
+  }
   if (W.mines && live) {
     CD.mines -= dt;
     if (CD.mines <= 0 && sp > 25) { CD.mines = (4.6 - .5 * W.mines) / rateMul; G.mines.push({ x: P.x - fx * P.len * .6, y: P.y - fy * P.len * .6, arm: .5, t: 0 }); if (G.mines.length > 14) G.mines.shift() }
@@ -1042,7 +1056,7 @@ export function update(dt) {
   G.bullets = G.bullets.filter(b => b.life > 0);
   for (const b of G.ebul) {
     b.life -= dt; b.x += b.vx * dt; b.y += b.vy * dt;
-    if (P.z < 20 && Math.hypot(P.x - b.x, P.y - b.y) < P.r + 7) { hitPlayer(b.dmg); b.life = 0 }
+    if (P.z < 20 && Math.hypot(P.x - b.x, P.y - b.y) < P.r + 4) { hitPlayer(b.dmg); b.life = 0 }
     if (G.obs.some(o => Math.hypot(o.x - b.x, o.y - b.y) < o.r)) b.life = 0;
   }
   G.ebul = G.ebul.filter(b => b.life > 0);

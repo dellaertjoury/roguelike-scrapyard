@@ -21,7 +21,7 @@ export async function loadAssets(onProgress = () => { }) {
   let done = 0;
   const jobs = [
     img('assets/ground-dirt.jpg').then(i => A.dirt = i),
-    img('assets/menu-bg.jpg').then(i => A.menuBg = i),
+    img('assets/loading-bg.jpg').then(i => A.menuBg = i), // the menu uses the loading screen's art
     img('assets/garage-bg.jpg').then(i => A.garageBg = i),
     img('assets/fx/fire-trail.png').then(i => { if (i) A.fx.fire = i }),
     img('assets/obstacles/hay-side.jpg').then(i => { if (i) A.obs.side = i }),
@@ -33,7 +33,7 @@ export async function loadAssets(onProgress = () => { }) {
     // assets/elites/*.png are reference portraits for the 3D enemy models, not loaded in game
     ...PACKS.map(p => img(`assets/packs/${p.id}.jpg`).then(i => { if (i) A.packs[p.id] = i.src })),
     img('assets/logo-vls.png').then(i => { if (i) A.logos.vls = i.src }),
-    ...[...CARS.map(c => c.id), ...PACKS.flatMap(p => p.cars)].map(id => img(`assets/cars/${id}.png`).then(i => { if (i) A.cars[id] = i.src })),
+    ...[...CARS.map(c => c.id), ...PACKS.flatMap(p => p.cars)].map(id => img(`assets/cars-cut/${id}.png`).then(i => { if (i) A.cars[id] = i.src })),
     ...PARTS.map(it => img(`assets/icons/${it.id}.png`).then(i => { if (i) A.icons[it.id] = i.src })),
     ...UI_ICONS.map(k => img(`assets/ui/${k}.png`).then(i => { if (i) A.ui[k] = i.src }))
   ].map(p => p.then(() => onProgress(++done / jobs.length)));

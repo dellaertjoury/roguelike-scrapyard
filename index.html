@@ -185,15 +185,34 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 .ov h2{font:800 clamp(24px,3.2vw,36px)/1.05 Rubik,sans-serif;margin:0}
 .sub{color:var(--mute);margin:0}
 /* main menu fills big screens: wider column, vertically centred, bigger cards and type */
+/* main menu: sized from the viewport (no scrolling). A 5-row grid where the car row takes whatever height is left;
+   type scales with min(vw, vh) so short-wide and tall-narrow screens both fit. Only below ~560px tall does it scroll. */
+#menu{display:grid;grid-template-rows:auto auto minmax(250px,1fr) auto auto;justify-items:center;align-content:stretch;gap:clamp(6px,1.5vh,20px);padding:clamp(10px,2.4vh,34px) clamp(12px,3vw,44px);box-sizing:border-box}
 #menu>*,#settings.menubg>*{width:min(1720px,100%)}#settings.menubg>.opts{width:min(720px,94vw)}#settings.menubg>.row{width:auto}
-#menu>:first-child,#settings>:first-child{margin-top:auto}#menu>:last-child,#settings>:last-child{margin-bottom:auto}
-#menu{gap:clamp(16px,2.2vh,30px)}#menu .grid3{gap:clamp(14px,1.8vw,32px)}#menu .grid2{gap:clamp(12px,1.8vw,32px)}
-#menu .car{padding:clamp(12px,1vw,20px);gap:clamp(7px,.7vw,12px);background:rgba(28,29,33,.82)}
-#menu .car b{font-size:clamp(19px,1.5vw,30px)}#menu .car .d{font-size:clamp(15px,.95vw,19px)}
-#menu .bar{font-size:clamp(13px,.85vw,16px)}#menu .bar i{height:clamp(6px,.5vw,9px)}
-#menu .pack{min-height:clamp(132px,15vh,210px);padding:clamp(16px,1.3vw,26px)}#menu .pack b{font-size:clamp(24px,1.8vw,34px)}#menu .pack .d{font-size:clamp(15px,1vw,19px)}
-#menu .chips img{width:clamp(76px,6vw,120px);height:auto;aspect-ratio:76/41}#menu .chips span{font-size:clamp(13px,.85vw,16px)}
-#menu .keys{font-size:clamp(15px,.9vw,18px)}#menu .lbl{font-size:clamp(11px,.7vw,14px)}
+#settings>:first-child{margin-top:auto}#settings>:last-child{margin-bottom:auto}
+#menu .menuhead h1 img{max-height:clamp(64px,15vh,200px)}
+#menu .grid3{gap:clamp(10px,1.6vw,30px);min-height:0;height:100%}#menu .grid2{gap:clamp(10px,1.6vw,30px)}
+#menu .car{min-height:0;height:100%;box-sizing:border-box;overflow:hidden;padding:clamp(8px,min(1vw,1.4vh),18px);gap:clamp(3px,min(.6vw,.9vh),10px);background:rgba(28,29,33,.86)}
+#menu .car b{font-size:clamp(17px,min(1.5vw,2.6vh),30px)}#menu .car .d{font-size:clamp(13px,min(.95vw,1.6vh),19px);line-height:1.3}
+#menu .bar{font-size:clamp(12px,min(.85vw,1.4vh),16px)}#menu .bar i{height:clamp(5px,min(.5vw,.8vh),9px)}
+#menu .pack{min-height:0;height:clamp(92px,15vh,200px);box-sizing:border-box;padding:clamp(10px,min(1.3vw,1.8vh),26px)}#menu .pack b{font-size:clamp(20px,min(1.8vw,3vh),34px)}#menu .pack .d{font-size:clamp(13px,min(1vw,1.6vh),19px)}
+#menu .chips img{width:auto;height:clamp(30px,5vh,64px);aspect-ratio:auto;object-fit:contain;background:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.5))}#menu .chips span{font-size:clamp(12px,min(.85vw,1.4vh),16px)}
+#menu .keys{font-size:clamp(13px,min(.9vw,1.6vh),18px);gap:4px 16px}#menu .lbl{font-size:clamp(10px,.7vw,14px)}
+/* every car card opens on its own garage bay: corrugated back wall, painted bay number, a hanging lamp with a light
+   cone, a concrete floor with a hazard kerb; the cut-out car stands in the light and rolls forward a bit on hover */
+.bay{position:relative;flex:1 1 0;min-height:70px;border-radius:10px;overflow:hidden;isolation:isolate;
+  background:linear-gradient(transparent 62%,#1d1b1a 62%,#1d1b1a 63.2%,transparent 63.2%),
+   repeating-linear-gradient(-45deg,#ffc23d 0 10px,#1d1b1a 10px 20px) 0 63.2%/100% 3.5% no-repeat,
+   linear-gradient(#4b4844 66%,#6a655d 80%,#3a3734) 0 100%/100% 38% no-repeat,
+   repeating-linear-gradient(90deg,#3b4048 0 12px,#323740 12px 14px,#2b3038 14px 26px,#353a42 26px 28px) 0 0/100% 63% no-repeat,#2b3038}
+.bay::before{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:radial-gradient(ellipse 46% 85% at 50% 0%,rgba(255,232,170,.42),rgba(255,232,170,.12) 55%,transparent 75%),radial-gradient(ellipse 38% 12% at 50% 90%,rgba(255,232,170,.22),transparent 70%),linear-gradient(90deg,rgba(0,0,0,.45),transparent 22%,transparent 78%,rgba(0,0,0,.45));transition:opacity .2s;opacity:.85}
+.bay::after{content:"";position:absolute;left:50%;top:0;width:18%;height:7%;transform:translateX(-50%);border-radius:0 0 50% 50%/0 0 100% 100%;background:linear-gradient(#55585e,#2a2c30);box-shadow:0 4px 0 #ffe6a8,0 6px 18px rgba(255,230,160,.8);z-index:2}
+.bay .no{position:absolute;left:5%;top:8%;font:900 clamp(22px,min(2.6vw,4.4vh),54px)/1 Rubik,Impact,sans-serif;color:rgba(255,194,61,.28);letter-spacing:.02em;z-index:0}
+.bay .no small{display:block;font-size:.32em;letter-spacing:.2em;color:rgba(255,255,255,.22)}
+.car .bay img{position:absolute;left:4%;bottom:5%;width:92%;height:84%;object-fit:contain;object-position:50% 100%;z-index:1;filter:drop-shadow(0 10px 8px rgba(0,0,0,.55));transition:transform .2s;border-radius:0;background:none;aspect-ratio:auto}
+.car:hover .bay::before,.car:focus-visible .bay::before{opacity:1}.car:hover .bay img,.car:focus-visible .bay img{transform:translateY(-2%) scale(1.03)}
+#menu .car .desc{min-height:2.6em}
+@media(prefers-reduced-motion:reduce){.bay img,.bay::before{transition:none}}
 #settings.menubg .opt{background:rgba(28,29,33,.82)}
 #menu .sub{font-size:clamp(16px,1vw,20px);color:#fff;font-weight:600;text-shadow:0 1px 3px rgba(0,0,0,.8),0 0 12px rgba(0,0,0,.5)}
 .menuhead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-start;gap:12px}
@@ -252,10 +271,10 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 /* blueprint views: drawing + markers in SVG, label chips laid over it in % so they track the drawing */
 .bpview{position:relative;margin-top:6px;z-index:1}.bpview:hover,.bpview:focus-within{z-index:4}.chip:hover,.chip:focus{z-index:6}.bpview+.bpview{margin-top:14px;padding-top:12px;border-top:1px dashed rgba(143,208,234,.3)}
 .vlbl{font:800 11px Rubik,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(143,208,234,.75)}
-.bpstage{position:relative;width:100%}.bpstage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.bpstage{position:relative;width:min(100%,calc((100vh - 330px) * 600 / 490));min-width:min(100%,380px);margin:0 auto}.bpstage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .car-o path,.car-o circle{fill:rgba(143,208,234,.08);stroke:var(--bp);stroke-width:2}.car-o .dent{fill:none;stroke-width:1.5;opacity:.8}.car-o .patch{fill:rgba(143,208,234,.18);stroke-dasharray:3 2}.car-o .rivet{fill:var(--bp);stroke:none}.car-o .spoiler{fill:rgba(255,194,61,.18);stroke:var(--haz)}
 .ld{stroke:rgba(143,208,234,.45);stroke-width:1.5;stroke-dasharray:4 4}.ld.on{stroke:var(--bp);stroke-dasharray:none}
-.chip{position:absolute;display:flex;align-items:center;gap:8px;max-width:52%;padding:6px 10px 6px 6px;border-radius:10px;background:rgba(16,28,40,.92);border:1.5px solid rgba(143,208,234,.35);white-space:nowrap;transform:translate(0,-50%);outline:none}
+.chip{position:absolute;display:flex;align-items:center;gap:8px;width:max-content;max-width:52%;padding:6px 10px 6px 6px;border-radius:10px;background:rgba(16,28,40,.92);border:1.5px solid rgba(143,208,234,.35);white-space:nowrap;transform:translate(0,-50%);outline:none}
 .chip.r{transform:translate(-100%,-50%)}.chip.c{transform:translate(-50%,-50%)}
 .chip.on{border-color:var(--bp);cursor:help}.chip.hl{border-color:var(--haz);box-shadow:0 0 0 3px rgba(255,194,61,.3)}
 .chip .sl{display:grid;gap:1px;min-width:0}.chip .sn{font:800 9.5px Rubik,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--bp)}
@@ -313,11 +332,20 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 @media(max-width:900px){.tl{width:min(240px,30vw)}#bossPnl{width:min(360px,36vw)}}
 @media(max-width:700px){.plate .hd{font-size:9.5px;letter-spacing:.05em}.tl{width:52vw;padding:8px 10px 8px 14px;gap:6px}.badge{width:30px;height:30px}.badge.sm{width:24px;height:24px}.plate .hd .val{font-size:13px}.plate .hd .chip{display:none}.tr{padding:8px 12px 8px 16px;gap:8px}.sico{width:44px;height:44px}.snum{font-size:26px}.num{font-size:22px}
   #bossPnl{top:84px;width:min(300px,76vw)}#cluster{width:205px}#banner{top:26%}#count{top:60%}.meter span{font-size:9.5px;padding:0 6px}#driftMtr{width:60px;padding:8px 6px}#driftMtr .bars{height:clamp(100px,19vh,160px)}#driftMtr .mul{font-size:18px}#driftMtr .pts{font-size:13px}.big{font-size:36px}}
-@media(max-width:1200px){.garage{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}.garage .panel{grid-column:1/-1}}
+@media(max-width:1200px){.garage{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(170px,.55fr);gap:14px}}
+@media(max-width:1200px){.lockbtn span{display:none}.card .tierb{margin-left:6px}.card .price{font-size:15px}}
+@media(max-width:1200px) and (max-height:860px){.card .d{-webkit-line-clamp:1!important}}
+@media(max-width:1000px){.garage{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}.garage .panel{grid-column:1/-1}}
 @media(max-width:600px){.chip{padding:4px 6px 4px 4px;gap:5px}.chip .pn{font-size:11px}.chip .sn{font-size:8px}.chip .lv{display:none}.ico.xs.empty,.chip .ico.xs{width:20px;height:20px}}
 @media(max-width:820px){.grid3{grid-template-columns:minmax(0,1fr)}.car{display:grid;grid-template-columns:150px minmax(0,1fr);column-gap:12px}.car img{grid-row:span 7}.garage{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){#banner{padding:16px 14px 18px}#banner b{font-size:34px;padding:10px 34px 11px}#banner span{font-size:16px;margin-top:22px}.gfoot .btn{padding:10px 14px;font-size:14px;min-height:44px}.gfoot{gap:8px}.grid2{grid-template-columns:minmax(0,1fr)}.car{grid-template-columns:minmax(0,1fr)}.car img{grid-row:auto}.tl{width:44vw;padding:10px}.lockbtn span{display:none}}
 @media(prefers-reduced-motion:reduce){#vign.on{animation:none;opacity:.7}.car,.card,#driftMtr{transition:none}#driftMtr.bank{animation:none}#banner.go{animation-duration:.01s;opacity:1}.ld .tyre{animation:none}}
+/* very short screens (≤ 740px tall): one-line card descriptions, smaller header and stats rows */
+@media(max-height:740px) and (min-width:1001px){.card .d{-webkit-line-clamp:1!important}.card .tag{font-size:11px}#build .stat{padding:3px 0;font-size:13px}#build h3{margin:0 0 4px}.bpview+.bpview{margin-top:8px;padding-top:6px}.gfoot .btn{min-height:42px;padding:8px 16px}}
+#menu .pack .d{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+/* garage on short screens: tighter cards (2-line descriptions), so the whole garage fits without scrolling */
+@media(max-height:860px) and (min-width:901px){#shop{padding-top:16px;gap:10px}#shop h2{font-size:26px}#cards{gap:6px}.card{padding:7px 10px;gap:10px;grid-template-columns:44px minmax(0,1fr) auto}.card .ico{width:44px;height:44px}
+  .card .d{font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.card .nm{font-size:16px}.gfoot{padding-top:10px}}
 </style>
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }

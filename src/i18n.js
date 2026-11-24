@@ -22,7 +22,7 @@ const T = {
     myParts: 'Jen stukken', noParts: 'Nog niks derin.', lockHint: 'Vastgezette stukken bluven liggen tot de volgende keer.',
     st: ['Karkasse', 'Topsnelheid', 'Grip', 'Pantser', 'Rammen', "Zeer bij 't rammen", 'Schade', 'Rap skietn', 'Were plakken', 'Magneet'],
     wrecked: 'KASSÉ!', reached: 'Toertje {lap} g\'oald mee: {car}', overLine: '{w} kassé · beste slieren {d} · score {s}',
-    newBest: 'Nieuw record, amaai!', back: 'Were nor de garasje', paused: 'Efkes stille', resume: 'Voort doen',
+    newBest: 'Nieuw record, amaai!', back: "Nor 't hoofdmenu", paused: 'Efkes stille', resume: 'Voort doen',
     loading: 'Den motor wordt warm gedroaid…',
     tips: ['Slieren maakt je geweren ette: tot +80% rapper skietn.', 'Banden bounsen je were weg. Ooibalen nie.',
       "Ip de schans? Heef mo slunse! Land ip ne otto en 't es 'm platgereen.", 'Rammen doet zeer, ook an jen eigen otto. De zwoarste wint.',
@@ -37,6 +37,7 @@ const T = {
       muscle: ['Roestbak', 'V8-vechter die zot es van slieren. Wordt rapper ette in e slip.'],
       hearse: ['Lijkotto', "Traag, zwoar en gepantserd. Rammen es zijn ambacht, en ie leit mijnen bachten 'm."] },
     w: {
+      mg2: ['Kofferkoepel', (l, d) => `Tweede mitraljeur ip de koffer, skiet ip e andere otto dan je dakgeweer. ${l >= 3 ? 'Dubbele loop. ' : ''}${d} schade per kogel`],
       mg: ['Dakmitraljeur', (l, d) => `Sjiet vanzelf ip d'otto die 't dichtste es. ${l >= 3 ? 'Dubbele loop. ' : ''}${d} schade per kogel`],
       mines: ['Mijnenlegger', (l, d, s) => `Leit alle ${s} seconden e mijne bachten je. ${d} schade as 't ontploft`],
       tesla: ['Teslaspoele', (l, d, n) => `Geeft ne sjok an één otto en springt deur nor ${n} andere. ${d} schade`],
@@ -44,7 +45,7 @@ const T = {
       saw: ['Zijzoagen', (l, d) => `Droaiende zoagen ip stoalen armen, links en rechts. Vanaf Lv 4: twee per kant. ${d} schade per kap`]
     },
     parts: {"magnet": ["Kraanmagneet", "+55 bereik om schroot ip te rapen, per level"], "cage": ["Rolkooi", "+25 max karkasse en 4% minder schade, per level"], "v8": ["V8 mee blower", "+10% rapper, +13% beter optrekken, per level"], "rounds": ["Kiste kogels", "+15% schade vo ol je geweren, per level"], "cooler": ["Geweerkoeler", "+12% rapper skietn mee ol je geweren, per level"], "plow": ["Rammploeg", "+35% rammen en 20% minder zeer an jen eigen otto, per level"], "spikes": ["Pinnekesgrille", "Ol wa je anraakt krijgt 12 schade per tik, per level"], "bullbar": ["Koeienvanger", "+6% pantser en +12% gewicht, per level"], "exhaust": ["Vuurspuwende uitlaten", "Slieren laat e brandend spoor bachten je, ieder level wermer"], "spoiler": ["Spoiler", "+10% grip, +5% beter droaien, per level"], "nitro": ["Nitrobidons", "Nitro vult 40% rapper en duwt 10% arder, per level"], "ballast": ["Blok beton", "+30% gewicht en +10 karkasse per level, 5% trager vertrekken"], "radar": ["Nafteradar", "+20% kans da der e pompe opduukt in e toertje, per level (standoard 45%)"], "tank": ["Reservetank", "+10 L nafte in je tank, dus 10 seconden langer rijen per toertje, per level"], "toolbox": ["Gereedschapskiste", "Plakt 0,8 karkasse per seconde were vaste, per level"], "scrapbin": ["Schrootbak", "+20% kans op extra schroot, per level"], "plate": ["Deurplaten", "8% minder schade, per level"], "skirts": ["Slier-schorten", "Slier-combo en ette goan 30% rapper omooge, per level"], "slicks": ["Brede slicks", "+15% grip, +8% beter droaien, per level"]},
-    bpViews: { side: "Zijaanzicht", top: "Bovenaanzicht" }, slots: {"turret": "Koepel (vaste)", "roof": "Dak", "hood": "Motorkap", "front": "Voorbarsjok", "rear": "Achterbarsjok", "trunk": "Koffer", "sides": "Zijkanten"},
+    bpViews: { side: "Zijaanzicht", top: "Bovenaanzicht" }, slots: {"turret": "Koepel (vaste)", "turret2": "Tweede koepel", "roof": "Dak", "hood": "Motorkap", "front": "Voorbarsjok", "rear": "Achterbarsjok", "trunk": "Koffer", "sides": "Zijkanten"},
     packs: {"britland": ["Britland", "De Mini Cooper en den Engelsen taxi. Thee drinken mag.", ["Mini Cooper", "Londense taxi"]], "f1": ["Da rappe wè", "Ne Formule 1 en de Safety Car. Stief rap, stief broos.", ["Formule 1", "Safety Car"]]},
     forSale: "Te koop",
     blueprint: "Bouwplan",
