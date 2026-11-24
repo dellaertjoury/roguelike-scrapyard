@@ -614,6 +614,11 @@ function partMesh(o, id, l, P) {
       break;
     }
     case 'ballast': box(10 + l * 2, 4 + l, W * .6, M.concrete, tx, top + 2 + l / 2, 0, g); break;
+    case 'radar': { // a little dish antenna on the roof, behind the turret
+      const x = cabX - cabL * .45; cyl(1, 1, 8 + l * 2, 6, M.dark, x, roofY + 4 + l, 0, g);
+      const dish = mesh(new THREE.SphereGeometry(4 + l, 8, 4, 0, Math.PI * 2, 0, Math.PI / 2), M.chrome); dish.rotation.z = Math.PI * .6; dish.position.set(x, roofY + 9 + l * 2, 0); g.add(dish);
+      const led = mesh(new THREE.BoxGeometry(1.5, 1.5, 1.5), M.glowBlue, false); led.position.set(x, roofY + 10 + l * 2, 0); g.add(led); break;
+    }
     case 'tank': { // red jerrycans strapped in the boot, one per level
       for (let i = 0; i < l; i++) { const x = tx + (i - (l - 1) / 2) * 8; box(6, 9, 7, M.red, x, top + 4.5, 0, g); box(2, 2, 4, M.dark, x, top + 9.8, 0, g) }
       break;

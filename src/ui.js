@@ -80,18 +80,32 @@ const lockSvg = on => `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidd
    Each slot has a marker on the drawing, a leader line and a label chip next to it; installed parts can be
    hovered (or focused) for a card with what they do at their current level. */
 const VW = 600;
+// slots in drawing coordinates (front of the car on the LEFT, the back with its spoiler on the RIGHT):
+// [marker x, marker y, label x, label y, label side]
 const BPV = {
-  top: { h: 240, slots: { front: [438, 115, 470, 22, 'c'], rear: [162, 115, 130, 22, 'c'], trunk: [205, 115, 300, 218, 'c'] } },
-  side: { h: 250, slots: { turret: [318, 46, 400, 22, 'l'], roof: [262, 62, 200, 22, 'r'], hood: [418, 120, 470, 228, 'c'], sides: [300, 168, 230, 228, 'c'] } }
+  top: { h: 240, slots: { front: [162, 115, 130, 22, 'c'], rear: [438, 115, 470, 22, 'c'], trunk: [395, 115, 300, 218, 'c'] } },
+  side: { h: 250, slots: { turret: [282, 46, 200, 22, 'r'], roof: [338, 62, 400, 22, 'l'], hood: [182, 120, 130, 228, 'c'], sides: [300, 168, 370, 228, 'c'] } }
 };
+// the drawings are made front-right and mirrored, so the back (spoiler) ends up on the right; deliberately a bit
+// scrappy: a crooked door, a riveted patch, a dented panel, a bent bumper and a spoiler bolted on at an angle
+const MIRROR = s => `<g transform="translate(${VW},0) scale(-1,1)">${s}</g>`;
 const BP_DRAW = {
-  top: `<g class="car-o"><rect x="196" y="52" width="40" height="16" rx="5"/><rect x="364" y="52" width="40" height="16" rx="5"/><rect x="196" y="162" width="40" height="16" rx="5"/><rect x="364" y="162" width="40" height="16" rx="5"/>
-    <rect x="160" y="64" width="280" height="102" rx="30"/><rect x="250" y="78" width="96" height="74" rx="10"/><line x1="236" y1="70" x2="236" y2="160"/><line x1="360" y1="70" x2="360" y2="160"/>
-    <rect x="148" y="72" width="10" height="86" rx="3"/><rect x="442" y="72" width="10" height="86" rx="3"/></g>`,
-  side: `<g class="car-o"><path d="M140 150 L140 118 Q142 104 158 102 L232 98 L270 60 Q276 54 286 54 L356 54 Q366 54 372 62 L396 98 L448 104 Q460 106 460 120 L460 150 Z"/>
-    <line x1="280" y1="62" x2="280" y2="98"/><line x1="350" y1="62" x2="350" y2="98"/><line x1="232" y1="98" x2="396" y2="98"/>
+  top: MIRROR(`<g class="car-o"><rect x="196" y="52" width="40" height="16" rx="5"/><rect x="364" y="52" width="40" height="16" rx="5"/><rect x="196" y="162" width="40" height="16" rx="5" transform="rotate(-4 216 170)"/><rect x="364" y="162" width="40" height="16" rx="5"/>
+    <path d="M190 64 L410 64 Q440 66 440 92 L440 140 Q438 166 410 166 L190 166 Q160 166 160 138 L160 92 Q162 64 190 64 Z"/>
+    <path d="M250 78 L346 80 Q356 80 356 90 L354 142 Q354 152 344 152 L252 150 Q242 150 242 140 L244 88 Q244 78 250 78 Z"/>
+    <line x1="236" y1="68" x2="242" y2="162"/><line x1="360" y1="70" x2="356" y2="160"/>
+    <path class="dent" d="M392 82 l8 6 l-5 7 l9 5 l-6 8"/><rect class="patch" x="372" y="128" width="30" height="22" transform="rotate(8 387 139)"/>
+    <circle class="rivet" cx="377" cy="133" r="1.8"/><circle class="rivet" cx="397" cy="136" r="1.8"/><circle class="rivet" cx="375" cy="146" r="1.8"/><circle class="rivet" cx="395" cy="149" r="1.8"/>
+    <rect x="442" y="72" width="10" height="86" rx="3" transform="rotate(5 447 115)"/>
+    <rect class="spoiler" x="126" y="58" width="16" height="114" rx="3" transform="rotate(-3 134 115)"/><line x1="142" y1="80" x2="160" y2="84"/><line x1="142" y1="150" x2="160" y2="146"/></g>`),
+  side: MIRROR(`<g class="car-o"><path d="M140 150 L140 118 Q142 104 158 102 L232 98 L270 60 Q276 54 286 54 L356 54 Q366 54 372 62 L396 98 L448 104 Q460 106 460 120 L460 150 Z"/>
+    <path d="M282 100 L284 64 M348 62 L352 100" /><path d="M286 100 L346 102 L348 146 L288 144 Z" transform="rotate(-3 316 122)"/><line x1="232" y1="98" x2="396" y2="98"/>
+    <path class="dent" d="M410 104 l6 8 l-7 5 l8 6"/><rect class="patch" x="162" y="112" width="34" height="24" transform="rotate(-6 179 124)"/>
+    <circle class="rivet" cx="167" cy="117" r="1.8"/><circle class="rivet" cx="191" cy="115" r="1.8"/><circle class="rivet" cx="169" cy="133" r="1.8"/><circle class="rivet" cx="193" cy="131" r="1.8"/>
     <circle cx="200" cy="152" r="26"/><circle cx="400" cy="152" r="26"/><circle cx="200" cy="152" r="10"/><circle cx="400" cy="152" r="10"/>
-    <rect x="176" y="158" width="250" height="8" rx="3"/></g>`
+    <rect x="176" y="158" width="250" height="8" rx="3" transform="rotate(1 300 162)"/>
+    <path class="spoiler" d="M118 78 L178 74 L180 84 L120 88 Z"/><line x1="150" y1="86" x2="154" y2="102"/><line x1="170" y1="84" x2="172" y2="100"/>
+    <path d="M140 140 L120 142 L120 148 L140 147"/></g>`)
 };
 const partDescAt = (id, l) => { const d = PART[id]; return d.w ? L().w[d.w][1](l, ...WSTAT[d.w](l)) : L().parts[id][1] };
 function bpView(view) {
@@ -281,8 +295,8 @@ function clusterHud(P) {
 /* ---------- HUD ---------- */
 // shrink a sign title until it fits its plate, so it always sits centred instead of spilling out one side
 function fitSign(el) {
-  el.style.fontSize = ''; let fs = parseFloat(getComputedStyle(el).fontSize);
-  while (el.scrollWidth > el.clientWidth + 1 && fs > 18) { fs -= 2; el.style.fontSize = fs + 'px' }
+  el.style.fontSize = ''; let fs = parseFloat(getComputedStyle(el).fontSize); const maxW = innerWidth * .96 - 70;
+  while (el.offsetWidth > maxW && fs > 18) { fs -= 2; el.style.fontSize = fs + 'px' } // the plate grows to fit; only shrink on very narrow screens
 }
 let bannerId = null; const hudMem = { scrap: null, hp: null };
 export function hud() {

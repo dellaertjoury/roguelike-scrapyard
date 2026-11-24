@@ -164,7 +164,7 @@ export function start(i) {
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = []; resetCones();
+  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = Math.random() < G.S.pumpChance ? PUMP_FIRST : Infinity; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = []; resetCones(); // pumps only show up some laps (S.pumpChance)
   G.crane = { st: 'idle', t: rnd(16, 26), side: G.crane ? G.crane.side : 0, a: CRANE.rest[G.crane ? G.crane.side : 0], R: 900, hit: new Set() };
   Object.assign(G.P, { x: GATE.x, y: GATE.y0, a: -Math.PI / 2, vx: 0, vy: 0, z: 0, vz: 0, air: false, intro: true, iy: GATE.y0, ix: GATE.x, iwl: null, stun: 0 }); G.gateV = 1; G.cam.x = GATE.x; G.cam.y = AH + 420;
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
@@ -395,6 +395,7 @@ function collideStatic(o, r, bounce) {
     const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy), m = r + b.r;
     if (d < m) {
       const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = b.x + nx * m; o.y = b.y + ny * m;
+      o.hitObs = G.time;
       bounceOff(o, nx, ny, bounce, b.k !== 'hay', o.x - nx * r, o.y - ny * r);
     }
   }
@@ -457,6 +458,9 @@ function drive(e, want, spd, dt, dPlayer) {
   if (dPlayer > 160 && !e.ramping) want = Math.atan2(ay, ax); // up close they go straight for you
   // stuck? (pushing but barely moving) → back out for a moment
   const sp0 = Math.hypot(e.vx, e.vy), fwd0 = e.vx * Math.cos(e.a) + e.vy * Math.sin(e.a);
+  // pinned against a tyre pile or bale for over a second → back off
+  e.pinT = G.time - (e.hitObs ?? -9) < .2 ? (e.pinT || 0) + dt : Math.max(0, (e.pinT || 0) - dt * 2);
+  if (!(e.rev > 0) && e.pinT > 1.2) { e.rev = rnd(.8, 1.2); e.pinT = 0; e.stuckT = 0 }
   if (e.rev > 0) e.rev -= dt;
   else if (sp0 < 22 && spd > 30) { e.stuckT = (e.stuckT || 0) + dt; if (e.stuckT > .7) { e.rev = rnd(.7, 1.1); e.stuckT = 0 } }
   else e.stuckT = 0;
@@ -517,14 +521,14 @@ const CRANE_DMG = 26;
 // count hits 2 and the gate swings shut before 1. gateOpen() feeds the gate animation in scene.js.
 // Timed to the whole countdown: flat out for 1.6 s, then braking into a drift that is still sliding at
 // INTRO_V when the lights go out, so you take over mid-drift and keep going.
-const INTRO_V = 210, INTRO_FAST = 1.6;
+const INTRO_V = 250, INTRO_FAST = 1.6;
 function pitIntro(P, dt) {
-  if (G.startT <= 0 && P.ix != null && P.iy != null && Math.hypot(P.x - P.ix, P.y - P.iy) > 0) { P.intro = false; return } // physics already moved us: keep sliding
+  if (G.startT <= 0 && P.ix != null && P.iy != null && Math.hypot(P.x - P.ix, P.y - P.iy) > 0) { P.intro = false; P.slideT = 1; return } // physics already moved us: keep sliding
   const t = clamp(START_T - G.startT, 0, START_T), D = GATE.y0 - GATE.y1, tb = START_T - INTRO_FAST;
   const va = (D - INTRO_V * tb / 2) / (INTRO_FAST + tb / 2); // top speed so the distance comes out exactly
   const u = Math.max(0, t - INTRO_FAST), dist = va * Math.min(t, INTRO_FAST) + va * u - (va - INTRO_V) / (2 * tb) * u * u;
   const d = (q => q * q * (3 - 2 * q))(clamp((t - 2.05) / (START_T - 2.05), 0, 1)); // drift phase, once through the gate
-  const x = GATE.x + 60 * d, y = GATE.y0 - dist, a = -Math.PI / 2 + 1.15 * d;
+  const x = GATE.x + 70 * d, y = GATE.y0 - dist, a = -Math.PI / 2 + 1.3 * d;
   const px = P.ix ?? x, py = P.iy ?? y; P.ix = x; P.iy = y;
   if (dt > 0) { P.vx = (x - px) / dt; P.vy = (y - py) / dt } P.x = x; P.y = y; P.a = a; P.z = 0;
   const c = Math.cos(a), s = Math.sin(a); P.fwd = P.vx * c + P.vy * s; P.lat = -P.vx * s + P.vy * c; P.sp = Math.hypot(P.vx, P.vy);
@@ -534,7 +538,7 @@ function pitIntro(P, dt) {
     if (P.iwl) { g.strokeStyle = 'rgba(40,28,18,.4)'; g.lineWidth = 6; for (let i = 0; i < 2; i++) { g.beginPath(); g.moveTo(P.iwl[i][0], P.iwl[i][1]); g.lineTo(wl[i][0], wl[i][1]); g.stroke() } G.groundDirty = true }
     P.iwl = wl; for (const w of wl) if (Math.random() < .7) puff(w[0], w[1], 1, { c: 0xf4f0e8, s0: 5, s1: 40, l0: .5, l1: 1.1, z0: 4, z1: 8, grow: 14, drag: 1.5, z: 4, vz0: 8, vz1: 30, vx: -P.vx * .1, vy: -P.vy * .1 });
   } else { P.iwl = null; if (Math.random() < .5) puff(x, y + P.len * .5, 1, { c: 0x8a6a48, s0: 20, s1: 60, l0: .4, l1: .8, z0: 4, z1: 8, grow: 12, z: 3, vz0: 10, vz1: 40 }) } // mud spray
-  if (G.startT <= 0) { P.intro = false; P.wl = P.iwl; P.iwl = null } // hand over mid-slide: the car keeps its speed and angle
+  if (G.startT <= 0) { P.intro = false; P.wl = P.iwl; P.iwl = null; P.slideT = 1 } // hand over mid-slide: the car keeps its speed and angle
 }
 // the gate stays open until the car is through, then swings shut behind it
 export const gateOpen = () => G.gateV || 0;
@@ -746,7 +750,8 @@ export function update(dt) {
   if (hb) fwd -= fwd * .55 * dt;
   if (fwd > top) fwd += (top - fwd) * Math.min(1, dt * 3);
   fwd -= fwd * (!gr ? .05 : up || dn ? .12 : .9) * dt;
-  if (gr) lat *= Math.max(0, 1 - (hb ? S.grip * .16 : S.grip) * dt);
+  P.slideT = Math.max(0, (P.slideT || 0) - dt); // just out of the pit: tyres still loose, so the slide carries on
+  if (gr) lat *= Math.max(0, 1 - (hb || P.slideT > 0 ? S.grip * .16 : S.grip) * dt);
   P.vx = fx * fwd - fy * lat; P.vy = fy * fwd + fx * lat;
   const sp = Math.hypot(P.vx, P.vy), steer = (rt ? 1 : 0) - (lt ? 1 : 0);
   P.steer += (steer - P.steer) * Math.min(1, dt * 10);
