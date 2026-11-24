@@ -295,6 +295,9 @@ export function hud() {
   if (G.banner && G.banner.id !== bannerId) {
     bannerId = G.banner.id; const b = $('banner');
     b.querySelector('b').textContent = tr(G.banner.s); b.querySelector('span').textContent = tr(G.banner.sub);
+    const key = Array.isArray(G.banner.s) ? G.banner.s[0] : '';
+    const subKey = Array.isArray(G.banner.sub) ? G.banner.sub[0] : ''; // sign style: yellow caution for elites and new enemies, green when the garage opens
+    b.classList.toggle('caution', ['eliteSub', 'thiefIntro', 'spitIntro', 'bruteIntro'].includes(subKey)); b.classList.toggle('info', key === 'outOfFuel' || key === 'lapQuit');
     b.classList.remove('go'); void b.offsetWidth; b.classList.add('go');
   }
 }

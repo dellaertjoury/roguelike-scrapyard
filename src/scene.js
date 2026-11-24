@@ -152,8 +152,9 @@ const crowdMesh = (() => {
   const trunkG = new THREE.CylinderGeometry(4, 6, 30, 5), crownG = new THREE.IcosahedronGeometry(1, 0), rockG = new THREE.DodecahedronGeometry(1, 0);
   const trunkM = lam(0x7a5434), crownMs = [0x4f9a4a, 0x5fae52, 0x3f8a46, 0x6dbb5a].map(c => lam(c)), rockM = lam(0x9a9a94);
   const outside = (x, z, m) => x < -m || x > AW + m || z < -m || z > AH + m;
+  const nearCrane = (x, z) => x < -40 && z < -40 && x > -380 && z > -380;
   const nearGate = (x, z) => z > AH - 40 && z < AH + 520 && Math.abs(x - GATE.x) < 260;
-  const nearStand = (x, z) => nearGate(x, z) || (z < 0 && z > -260 && ((x > AW * .3 - 230 && x < AW * .3 + 230) || (x > AW * .7 - 230 && x < AW * .7 + 230))) || (z > AH && z < AH + 260 && x > AW * .5 - 230 && x < AW * .5 + 230);
+  const nearStand = (x, z) => nearGate(x, z) || nearCrane(x, z) || (z < 0 && z > -260 && ((x > AW * .3 - 230 && x < AW * .3 + 230) || (x > AW * .7 - 230 && x < AW * .7 + 230))) || (z > AH && z < AH + 260 && x > AW * .5 - 230 && x < AW * .5 + 230);
   let placed = 0;
   for (let t = 0; t < 2000 && placed < 110; t++) {
     const x = rnd(-1100, AW + 1100), z = rnd(-900, AH + 900);
@@ -193,24 +194,40 @@ const crowdMesh = (() => {
   }
 }
 
-// wrecking-ball crane: a yellow lattice tower outside the top-left corner, a long jib that rotates,
-// a trolley that runs out to the swing radius, a cable and a big iron ball
+// wrecking-ball crane: a crawler crane outside the top-left corner (rusty tracks, a cream cab with a red
+// counterweight, a dark lattice boom). The whole upper half slews; the boom reaches out to the swing radius
+// with its tip TIP_Y up, and the iron ball hangs from the tip on a cable.
 const craneG = new THREE.Group(); craneG.position.set(CRANE.x, 0, CRANE.y); scene.add(craneG);
-const JIB_Y = 210, jib = new THREE.Group(), trolley = new THREE.Group(), ballG = new THREE.Group();
+const TIP_Y = 250, upper = new THREE.Group(), boomG = new THREE.Group(), ballG = new THREE.Group();
 {
-  const yel = lam(0xf2b83a), dark = lam(0x2f2d2a), conc = lam(0xb8b2a6);
-  const base = mesh(new THREE.BoxGeometry(80, 16, 80), conc); base.position.y = 8; craneG.add(base);
-  for (const [x, z] of [[-10, -10], [10, -10], [-10, 10], [10, 10]]) { const leg = mesh(new THREE.BoxGeometry(4, JIB_Y, 4), yel); leg.position.set(x, JIB_Y / 2 + 8, z); craneG.add(leg) }
-  for (let y = 30; y < JIB_Y; y += 26) for (const r of [0, Math.PI / 2]) { const br = mesh(new THREE.BoxGeometry(30, 3, 3), yel, false); br.position.set(0, y + 8, 0); br.rotation.set(0, r, .7); craneG.add(br) }
-  jib.position.y = JIB_Y + 10; craneG.add(jib);
-  const cab = mesh(new THREE.BoxGeometry(26, 20, 24), yel); cab.position.set(6, 6, 18); jib.add(cab);
-  const glass = new THREE.Mesh(new THREE.BoxGeometry(4, 10, 20), lam(0x26313a)); glass.position.set(20, 8, 18); jib.add(glass);
-  const boom = mesh(new THREE.BoxGeometry(1720, 10, 12), yel); boom.position.set(860, 12, 0); jib.add(boom);
-  for (let x = 40; x < 1700; x += 60) { const r = mesh(new THREE.BoxGeometry(3, 3, 14), dark, false); r.position.set(x, 18, 0); jib.add(r) }
-  const counter = mesh(new THREE.BoxGeometry(220, 8, 12), yel); counter.position.set(-110, 12, 0); jib.add(counter);
-  const weight = mesh(new THREE.BoxGeometry(50, 30, 30), conc); weight.position.set(-200, 0, 0); jib.add(weight);
-  const tip = mesh(new THREE.ConeGeometry(6, 40, 4), yel); tip.position.set(0, 40, 0); jib.add(tip);
-  const tr = mesh(new THREE.BoxGeometry(24, 8, 20), dark); trolley.add(tr); trolley.position.y = 2; jib.add(trolley);
+  const cream = lam(0xe8c27a), rustT = lam(0x6a3a22), dark = lam(0x3a3a38), red = lam(0xb8402a), steel = lam(0x5d6064), boomM = lam(0x4a4a46);
+  // tracks and undercarriage, angled toward the arena
+  const under = new THREE.Group(); under.rotation.y = -Math.PI / 4; craneG.add(under);
+  for (const z of [-34, 34]) {
+    const tr = mesh(new THREE.BoxGeometry(150, 22, 22), rustT); tr.position.set(0, 11, z); under.add(tr);
+    for (let x = -60; x <= 60; x += 20) { const w = mesh(new THREE.CylinderGeometry(8, 8, 23, 8), dark); w.rotation.x = Math.PI / 2; w.position.set(x, 11, z); under.add(w) }
+    for (let x = -70; x <= 70; x += 10) { const pad = mesh(new THREE.BoxGeometry(5, 2, 24), dark, false); pad.position.set(x, 23, z); under.add(pad) }
+  }
+  const frame = mesh(new THREE.BoxGeometry(110, 10, 50), steel); frame.position.y = 22; under.add(frame);
+  // upper works: cab, engine house, counterweight, A-frame
+  upper.position.y = 28; craneG.add(upper);
+  const house = mesh(new THREE.BoxGeometry(110, 46, 56), cream); house.position.set(-10, 23, 0); upper.add(house);
+  const roofH = mesh(new THREE.BoxGeometry(112, 4, 58), lam(0xc99a52)); roofH.position.set(-10, 48, 0); upper.add(roofH);
+  const cab = mesh(new THREE.BoxGeometry(34, 40, 24), cream); cab.position.set(52, 20, -18); upper.add(cab);
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(2, 22, 20), lam(0x2e5468)); glass.position.set(69.5, 24, -18); upper.add(glass);
+  for (let i = 0; i < 4; i++) { const wdw = new THREE.Mesh(new THREE.BoxGeometry(14, 12, 1), lam(0x2e5468)); wdw.position.set(-50 + i * 24, 30, 28.6); upper.add(wdw) }
+  const cw = mesh(new THREE.BoxGeometry(30, 44, 60), red); cw.position.set(-78, 22, 0); upper.add(cw);
+  for (const y of [12, 32]) { const band = mesh(new THREE.BoxGeometry(31, 4, 61), lam(0xe8c27a), false); band.position.set(-78, y, 0); upper.add(band) }
+  const aFrame = mesh(new THREE.BoxGeometry(8, 40, 40), dark); aFrame.position.set(10, 66, 0); aFrame.rotation.z = -.25; upper.add(aFrame);
+  const drum = mesh(new THREE.CylinderGeometry(9, 9, 30, 10), steel); drum.rotation.x = Math.PI / 2; drum.position.set(0, 56, 0); upper.add(drum);
+  // lattice boom, built 1 unit long along +x and scaled to the reach each frame
+  boomG.position.set(40, 30, 0); upper.add(boomG);
+  const unitBoom = new THREE.Group(); unitBoom.name = 'unitBoom'; boomG.add(unitBoom);
+  for (const z of [-9, 9]) for (const y of [-5, 5]) { const ch = mesh(new THREE.BoxGeometry(1, 3, 3), boomM); ch.position.set(.5, y, z); unitBoom.add(ch) }
+  for (let i = 1; i < 24; i++) { const br = mesh(new THREE.BoxGeometry(.004, 2, 20), boomM, false); br.position.set(i / 24, 0, 0); br.rotation.x = i % 2 ? .45 : -.45; unitBoom.add(br) }
+  const pend = mesh(new THREE.CylinderGeometry(.8, .8, 1, 4), dark, false); pend.name = 'pendant'; upper.add(pend);
+  const sheave = mesh(new THREE.CylinderGeometry(7, 7, 14, 8), steel); sheave.rotation.x = Math.PI / 2; sheave.name = 'sheave'; scene.add(sheave);
+  const hookB = mesh(new THREE.BoxGeometry(10, 12, 8), lam(0xffc23d)); hookB.name = 'hookBlock'; scene.add(hookB);
   const cable = mesh(new THREE.CylinderGeometry(1.2, 1.2, 1, 5), dark, false); cable.name = 'cable'; ballG.add(cable);
   const ball = mesh(new THREE.IcosahedronGeometry(CRANE.ball, 1), new THREE.MeshLambertMaterial({ color: 0x3a3c40, flatShading: true })); ball.name = 'ball'; ballG.add(ball);
   const ring = mesh(new THREE.TorusGeometry(8, 2.5, 4, 8), dark); ring.position.y = CRANE.ball + 6; ring.name = 'eye'; ball.add(ring);
@@ -335,8 +352,8 @@ const tyreM = keep(lam(0x1f1d1c)), rimM = keep(lam(0xb8bcc2)), glassM = keep(lam
 const headM = keep(new THREE.MeshBasicMaterial({ color: 0xfff2c0 })), tailM = keep(new THREE.MeshBasicMaterial({ color: 0xff3a2a }));
 const wheelG = keep(new THREE.CylinderGeometry(1, 1, 1, 8));
 
-// Painted skins (assets/skins/<id>-top.png + <id>-side.png): the top image wraps the body's top face and,
-// cropped, the roof plate; the side image wraps both flanks. Front of the car = right edge of both images.
+// Painted skins (assets/skins/<id>-top.png + <id>-side.png): the top image covers the car's roof, the side image
+// both flanks (body and cabin, transparent outside the car). Front of the car = right edge of both images.
 const skinTex = {};
 function skinFor(key) {
   const sk = A.skins && A.skins[key]; if (!sk) return null;
@@ -352,27 +369,26 @@ export function buildCar({ id, len: L, wid: W, color, kind, shape }) {
   const r = kind === 'monster' ? W * .42 : W * .22, bh = W * .4, by = (kind === 'monster' ? r * 1.5 : r * .9) + bh / 2;
   const cabH = W * shape.cabH, cabL = L * shape.cabL, roofX = L * shape.cabX - cabL * .12;
   if (sk) {
-    const sideM = new THREE.MeshLambertMaterial({ map: sk.side }); sideM.color = body.color; sideM.emissive = body.emissive;
-    const endM = lam(0x4a4744);
-    const b = new THREE.Mesh(new THREE.BoxGeometry(L, bh, W), [endM, endM, body, endM, sideM, sideM]); b.position.y = by; b.castShadow = b.receiveShadow = true; b.userData.skin = true; tilt.add(b);
-    // roof plate shows the matching crop of the top image
-    const rt = sk.top.clone(); rt.userData.keep = false; rt.needsUpdate = true;
-    rt.repeat.set(cabL * .62 / L, .8); rt.offset.set((roofX - cabL * .31) / L + .5, .1);
-    const roofTop = new THREE.MeshLambertMaterial({ map: rt }); roofTop.color = body.color; roofTop.emissive = body.emissive;
-    const rp = new THREE.Mesh(new THREE.BoxGeometry(cabL * .62, 1.4, W * .8), [endM, endM, roofTop, endM, endM, endM]); rp.position.set(roofX, by + bh / 2 + cabH + .5, 0); rp.castShadow = true; rp.userData.skin = true; tilt.add(rp);
+    // one full-height block (body + cabin): the top image covers its roof, the side image both flanks (with windows,
+    // cut-out arches show the wheels). Width follows the painting's proportions, within reason.
+    W = clamp(L / (sk.top.image.width / sk.top.image.height), W * .75, W * 1.05);
+    const H = bh + cabH, sideM = new THREE.MeshLambertMaterial({ map: sk.side, alphaTest: .45 }); sideM.color = body.color; sideM.emissive = body.emissive;
+    body.alphaTest = .45; body.needsUpdate = true;
+    const endM = lam(0x3a3835);
+    const b = new THREE.Mesh(new THREE.BoxGeometry(L, H, W), [endM, endM, body, endM, sideM, sideM]); b.position.y = by - bh / 2 + H / 2; b.castShadow = b.receiveShadow = true; b.userData.skin = true; tilt.add(b);
   } else {
     const b = mesh(new THREE.BoxGeometry(L, bh, W), body); b.position.y = by; tilt.add(b);
     // hood slope: a thin wedge-ish top plate in body colour
     const hood = mesh(new THREE.BoxGeometry(L * .28, bh * .2, W * .86), body); hood.position.set(L * .3, by + bh * .55, 0); tilt.add(hood);
   }
   // glass cabin with a painted roof plate set back, so the windshield shows from above
-  const cab = mesh(new THREE.BoxGeometry(cabL, cabH, W * .84), glassM);
-  cab.position.set(L * shape.cabX, by + bh / 2 + cabH / 2, 0); tilt.add(cab);
   if (!sk) {
+    const cab = mesh(new THREE.BoxGeometry(cabL, cabH, W * .84), glassM);
+    cab.position.set(L * shape.cabX, by + bh / 2 + cabH / 2, 0); tilt.add(cab);
     const roofP = mesh(new THREE.BoxGeometry(cabL * .62, 1.4, W * .8), roof); roofP.position.set(roofX, by + bh / 2 + cabH + .5, 0); tilt.add(roofP);
     const roundel = mesh(new THREE.CylinderGeometry(W * .17, W * .17, .6, 10), whiteM, false); roundel.position.set(L * .32, by + bh / 2 + bh * .12, 0); tilt.add(roundel);
   }
-  for (const s of [1, -1]) {
+  if (!sk) for (const s of [1, -1]) { // bumpers and lights (painted in on skinned cars)
     const bp = mesh(new THREE.BoxGeometry(3, bh * .45, W * 1.04), bumperM); bp.position.set(s * (L / 2 + 1), r * .9 + bh * .25, 0); tilt.add(bp);
     for (const z of [-1, 1]) {
       const l = new THREE.Mesh(new THREE.BoxGeometry(1.5, bh * .22, W * .18), s > 0 ? headM : tailM); l.position.set(s * (L / 2 + .3), by + bh * .15, z * W * .34); tilt.add(l);
@@ -718,10 +734,18 @@ export function render(dt) {
   placeCamera(G.cam.x, G.cam.y, G.shake * .6);
   { // crane: jib angle, trolley out at the swing radius, ball hanging under it; red dashed arc while the warning runs
     const C = G.crane || { st: 'idle', a: CRANE.rest[0], R: 900 }, a = C.a ?? CRANE.rest[0], R = C.R || 900;
-    jib.rotation.y = -a; trolley.position.x = R;
+    // slew the upper works to face the ball, stretch the boom from its foot to the tip above the ball
+    upper.rotation.y = -a;
     const bx = CRANE.x + Math.cos(a) * R, bz = CRANE.y + Math.sin(a) * R, by = C.st === 'swing' ? CRANE.ball + 4 : CRANE.ball + 30;
+    const footR = 40, footY = 28 + 30, reach = R - footR, rise = TIP_Y - footY, len = Math.hypot(reach, rise);
+    boomG.rotation.z = Math.atan2(rise, reach); boomG.getObjectByName('unitBoom').scale.set(len, 1, 1);
+    const tipX = CRANE.x + Math.cos(a) * R, tipZ = CRANE.y + Math.sin(a) * R;
+    scene.getObjectByName('sheave').position.set(tipX, TIP_Y, tipZ); scene.getObjectByName('sheave').rotation.y = -a;
+    const pd = upper.getObjectByName('pendant'), ax = 10, ay = 86 - 28, tx = R, ty = TIP_Y - 28; // A-frame top → boom tip, in upper's frame
+    pd.position.set((ax + tx) / 2, (ay + ty) / 2, 0); pd.scale.y = Math.hypot(tx - ax, ty - ay); pd.rotation.z = -Math.atan2(tx - ax, ty - ay);
     ballG.getObjectByName('ball').position.set(bx, by, bz); ballG.getObjectByName('ball').rotation.y = a * 6;
-    const cb = ballG.getObjectByName('cable'), top = JIB_Y + 10; cb.position.set(bx, (top + by) / 2, bz); cb.scale.y = top - by;
+    scene.getObjectByName('hookBlock').position.set(bx, by + CRANE.ball + 14, bz);
+    const cb = ballG.getObjectByName('cable'), top = TIP_Y; cb.position.set(bx, (top + by) / 2, bz); cb.scale.y = top - by;
     G._craneArc = C.st === 'warn' || C.st === 'swing' ? { R, from: CRANE.ends[C.from], to: CRANE.ends[C.to], k: C.st === 'warn' ? 1 - C.t / CRANE.warn : 1 } : null;
   }
   { const op = gateOpen(); for (const d of gateDoors) d.hinge.rotation.y = d.sx * op * 1.6; // pit gate swings shut as the countdown ends

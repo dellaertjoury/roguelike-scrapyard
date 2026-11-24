@@ -5,7 +5,7 @@ import { CARS, PARTS, PACKS } from './data.js';
 export const A = { fx: {}, elites: {}, dirt: null, menuBg: null, garageBg: null, logos: {}, cars: {}, icons: {}, ui: {}, packs: {}, obs: {}, skins: {}, pit: {} };
 // Car skins that exist in assets/skins/ (add an id here when its <id>-top.png and <id>-side.png arrive).
 // Possible ids: hatch, muscle, hearse, rust, spit, brute, thief, harvester, monster, tow.
-export const SKINS = [];
+export const SKINS = ['hatch', 'muscle', 'hearse'];
 // Pit entry art that exists in assets/pit/ (add 'gate' / 'driveway' when gate.png / driveway.jpg arrive).
 export const PIT_ART = [];
 export const UI_ICONS = ['hull', 'nitro', 'heat', 'scrap', 'lap', 'drift', 'boss', 'fuel-gauge', 'fuel-needle', 'pump', 'jerrycan'];
