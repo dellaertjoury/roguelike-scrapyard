@@ -1,0 +1,449 @@
+{
+ "driftFarm": [
+  {
+   "car": "hatch",
+   "pattern": "W+D+Space held",
+   "state": "pause",
+   "driftFrac": 0.05,
+   "maxMult": 1.4,
+   "biggestCombo": 84,
+   "scrap": 0,
+   "score": 84,
+   "bestDrift": 84
+  },
+  {
+   "car": "hatch",
+   "pattern": "W+D held",
+   "state": "pause",
+   "driftFrac": 0.99,
+   "maxMult": 5,
+   "biggestCombo": 20609,
+   "scrap": 0,
+   "score": 0,
+   "bestDrift": 0
+  },
+  {
+   "car": "hatch",
+   "pattern": "W+D, Space tapped 0.3s every 1s",
+   "state": "pause",
+   "driftFrac": 0.99,
+   "maxMult": 5,
+   "biggestCombo": 13074,
+   "scrap": 0,
+   "score": 98,
+   "bestDrift": 98
+  },
+  {
+   "car": "hatch",
+   "pattern": "W+D, Space tapped 0.2s every 0.5s",
+   "state": "pause",
+   "driftFrac": 0.99,
+   "maxMult": 5,
+   "biggestCombo": 18011,
+   "scrap": 0,
+   "score": 0,
+   "bestDrift": 0
+  },
+  {
+   "car": "muscle",
+   "pattern": "W+D+Space held",
+   "state": "pause",
+   "driftFrac": 0.07,
+   "maxMult": 1.6,
+   "biggestCombo": 113,
+   "scrap": 0,
+   "score": 212,
+   "bestDrift": 113
+  },
+  {
+   "car": "muscle",
+   "pattern": "W+D held",
+   "state": "pause",
+   "driftFrac": 0.99,
+   "maxMult": 5,
+   "biggestCombo": 22225,
+   "scrap": 0,
+   "score": 0,
+   "bestDrift": 0
+  },
+  {
+   "car": "muscle",
+   "pattern": "W+D, Space tapped 0.3s every 1s",
+   "state": "pause",
+   "driftFrac": 0.99,
+   "maxMult": 5,
+   "biggestCombo": 19415,
+   "scrap": 0,
+   "score": 0,
+   "bestDrift": 0
+  },
+  {
+   "car": "muscle",
+   "pattern": "W+D, Space tapped 0.2s every 0.5s",
+   "state": "pause",
+   "driftFrac": 0.99,
+   "maxMult": 5,
+   "biggestCombo": 19247,
+   "scrap": 0,
+   "score": 0,
+   "bestDrift": 0
+  },
+  {
+   "car": "hearse",
+   "pattern": "W+D+Space held",
+   "state": "pause",
+   "driftFrac": 0.04,
+   "maxMult": 1.4,
+   "biggestCombo": 94,
+   "scrap": 0,
+   "score": 94,
+   "bestDrift": 94
+  },
+  {
+   "car": "hearse",
+   "pattern": "W+D held",
+   "state": "pause",
+   "driftFrac": 0.99,
+   "maxMult": 5,
+   "biggestCombo": 19642,
+   "scrap": 0,
+   "score": 0,
+   "bestDrift": 0
+  },
+  {
+   "car": "hearse",
+   "pattern": "W+D, Space tapped 0.3s every 1s",
+   "state": "pause",
+   "driftFrac": 0.99,
+   "maxMult": 5,
+   "biggestCombo": 17200,
+   "scrap": 0,
+   "score": 0,
+   "bestDrift": 0
+  },
+  {
+   "car": "hearse",
+   "pattern": "W+D, Space tapped 0.2s every 0.5s",
+   "state": "pause",
+   "driftFrac": 0.99,
+   "maxMult": 5,
+   "biggestCombo": 16947,
+   "scrap": 0,
+   "score": 0,
+   "bestDrift": 0
+  }
+ ],
+ "perLap": {
+  "passive": [
+   {
+    "lap": 1,
+    "scrap": 20,
+    "wrecks": 19
+   },
+   {
+    "lap": 2,
+    "scrap": 25,
+    "wrecks": 23
+   },
+   {
+    "lap": 3,
+    "scrap": 36,
+    "wrecks": 16
+   },
+   {
+    "lap": 4,
+    "scrap": 65,
+    "wrecks": 30
+   },
+   {
+    "lap": 5,
+    "scrap": 144,
+    "wrecks": 61
+   },
+   {
+    "lap": 6,
+    "scrap": 120,
+    "wrecks": 62
+   },
+   {
+    "lap": 7,
+    "scrap": 135,
+    "wrecks": 59
+   },
+   {
+    "lap": 8,
+    "scrap": 98,
+    "wrecks": 39
+   },
+   {
+    "lap": 9,
+    "scrap": 218,
+    "wrecks": 108
+   },
+   {
+    "lap": 10,
+    "scrap": 227,
+    "wrecks": 74
+   },
+   {
+    "lap": 11,
+    "scrap": 239,
+    "wrecks": 113
+   },
+   {
+    "lap": 12,
+    "scrap": 175,
+    "wrecks": 68
+   },
+   {
+    "lap": 13,
+    "scrap": 248,
+    "wrecks": 88
+   },
+   {
+    "lap": 14,
+    "scrap": 330,
+    "wrecks": 155
+   },
+   {
+    "lap": 15,
+    "scrap": 339,
+    "wrecks": 111
+   }
+  ],
+  "active": [
+   {
+    "lap": 1,
+    "scrap": 20,
+    "wrecks": 19
+   },
+   {
+    "lap": 2,
+    "scrap": 24,
+    "wrecks": 23
+   },
+   {
+    "lap": 3,
+    "scrap": 36,
+    "wrecks": 27
+   },
+   {
+    "lap": 4,
+    "scrap": 107,
+    "wrecks": 65
+   },
+   {
+    "lap": 5,
+    "scrap": 154,
+    "wrecks": 81
+   },
+   {
+    "lap": 6,
+    "scrap": 175,
+    "wrecks": 94
+   },
+   {
+    "lap": 7,
+    "scrap": 296,
+    "wrecks": 167
+   },
+   {
+    "lap": 8,
+    "scrap": 401,
+    "wrecks": 235
+   },
+   {
+    "lap": 9,
+    "scrap": 609,
+    "wrecks": 368
+   },
+   {
+    "lap": 10,
+    "scrap": 848,
+    "wrecks": 473
+   },
+   {
+    "lap": 11,
+    "scrap": 868,
+    "wrecks": 470
+   },
+   {
+    "lap": 12,
+    "scrap": 888,
+    "wrecks": 473
+   },
+   {
+    "lap": 13,
+    "scrap": 945,
+    "wrecks": 570
+   },
+   {
+    "lap": 14,
+    "scrap": 1055,
+    "wrecks": 577
+   },
+   {
+    "lap": 15,
+    "scrap": 1096,
+    "wrecks": 579
+   }
+  ]
+ },
+ "prices": [
+  {
+   "lap": 1,
+   "avgLv1": 16,
+   "cheapest": 10,
+   "priciest": 26,
+   "avgLv2": 24,
+   "avgLv3": 32,
+   "reroll": 3,
+   "repair": 8
+  },
+  {
+   "lap": 2,
+   "avgLv1": 18,
+   "cheapest": 11,
+   "priciest": 30,
+   "avgLv2": 28,
+   "avgLv3": 37,
+   "reroll": 4,
+   "repair": 10
+  },
+  {
+   "lap": 3,
+   "avgLv1": 21,
+   "cheapest": 13,
+   "priciest": 33,
+   "avgLv2": 31,
+   "avgLv3": 41,
+   "reroll": 5,
+   "repair": 12
+  },
+  {
+   "lap": 4,
+   "avgLv1": 23,
+   "cheapest": 14,
+   "priciest": 37,
+   "avgLv2": 34,
+   "avgLv3": 46,
+   "reroll": 6,
+   "repair": 14
+  },
+  {
+   "lap": 5,
+   "avgLv1": 25,
+   "cheapest": 16,
+   "priciest": 41,
+   "avgLv2": 38,
+   "avgLv3": 50,
+   "reroll": 7,
+   "repair": 16
+  },
+  {
+   "lap": 6,
+   "avgLv1": 28,
+   "cheapest": 17,
+   "priciest": 44,
+   "avgLv2": 41,
+   "avgLv3": 55,
+   "reroll": 8,
+   "repair": 18
+  },
+  {
+   "lap": 7,
+   "avgLv1": 30,
+   "cheapest": 18,
+   "priciest": 48,
+   "avgLv2": 45,
+   "avgLv3": 60,
+   "reroll": 9,
+   "repair": 20
+  },
+  {
+   "lap": 8,
+   "avgLv1": 32,
+   "cheapest": 20,
+   "priciest": 51,
+   "avgLv2": 48,
+   "avgLv3": 64,
+   "reroll": 10,
+   "repair": 22
+  },
+  {
+   "lap": 9,
+   "avgLv1": 34,
+   "cheapest": 21,
+   "priciest": 55,
+   "avgLv2": 51,
+   "avgLv3": 69,
+   "reroll": 11,
+   "repair": 24
+  },
+  {
+   "lap": 10,
+   "avgLv1": 37,
+   "cheapest": 23,
+   "priciest": 59,
+   "avgLv2": 55,
+   "avgLv3": 73,
+   "reroll": 12,
+   "repair": 26
+  },
+  {
+   "lap": 11,
+   "avgLv1": 39,
+   "cheapest": 24,
+   "priciest": 62,
+   "avgLv2": 58,
+   "avgLv3": 78,
+   "reroll": 13,
+   "repair": 28
+  },
+  {
+   "lap": 12,
+   "avgLv1": 41,
+   "cheapest": 25,
+   "priciest": 66,
+   "avgLv2": 62,
+   "avgLv3": 82,
+   "reroll": 14,
+   "repair": 30
+  },
+  {
+   "lap": 13,
+   "avgLv1": 43,
+   "cheapest": 27,
+   "priciest": 70,
+   "avgLv2": 65,
+   "avgLv3": 87,
+   "reroll": 15,
+   "repair": 32
+  },
+  {
+   "lap": 14,
+   "avgLv1": 46,
+   "cheapest": 28,
+   "priciest": 73,
+   "avgLv2": 68,
+   "avgLv3": 91,
+   "reroll": 16,
+   "repair": 34
+  },
+  {
+   "lap": 15,
+   "avgLv1": 48,
+   "cheapest": 30,
+   "priciest": 77,
+   "avgLv2": 72,
+   "avgLv3": 96,
+   "reroll": 17,
+   "repair": 36
+  }
+ ],
+ "camping": {
+  "corner": 1170,
+  "centre": 2166,
+  "moving circle": 1833
+ }
+}

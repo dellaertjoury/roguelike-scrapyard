@@ -1,0 +1,23 @@
+{
+ "driving": {
+  "sp": 151,
+  "slip": 54,
+  "drift": 32,
+  "scrollY": 0,
+  "state": "play"
+ },
+ "moved": 105,
+ "afterP": "pause",
+ "afterP2": "play",
+ "spawnClose": {
+  "spawns": 126,
+  "within60": 5,
+  "overlapping": 1,
+  "minD": 36,
+  "offscreenAtSpawn": 35
+ },
+ "errors": [
+  "THREE.Material: parameter 'color' has value of undefined.",
+  "[.WebGL-0x32cc009c3800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

@@ -1,0 +1,36 @@
+{"run": "gen_spawn", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795517826.6715307}
+{"run": "gen_spawn", "kind": "warning", "text": "[.WebGL-0x3a54001a6c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795517827.2238007}
+{"run": "physics", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795517922.6644611}
+{"run": "physics", "kind": "warning", "text": "[.WebGL-0x12fc00176000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795517923.3328216}
+{"run": "physics2", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795517984.0925376}
+{"run": "physics2", "kind": "warning", "text": "[.WebGL-0x7dc00177800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795517984.5671604}
+{"run": "physics2", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518009.980039}
+{"run": "physics2", "kind": "warning", "text": "[.WebGL-0x182c001c3a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518010.6207275}
+{"run": "econ", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518057.0984712}
+{"run": "econ", "kind": "warning", "text": "[.WebGL-0x2694001b7800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518057.7640061}
+{"run": "econ2", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518105.6919076}
+{"run": "econ2", "kind": "warning", "text": "[.WebGL-0x85c001c0a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518106.291938}
+{"run": "perf", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518175.9440403}
+{"run": "perf", "kind": "warning", "text": "[.WebGL-0x10dc0016d000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518176.4606264}
+{"run": "flow", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518422.88381}
+{"run": "flow", "kind": "warning", "text": "[.WebGL-0x22a400161400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518423.3561997}
+{"run": "elites", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518546.9711087}
+{"run": "elites", "kind": "warning", "text": "[.WebGL-0x1ee40018fe00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518547.5709667}
+{"run": "elites", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518559.4460561}
+{"run": "elites", "kind": "warning", "text": "[.WebGL-0x249401a33200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518559.976847}
+{"run": "visuals", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518606.4998903}
+{"run": "visuals", "kind": "warning", "text": "[.WebGL-0x32bc009a4600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518606.9702587}
+{"run": "read_en", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518674.527335}
+{"run": "read_en", "kind": "warning", "text": "[.WebGL-0x1ac00177800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518675.0513017}
+{"run": "read_de", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518731.8632233}
+{"run": "read_de", "kind": "warning", "text": "[.WebGL-0x2ebc009ad400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518732.332611}
+{"run": "read_fr", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518800.1086657}
+{"run": "read_fr", "kind": "warning", "text": "[.WebGL-0x9cc00181c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518800.7671263}
+{"run": "read_es", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518859.3859725}
+{"run": "read_es", "kind": "warning", "text": "[.WebGL-0x14fc001cfa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518859.8685296}
+{"run": "read_vls", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518921.158839}
+{"run": "read_vls", "kind": "warning", "text": "[.WebGL-0x84c0017a800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518921.6422253}
+{"run": "read_en", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795518982.3142202}
+{"run": "read_en", "kind": "warning", "text": "[.WebGL-0x32f400963200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795518982.804037}
+{"run": "keys", "kind": "warning", "text": "THREE.Material: parameter 'color' has value of undefined.", "t": 1795519074.4923716}
+{"run": "keys", "kind": "warning", "text": "[.WebGL-0x32cc009c3800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795519074.967073}
