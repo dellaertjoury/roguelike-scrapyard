@@ -1,7 +1,7 @@
 // Game simulation: driving, drifting, jumping, enemies, weapons, laps, garage.
 // (Internally a lap is still called a 'wave'.)
 // Runs on a flat 2D plane (x, y). The 3D scene maps sim y to world z.
-import { CARS, BASE, PARTS, PART, SLOTS, WSTAT, ENEMY, ECOL, ELITES } from './data.js';
+import { CARS, BASE, PARTS, PART, SLOTS, ALL_SLOTS, WSTAT, ENEMY, ECOL, ELITES } from './data.js';
 import { t, L, num, lang } from './i18n.js';
 
 export const AW = 2000, AH = 1360, EDGE = 34, GS = .6;
@@ -114,10 +114,10 @@ export function makeObs() {
   }
   // traffic cones, just for fun: a few slalom rows; they get kicked around but never block anything
   const cones = []; n = 0;
-  while (cones.length < 15 && n++ < 300) {
+  while (cones.length < 7 && n++ < 300) {
     const x = rnd(260, AW - 260), y = rnd(260, AH - 260), a = rnd(0, TAU), k = 3 + (Math.random() * 3 | 0);
     if (obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 120) || ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < 220) || Math.hypot(x - GATE.x, y - GATE.y1) < 200) continue;
-    for (let i = 0; i < k && cones.length < 15; i++) cones.push({ hx: x + Math.cos(a) * i * 46, hy: y + Math.sin(a) * i * 46 });
+    for (let i = 0; i < k && cones.length < 7; i++) cones.push({ hx: x + Math.cos(a) * i * 46, hy: y + Math.sin(a) * i * 46 });
   }
   G.cones = cones; resetCones();
   G.obs = obs; G.ramps = ramps; G.obsVersion++;
@@ -318,7 +318,7 @@ function fuelStep(dt) {
 export function recompute() {
   const oldMax = G.S ? G.S.maxhp : 0;
   const S = Object.assign({}, BASE, G.car.st), W = { mg: 0, mines: 0, tesla: 0, flame: 0, saw: 0 };
-  for (const slot of SLOTS) {
+  for (const slot of ALL_SLOTS) {
     const b = G.build[slot]; if (!b) continue;
     const d = PART[b.id]; if (d.w) W[d.w] = b.lvl; else d.f(S, b.lvl);
   }

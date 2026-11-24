@@ -124,29 +124,20 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 #driftMtr.bank{animation:bank .5s ease-out}
 @keyframes bank{0%{transform:translateY(-50%) scale(1.12);box-shadow:0 0 0 3px #7fdcaa,0 0 30px rgba(127,220,170,.8)}100%{transform:translateY(-50%) scale(1)}}
 /* red pulse on the screen edges while a thief's hose drains your tank */
-#craneSign{position:absolute;left:50%;top:96px;width:min(480px,88vw);padding:18px 24px 20px;transform:translate(-50%,-30px) rotate(-2deg);opacity:0;pointer-events:none;text-align:center;
-  background:linear-gradient(170deg,#f4f1ea,#d9d4c8 60%,#c7c0b0);border-radius:6px;box-shadow:0 0 0 3px #2a2826,0 0 0 6px #d9d4c8,0 14px 30px rgba(0,0,0,.5);color:#1d1b1a;transition:opacity .2s,transform .25s}
-#craneSign::before,#craneSign::after{content:"";position:absolute;top:8px;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle,#8a857c 40%,#55514b 45%)}#craneSign::before{left:8px}#craneSign::after{right:8px}
+#craneSign{position:absolute;left:50%;top:84px;width:min(380px,82vw);padding:8px;border-radius:18px;transform:translate(-50%,-30px) rotate(-2deg);opacity:0;pointer-events:none;text-align:center;
+  background:#1d1b1a;box-shadow:0 0 0 5px #ffc23d,0 0 0 8px #1d1b1a,0 16px 32px rgba(0,0,0,.5);transition:opacity .2s,transform .25s}
 #craneSign.on{opacity:1;transform:translate(-50%,0) rotate(-2deg);animation:signShake .45s ease-in-out infinite}
-#craneSign.art{background:center/100% 100% no-repeat var(--art);box-shadow:none}
-#craneSign.art>*{visibility:hidden}
-#craneSign .oval{display:inline-block;white-space:nowrap;margin:0 auto 10px;padding:8px 46px 9px;border-radius:50%;background:#d62a1f;color:#fff;font:700 clamp(26px,4vw,36px)/1.05 Oswald,'Arial Narrow',Impact,sans-serif;letter-spacing:.06em;box-shadow:0 0 0 4px #1d1b1a,0 0 0 8px #fff,0 0 0 12px #1d1b1a}
-#craneSign b{display:block;font:700 clamp(36px,6vw,56px)/1 Oswald,'Arial Narrow',Impact,sans-serif;letter-spacing:.02em}
-#craneSign span{display:block;margin-top:8px;font:700 16px Oswald,'Arial Narrow',sans-serif;letter-spacing:.04em;text-transform:uppercase;color:#3a2a20}
-#craneSign .cs-ball{position:absolute;right:16px;bottom:12px;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7a7c80,#1d1b1a);transform-origin:50% -26px;animation:swingB .9s ease-in-out infinite alternate}
-#craneSign .cs-ball::before{content:"";position:absolute;left:12px;top:-26px;width:2px;height:26px;background:#1d1b1a}
+#craneSign.art{background:center/100% 100% no-repeat var(--art);box-shadow:none}#craneSign.art>*{visibility:hidden}
+#craneSign .cs-head{font:700 clamp(46px,8vw,74px)/1 Oswald,'Arial Narrow',Impact,sans-serif;letter-spacing:.06em;color:#ffc23d;padding:4px 0 8px;-webkit-text-stroke:.6px #ffc23d}
+#craneSign .cs-body{background:#ffc23d;border-radius:4px 4px 12px 12px;padding:12px 14px 14px;color:#1d1b1a}
+#craneSign b{display:block;font:700 clamp(22px,3.6vw,30px)/1.1 Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:.03em;-webkit-text-stroke:.4px #1d1b1a}
+#craneSign .cs-pic{display:block;width:78%;margin:10px auto 8px}
+#craneSign .cs-swing{transform-origin:148px 12px;animation:swingB .9s ease-in-out infinite alternate}
+#craneSign span{display:block;font:700 clamp(22px,3.6vw,30px)/1.1 Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:.03em;-webkit-text-stroke:.4px #1d1b1a}
 @keyframes signShake{0%,100%{transform:translate(-50%,0) rotate(-2deg)}50%{transform:translate(-50%,2px) rotate(1.5deg)}}
-@keyframes swingB{from{transform:rotate(-35deg)}to{transform:rotate(35deg)}}
-@media(prefers-reduced-motion:reduce){#craneSign.on,#craneSign .cs-ball{animation:none}}
-#lights{position:absolute;left:50%;top:10px;transform:translateX(-50%);display:none;gap:8px;padding:8px 12px 10px;border-radius:10px;
+@keyframes swingB{from{transform:rotate(-28deg)}to{transform:rotate(28deg)}}
+@media(prefers-reduced-motion:reduce){#craneSign.on,#craneSign .cs-swing{animation:none}}
   background:linear-gradient(#2c2b29,#1a1918);box-shadow:0 0 0 2px #0d0c0b,0 0 0 4px #4a4844,0 10px 24px rgba(0,0,0,.5)}
-#lights::before{content:"";position:absolute;left:-30px;right:-30px;top:50%;height:8px;margin-top:-4px;background:repeating-linear-gradient(-45deg,#ffc23d 0 8px,#1a1917 8px 16px);z-index:-1;border-radius:3px}
-#lights.on{display:flex}
-#lights i{display:grid;gap:6px;padding:6px;border-radius:8px;background:#0f0e0d;box-shadow:inset 0 2px 4px rgba(0,0,0,.8)}
-#lights b{width:clamp(18px,2.6vw,28px);height:clamp(18px,2.6vw,28px);border-radius:50%;background:radial-gradient(circle at 35% 30%,#4a1612,#240a08);box-shadow:inset 0 -2px 3px rgba(0,0,0,.6)}
-#lights i.lit b{background:radial-gradient(circle at 35% 30%,#ffd0c8,#ff2a1a 45%,#a8140c);box-shadow:0 0 14px 3px rgba(255,40,20,.75)}
-#lights.go i b{background:radial-gradient(circle at 35% 30%,#e6ffe0,#3fdc5f 45%,#1f8a3a);box-shadow:0 0 14px 3px rgba(80,230,110,.75)}
-#count{display:none!important}
 /* pause menu and settings */
 .btn.wide{min-width:min(300px,80vw)}
 .pmenu{display:grid;gap:10px;width:min(380px,92vw)}.pmenu .btn{width:100%}.pmenu .small{text-align:center;margin:0}
@@ -176,8 +167,8 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 #banner{position:absolute;left:50%;top:18%;width:min(620px,92vw);margin-left:calc(min(620px,92vw) / -2);padding:20px 28px 22px;text-align:center;opacity:0;pointer-events:none;
   background:linear-gradient(170deg,#f4f1ea,#d9d4c8 60%,#c7c0b0);border-radius:6px;box-shadow:0 0 0 3px #2a2826,0 0 0 6px #d9d4c8,0 14px 30px rgba(0,0,0,.5);color:#1d1b1a}
 #banner::before,#banner::after{content:"";position:absolute;top:10px;width:12px;height:12px;border-radius:50%;background:radial-gradient(circle,#8a857c 40%,#55514b 45%)}#banner::before{left:8px}#banner::after{right:8px}
-#banner b{display:inline-block;white-space:nowrap;padding:10px clamp(40px,7vw,70px) 12px;border-radius:50%;background:#d62a1f;color:#fff;font:700 clamp(40px,7vw,72px)/1 Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:.02em;box-shadow:0 0 0 4px #1d1b1a,0 0 0 8px #fff,0 0 0 12px #1d1b1a}
-#banner span{display:block;margin-top:18px;font:700 clamp(17px,2.2vw,22px)/1.25 Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:.03em}
+#banner b{display:inline-block;max-width:100%;white-space:nowrap;padding:14px clamp(44px,7vw,84px) 16px;border-radius:50%;background:#d62a1f;color:#fff;font:700 clamp(42px,7vw,74px)/1 Oswald,'Arial Narrow',Impact,sans-serif;letter-spacing:.03em;-webkit-text-stroke:1px #fff;box-shadow:0 0 0 4px #1d1b1a,0 0 0 8px #fff,0 0 0 12px #1d1b1a}
+#banner span{display:block;margin-top:30px;white-space:pre-line;font:700 clamp(19px,2.5vw,25px)/1.25 Oswald,'Arial Narrow',Impact,sans-serif;text-transform:uppercase;letter-spacing:.04em;-webkit-text-stroke:.4px currentColor}
 #banner.caution{background:repeating-linear-gradient(-45deg,#1d1b1a 0 16px,#ffc23d 16px 32px) top/100% 14px no-repeat,repeating-linear-gradient(-45deg,#1d1b1a 0 16px,#ffc23d 16px 32px) bottom/100% 14px no-repeat,linear-gradient(170deg,#ffd24d,#f2b62a);padding:32px 28px 34px}
 #banner.caution b{background:#1d1b1a;color:#ffc23d;box-shadow:0 0 0 4px #ffc23d,0 0 0 8px #1d1b1a}
 #banner.info{background:linear-gradient(170deg,#2f8a4f,#1f6a3a);color:#fff;box-shadow:0 0 0 3px #f4f1ea,0 0 0 6px #1f6a3a,0 14px 30px rgba(0,0,0,.5)}
@@ -290,7 +281,7 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
   #bossPnl{top:84px;width:min(300px,76vw)}#cluster{width:205px}#banner{top:26%}#count{top:60%}.meter span{font-size:9.5px;padding:0 6px}#driftMtr{width:60px;padding:8px 6px}#driftMtr .bars{height:clamp(100px,19vh,160px)}#driftMtr .mul{font-size:18px}#driftMtr .pts{font-size:13px}.big{font-size:36px}}
 @media(max-width:1000px){.garage{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.garage .panel{grid-column:1/-1}}
 @media(max-width:820px){.grid3{grid-template-columns:minmax(0,1fr)}.car{display:grid;grid-template-columns:150px minmax(0,1fr);column-gap:12px}.car img{grid-row:span 7}.garage{grid-template-columns:minmax(0,1fr)}}
-@media(max-width:600px){#banner{padding:16px 14px 18px}#banner b{font-size:34px;padding:8px 26px 9px}#banner span{font-size:15px;margin-top:14px}#craneSign .oval{padding:6px 28px}.gfoot .btn{padding:10px 14px;font-size:14px;min-height:44px}.gfoot{gap:8px}.grid2{grid-template-columns:minmax(0,1fr)}.car{grid-template-columns:minmax(0,1fr)}.car img{grid-row:auto}.tl{width:44vw;padding:10px}.lockbtn span{display:none}}
+@media(max-width:600px){#banner{padding:16px 14px 18px}#banner b{font-size:34px;padding:10px 34px 11px}#banner span{font-size:16px;margin-top:22px}.gfoot .btn{padding:10px 14px;font-size:14px;min-height:44px}.gfoot{gap:8px}.grid2{grid-template-columns:minmax(0,1fr)}.car{grid-template-columns:minmax(0,1fr)}.car img{grid-row:auto}.tl{width:44vw;padding:10px}.lockbtn span{display:none}}
 @media(prefers-reduced-motion:reduce){#vign.on{animation:none;opacity:.7}.car,.card,#driftMtr{transition:none}#driftMtr.bank{animation:none}#banner.go{animation-duration:.01s;opacity:1}.ld .tyre{animation:none}}
 </style>
 <script type="importmap">
@@ -319,10 +310,12 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
     <div id="driftMtr" aria-label="Drift"><div class="lbl" data-ui="drift"><span data-i18n="drift">Drift</span></div><div class="mul" id="driftMul">×1.0</div><div class="bars"><div class="clock"><i id="driftClock"></i></div><div class="tube"><i id="driftFill"></i><b style="bottom:25%"></b><b style="bottom:50%"></b><b style="bottom:75%"></b></div></div><div class="pts" id="driftNum">0</div></div>
     <div id="vign"></div>
     <!-- wrecking-ball warning: a battered DANGER road sign that drops in during the crane warning -->
-    <div id="craneSign" aria-live="assertive"><div class="oval" id="csTop">GEVAAR</div><b id="csBig">SLOOPKOGEL</b><span id="csSub"></span><i class="cs-ball"></i></div>
+    <div id="craneSign" aria-live="assertive"><div class="cs-head" id="csTop">GEVAAR</div><div class="cs-body"><b id="csBig">SLOOPHAMER PASSEERT IERE</b>
+      <svg class="cs-pic" viewBox="0 0 200 110" aria-hidden="true"><g fill="#1d1b1a"><rect x="4" y="96" width="192" height="8"/><rect x="18" y="30" width="10" height="66"/><polygon points="14,96 32,96 28,84 18,84"/><polygon points="23,30 150,8 152,14 25,38"/>
+        <line x1="148" y1="12" x2="148" y2="58" stroke="#1d1b1a" stroke-width="3"/><g class="cs-swing"><circle cx="148" cy="70" r="14"/></g>
+        <path d="M96 80h34l8 10h6v6h-56v-6h4z"/><circle cx="104" cy="96" r="6"/><circle cx="132" cy="96" r="6"/><path d="M104 80l6-8h16l6 8z" fill="#ffc23d" stroke="#1d1b1a" stroke-width="3"/></g></svg>
+      <span id="csSub"></span></div></div>
     <div id="count" aria-live="polite"></div>
-    <!-- start lights, F1 style: five red lights come on one by one during the countdown; all out (green flash) = go -->
-    <div id="lights" aria-hidden="true"><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i><i><b></b><b></b></i></div>
     <div id="banner"><b></b><span></span></div>
     <div id="touch" aria-hidden="true">
       <div class="tl2"><button class="b" data-key="ArrowLeft">◀</button><button class="b" data-key="ArrowRight">▶</button></div>

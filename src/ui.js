@@ -86,7 +86,11 @@ function renderBlueprint() {
     <rect x="125" y="68" width="110" height="304" rx="30"/><rect x="138" y="165" width="84" height="108" rx="12"/>
     <line x1="140" y1="160" x2="220" y2="160"/><line x1="140" y1="280" x2="220" y2="280"/>
     <rect x="132" y="60" width="96" height="8" rx="3"/><rect x="132" y="372" width="96" height="8" rx="3"/></g>${marks}</svg>`;
-  const rows = SLOTS.map((s, i) => {
+  const tb = G.build.turret; // the fixed MG mount, listed above the six slots
+  const turretRow = `<li class="bprow on fixed" data-slot="turret"><span class="num">★</span>
+      <span class="sl"><span class="sn">${esc(L().slots.turret)}</span><span class="pn${tb ? '' : ' empty'}">${tb ? esc(partName(tb.id)) : esc(t('empty'))}</span></span>
+      ${tb ? `${icon(tb.id, 'ico xs')}<span class="lv">Lv ${tb.lvl}/${PART[tb.id].max}</span>` : ''}</li>`;
+  const rows = turretRow + SLOTS.map((s, i) => {
     const b = G.build[s];
     return `<li class="bprow${b ? ' on' : ''}" data-slot="${s}"><span class="num">${i + 1}</span>
       <span class="sl"><span class="sn">${esc(L().slots[s])}</span><span class="pn${b ? '' : ' empty'}">${b ? esc(partName(b.id)) : esc(t('empty'))}</span></span>
@@ -278,12 +282,9 @@ export function hud() {
   const cs = $('craneSign'), cw = G.crane && (G.crane.st === 'warn' || G.crane.st === 'swing') && G.state === 'play';
   cs.classList.toggle('on', !!cw);
   $('vign').classList.toggle('on', !!G.siphon && G.state === 'play');
-  // F1 start lights: one red light per 0.6 s of countdown, all five lit just before GO, then green for a moment
-  const lt = $('lights'), lit = G.state === 'play' && G.startT > 0 ? Math.min(5, Math.floor((START_T - G.startT) / (START_T / 5)) + 1) : 0;
-  if (G.startT > 0 && G.state === 'play') hudMem.goT = .9; else if (hudMem.goT > 0) hudMem.goT -= 1 / 60;
-  const showGo = !(G.startT > 0) && hudMem.goT > 0 && G.state === 'play';
-  lt.classList.toggle('on', lit > 0 || showGo); lt.classList.toggle('go', showGo);
-  if (lt._lit !== lit) { lt._lit = lit; [...lt.children].forEach((p, i) => p.classList.toggle('lit', i < lit)) }
+  // countdown: a round road sign 3-2-1, then a green GO disc
+  const cd = $('count'), n = G.startT > 0 && G.state === 'play' ? String(Math.ceil(G.startT)) : '';
+  if (cd._n !== n) { cd._n = n; if (n || cd.textContent) { cd.textContent = n || t('go'); cd.className = n ? 'tick' : 'tick go'; void cd.offsetWidth; cd.classList.add('on') } }
   set($('scrapTxt'), fmt(G.scrap)); set($('wreckTxt'), t('wrecks', { n: fmt(G.wrecks) }));
   // scrap bump (+N) and a shake on the hull plate when you take damage
   if (hudMem.scrap != null && G.scrap > hudMem.scrap) { const b = $('scrapBump'), n = $('scrapTxt'); b.textContent = '+' + fmt(G.scrap - hudMem.scrap); b.classList.remove('go'); void b.offsetWidth; b.classList.add('go'); n.classList.add('pop'); clearTimeout(hudMem.pt); hudMem.pt = setTimeout(() => n.classList.remove('pop'), 150) }

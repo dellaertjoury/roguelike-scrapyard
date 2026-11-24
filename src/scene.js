@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import { G, OPTS, AW, AH, EDGE, GATE, gateOpen, CRANE, ground, composeGround, TAU, rnd, clamp, sawLayout, harvesterBlades, PUMP_R, PUMP_RESERVE, PUMP_WARN, canZ } from './game.js';
 import { A } from './assets.js';
 import { t } from './i18n.js';
-import { SLOTS } from './data.js';
+import { ALL_SLOTS } from './data.js';
 import { ECOL } from './data.js';
 
 const host = document.getElementById('gl');
@@ -536,17 +536,17 @@ function partMesh(o, id, l, P) {
       box(5, 3, 4, M.yellow, -4, 4.5, 0, tu);
       g.add(tu); o.turret = tu; break;
     }
-    case 'tesla': {
-      const x = cabX - cabL * .1; cyl(5, 6, 2.5, 8, M.dark, x, roofY + 1.2, 0, g);
+    case 'tesla': { // behind the MG turret
+      const x = cabX - cabL * .48; cyl(5, 6, 2.5, 8, M.dark, x, roofY + 1.2, 0, g);
       const h = 8 + l * 2; cyl(2.2, 2.2, h, 8, M.copper, x, roofY + 2.5 + h / 2, 0, g);
       for (let i = 0; i < 2 + l; i++) { const t = mesh(new THREE.TorusGeometry(3.6, .9, 5, 10), M.chrome); t.rotation.x = Z; t.position.set(x, roofY + 4 + i * (h - 3) / (1 + l), 0); g.add(t) }
       const ball = mesh(new THREE.IcosahedronGeometry(3.2, 0), M.glowBlue, false); ball.position.set(x, roofY + 4 + h, 0); g.add(ball); break;
     }
-    case 'magnet': {
-      const x = cabX - cabL * .25; box(2.4, 10, 2.4, M.yellow, x, roofY + 5, 0, g);
-      const arm = box(20, 2.4, 2.4, M.yellow, x + 8, roofY + 11, 0, g); arm.rotation.z = -.25;
-      box(1, 6, 1, M.dark, x + 17, roofY + 6, 0, g);
-      cyl(5 + l, 5 + l, 2.5, 10, M.red, x + 17, roofY + 2.5, 0, g); break;
+    case 'magnet': { // a little crane arm on the rear bumper, the magnet hanging out behind the car
+      const x = -L / 2 + 4; box(2.4, 12, 2.4, M.yellow, x, top + 6, 0, g);
+      const arm = box(16, 2.4, 2.4, M.yellow, x - 6, top + 12, 0, g); arm.rotation.z = .3;
+      box(1, 6, 1, M.dark, x - 13, top + 7, 0, g);
+      cyl(5 + l, 5 + l, 2.5, 10, M.red, x - 13, top + 3.5, 0, g); break;
     }
     case 'cage': {
       const y = roofY + 2.2, x0 = cabX - cabL * .5, x1 = cabX + cabL * .5, t = 1.4 + l * .3;
@@ -652,13 +652,13 @@ function partMesh(o, id, l, P) {
   return g;
 }
 function syncParts(o, P) {
-  const sig = SLOTS.map(s => G.build[s] ? G.build[s].id + G.build[s].lvl : '-').join('|') + P.car.id;
+  const sig = ALL_SLOTS.map(s => G.build[s] ? G.build[s].id + G.build[s].lvl : '-').join('|') + P.car.id;
   if (o.partSig !== sig) {
     if (o.parts) { o.tilt.remove(o.parts); dispose(o.parts) }
     o.turret = null; o.blades = []; o.pipeGlow = null; o.skirtGlow = null;
     for (const w of o.wheels) w.scale.z = 1;
     const g = new THREE.Group();
-    for (const s of SLOTS) { const b = G.build[s]; if (b) g.add(partMesh(o, b.id, b.lvl, P)) }
+    for (const s of ALL_SLOTS) { const b = G.build[s]; if (b) g.add(partMesh(o, b.id, b.lvl, P)) }
     o.tilt.add(g); o.parts = g; o.partSig = sig;
   }
   for (const b of o.blades) b.rotation.y += .5;

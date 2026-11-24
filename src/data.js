@@ -6,19 +6,19 @@ export const CARS = [
     id: 'hatch', color: '#f2c230', num: 7, len: 44, wid: 24,
     shape: { cabL: .5, cabX: -.08, cabH: .42 },
     st: { maxhp: 70, top: 210, accel: 290, grip: 6.2, turn: 3.4, mass: .8, ram: .8 },
-    build: { roof: ['mg', 1] }, bars: [90, 88, 30, 30]
+    build: { turret: ['mg', 1] }, bars: [90, 88, 30, 30]
   },
   {
     id: 'muscle', color: '#e8553a', num: 23, len: 50, wid: 26,
     shape: { cabL: .36, cabX: -.14, cabH: .34 },
     st: { maxhp: 100, top: 190, accel: 255, grip: 4.8, turn: 2.9, mass: 1.2, ram: 1, driftGain: 1.35 },
-    build: { roof: ['mg', 1] }, bars: [75, 60, 55, 55]
+    build: { turret: ['mg', 1] }, bars: [75, 60, 55, 55]
   },
   {
     id: 'hearse', color: '#56606e', num: 66, len: 60, wid: 28,
     shape: { cabL: .62, cabX: -.12, cabH: .44 },
     st: { maxhp: 150, top: 160, accel: 205, grip: 4.3, turn: 2.6, mass: 2, ram: 1.6, armor: .04 },
-    build: { rear: ['mines', 1], front: ['bullbar', 1] }, bars: [45, 45, 90, 95]
+    build: { turret: ['mg', 1], rear: ['mines', 1], front: ['bullbar', 1] }, bars: [45, 45, 90, 95]
   }
 ];
 
@@ -40,10 +40,12 @@ export const WSTAT = {
 // Buying the same part again levels it up (max), buying another part for that slot replaces it.
 // Weapons (w) give the weapon level; other parts apply f(S, level) to the stats.
 export const SLOTS = ['roof', 'hood', 'front', 'rear', 'trunk', 'sides'];
+// the roof MG sits on its own fixed turret mount, so roof parts never cost you the gun
+export const ALL_SLOTS = ['turret', ...SLOTS];
 export const PARTS = [
-  { id: 'mg', slot: 'roof', w: 'mg', tag: 'Weapon', cost: 18, max: 4 },
+  { id: 'mg', slot: 'turret', w: 'mg', tag: 'Weapon', cost: 18, max: 4 },
   { id: 'tesla', slot: 'roof', w: 'tesla', tag: 'Weapon', cost: 26, max: 4 },
-  { id: 'magnet', slot: 'roof', tag: 'Utility', cost: 10, max: 3, f: (S, l) => { S.magnet += 55 * l } },
+  { id: 'magnet', slot: 'rear', tag: 'Utility', cost: 10, max: 3, f: (S, l) => { S.magnet += 55 * l } },
   { id: 'cage', slot: 'roof', tag: 'Armour', cost: 14, max: 3, f: (S, l) => { S.maxhp += 25 * l; S.armor += .04 * l } },
   { id: 'v8', slot: 'hood', tag: 'Engine', cost: 16, max: 3, f: (S, l) => { S.top *= 1 + .1 * l; S.accel *= 1 + .13 * l } },
   { id: 'flame', slot: 'hood', w: 'flame', tag: 'Weapon', cost: 24, max: 4 },
