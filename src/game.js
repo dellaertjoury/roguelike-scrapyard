@@ -63,23 +63,29 @@ export function makeGround() {
 }
 
 // Ramps: a wedge that rises from (x, y) along direction d to height H over length L.
+// Every ramp faces open ground: from the lip there is at least RUNWAY of clear arena before
+// the tyre wall, and launches are capped (launchCap) so no jump can carry a car past it.
 // The landing zone beyond the lip is kept clear of obstacles.
+export const JUMP_MAX = 400, RUNWAY = JUMP_MAX + 120;
+const wallDist = (x, y, c, s) => Math.min(c > 1e-6 ? (AW - EDGE - x) / c : c < -1e-6 ? (x - EDGE) / -c : 1e9, s > 1e-6 ? (AH - EDGE - y) / s : s < -1e-6 ? (y - EDGE) / -s : 1e9);
 export function makeObs() {
   const ramps = []; let n = 0;
-  while (ramps.length < 2 && n++ < 400) {
+  while (ramps.length < 2 && n++ < 2000) {
     const d = rnd(0, TAU), L = 150, W = 80, H = 30, x = rnd(300, AW - 300), y = rnd(260, AH - 260);
-    const c = Math.cos(d), s = Math.sin(d), cx = x + c * L / 2, cy = y + s * L / 2, lx = x + c * (L + 200), ly = y + s * (L + 200);
+    const c = Math.cos(d), s = Math.sin(d), cx = x + c * L / 2, cy = y + s * L / 2, lx = x + c * (L + 260), ly = y + s * (L + 260);
     if (Math.hypot(cx - AW / 2, cy - AH / 2) < 300) continue;
-    if (lx < 160 || lx > AW - 160 || ly < 160 || ly > AH - 160 || x + c * L < 120 || x + c * L > AW - 120 || y + s * L < 120 || y + s * L > AH - 120) continue;
-    if (ramps.some(r => Math.hypot(r.cx - cx, r.cy - cy) < 600)) continue;
-    ramps.push({ x, y, d, c, s, L, W, H, cx, cy, lx, ly });
+    if (wallDist(x + c * L, y + s * L, c, s) < RUNWAY) continue; // room to fly and land
+    if (wallDist(x, y, -c, -s) < 300) continue;                  // room for a run-up
+    if (Math.min(wallDist(cx, cy, -s, c), wallDist(cx, cy, s, -c)) < 140) continue; // not hugging a side wall
+    if (ramps.some(r => Math.hypot(r.cx - cx, r.cy - cy) < 600 || Math.hypot(r.lx - lx, r.ly - ly) < 360)) continue;
+    ramps.push({ x, y, d, c, s, L, W, H, cx, cy, lx, ly, run: wallDist(x + c * L, y + s * L, c, s) });
   }
   const obs = []; n = 0;
   while (obs.length < 12 && n++ < 600) {
     const o = { x: rnd(220, AW - 220), y: rnd(220, AH - 220), r: rnd(26, 42), k: Math.random() < .6 ? 'tire' : 'hay' };
     if (Math.hypot(o.x - AW / 2, o.y - AH / 2) < 280) continue;
     if (obs.some(b => Math.hypot(b.x - o.x, b.y - o.y) < b.r + o.r + 140)) continue;
-    if (ramps.some(r => Math.hypot(r.cx - o.x, r.cy - o.y) < r.L / 2 + o.r + 110 || Math.hypot(r.lx - o.x, r.ly - o.y) < o.r + 170 || Math.hypot(r.x - r.c * 120 - o.x, r.y - r.s * 120 - o.y) < o.r + 90)) continue;
+    if (ramps.some(r => Math.hypot(r.cx - o.x, r.cy - o.y) < r.L / 2 + o.r + 110 || Math.hypot(r.lx - o.x, r.ly - o.y) < o.r + 190 || Math.hypot(r.x - r.c * 120 - o.x, r.y - r.s * 120 - o.y) < o.r + 90)) continue;
     obs.push(o);
   }
   G.obs = obs; G.ramps = ramps; G.obsVersion++;
@@ -125,7 +131,7 @@ export function start(i) {
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play';
+  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T;
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
   G.banner = { s: ['lap', { n: G.wave }], elite, sub: elite ? ['eliteSub', { name: L().elites[elite][0], hint: L().elites[elite][1] }] : ['tankFull', { l: G.tank }], id: Math.random() };
   if (G.wave === 2) Object.assign(G.banner, { elite: 'thief', sub: ['thiefIntro'] }); // fuel thieves show up from lap 2
@@ -209,16 +215,23 @@ function bankDrift() {
 // A pump opens somewhere on the map; standing in its zone adds 5 L every 3 s until its 20 L reserve
 // is used up, then it closes and another opens 15 s later. Fuel keeps burning while you fill, so a pump
 // is worth exactly its reserve (+20 s of lap) and there is no way to freeze the lap clock.
-export const BURN = 1, PUMP_R = 64, PUMP_TICK = 3, PUMP_GIVE = 5, PUMP_RESERVE = 20, PUMP_RESPAWN = 15, PUMP_FIRST = 8, THIEF_STEAL = 6;
+export const START_T = 3; // 3-2-1 countdown: no fuel burn, spawns, throttle or guns until GO
+// a pump holds 30 L (= 30 s of lap) and pours it straight in while you stand on the pad: 6 L/s, so ~5 s to drain
+export const BURN = 1, PUMP_R = 92, PUMP_FLOW = 6, PUMP_RESERVE = 30, PUMP_RESPAWN = 15, PUMP_FIRST = 8, THIEF_STEAL = 6;
 export const fmtL = l => (Math.round(l * 10) / 10).toLocaleString(lang() === 'en' ? 'en-US' : lang() === 'vls' ? 'nl-BE' : lang());
+// Is (x, y) within m of a ramp's lane: 260 of run-up, the ramp, and the flight/landing strip?
+export function inLane(r, x, y, m) {
+  const dx = x - r.x, dy = y - r.y, u = dx * r.c + dy * r.s, v = -dx * r.s + dy * r.c;
+  return u > -260 - m && u < r.L + JUMP_MAX + 60 + m && Math.abs(v) < r.W / 2 + m;
+}
 function openPump() {
   const P = G.P;
   for (let i = 0; i < 80; i++) {
     const x = rnd(220, AW - 220), y = rnd(220, AH - 220);
     if (Math.hypot(x - P.x, y - P.y) < 350) continue;
     if (G.obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + PUMP_R + 30)) continue;
-    if (G.ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < r.L / 2 + PUMP_R + 60 || Math.hypot(r.lx - x, r.ly - y) < PUMP_R + 120)) continue;
-    G.pump = { x, y, res: PUMP_RESERVE, acc: 0, id: Math.random() }; return;
+    if (G.ramps.some(r => inLane(r, x, y, PUMP_R + 40))) continue;
+    G.pump = { x, y, res: PUMP_RESERVE, got: 0, id: Math.random() }; txt(P.x, P.y - 60, t('pumpOpen'), '#7fdcaa', 22, 1.6); return;
   }
   G.pumpT = 2; // no room right now, try again shortly
 }
@@ -228,17 +241,13 @@ function fuelStep(dt) {
   const filling = pu && G.fuel < G.tank - .5 && P.z < 6 && Math.hypot(P.x - pu.x, P.y - pu.y) < PUMP_R;
   G.filling = !!filling;
   if (filling) {
-    pu.acc += dt;
-    if (pu.acc >= PUMP_TICK) {
-      pu.acc -= PUMP_TICK; const l = Math.min(PUMP_GIVE, pu.res, G.tank - G.fuel); G.fuel += l; pu.res -= l;
-      txt(pu.x, pu.y - 30, t('fFuel', { l: fmtL(l) }), '#7fdcaa', 20, 1.1);
-      if (pu.res <= .01) { G.pump = null; G.pumpT = PUMP_RESPAWN }
-    }
-  } else if (pu) pu.acc = Math.max(0, pu.acc - dt * 2);
+    const l = Math.min(PUMP_FLOW * dt, pu.res, G.tank - G.fuel); G.fuel += l; pu.res -= l; pu.got += l;
+    if (pu.res <= .01) { txt(pu.x, pu.y - 40, t('pumpEmpty'), '#ffc23d', 18, 1.2); G.pump = null; G.pumpT = PUMP_RESPAWN }
+  }
   G.fuel -= dt * (BURN + (P.boost ? 1 : 0));
   for (const c of G.cans) {
     c.t += dt;
-    if (P.z < 10 && Math.hypot(c.x - P.x, c.y - P.y) < P.r + 14 && G.fuel < G.tank) { const l = Math.min(c.l, G.tank - G.fuel); G.fuel += l; c.got = true; txt(c.x, c.y - 30, t('fFuel', { l: fmtL(l) }), '#7fdcaa', 20, 1.1) }
+    if (Math.abs(P.z - canZ(c)) < 14 && Math.hypot(c.x - P.x, c.y - P.y) < P.r + 14 && G.fuel < G.tank) { const l = Math.min(c.l, G.tank - G.fuel); G.fuel += l; c.got = true; txt(c.x, c.y - 30, t('fFuel', { l: fmtL(l) }), '#7fdcaa', 20, 1.1) }
   }
   G.cans = G.cans.filter(c => !c.got);
 }
@@ -333,6 +342,7 @@ function collideStatic(o, r, bounce) {
 }
 /* ---------- ramps & air time ---------- */
 const GRAV = 560;
+export const canZ = c => { const ra = rampAt(c.x, c.y); return ra ? ra.h : 0 };
 function rampAt(x, y) {
   for (const r of G.ramps) {
     const dx = x - r.x, dy = y - r.y, u = dx * r.c + dy * r.s, v = -dx * r.s + dy * r.c;
@@ -351,12 +361,19 @@ function rampStep(o, px, py, dt) {
   }
   if (h > o.z + 8) { rampPushOut(o, ra.r, true); return }
   if (!ra && o.z > 6) {
-    const r = o.rampRef, along = r ? o.vx * r.c + o.vy * r.s : 0;
+    const r = o.rampRef; let along = r ? o.vx * r.c + o.vy * r.s : 0;
+    if (r) { const cap = launchCap(r); if (along > cap) { const k = cap / along; o.vx *= k; o.vy *= k; along = cap } }
     o.air = true; o.airT = 0; o.vz = Math.max(0, along) * .95 + 30; o.rampRef = null; o.crushJump = false;
     return;
   }
   o.z = h; o.rampRef = ra ? ra.r : null;
   o.pitch = ra ? Math.atan2(ra.r.H, ra.r.L) * (Math.cos(o.a) * ra.r.c + Math.sin(o.a) * ra.r.s) : 0;
+}
+// Fastest launch whose jump (flight = v * 2(.95v + 30) / g) still lands before the tyre wall.
+// Nitro still makes jumps longer, just never longer than the open ground in front of the ramp.
+function launchCap(r) {
+  const D = Math.min(JUMP_MAX, r.run - 90);
+  return Math.max(120, (-60 + Math.sqrt(3600 + 7.6 * GRAV * D)) / 3.8);
 }
 // Ramps are solid from the back and sides. Push a car that is inside out through the nearest
 // face (back or side) and kill its velocity into that face. Also used after any other push.
@@ -508,14 +525,16 @@ export function update(dt) {
   }
   if (G.state !== 'play') return;
   const P = G.P, S = G.S, W = G.W, CD = G.CD, drift = G.drift;
+  if (G.startT > 0) G.startT = Math.max(0, G.startT - dt);
+  const live = G.startT <= 0;
 
   /* driving: split velocity into forward and lateral; grip eats lateral, handbrake drops grip */
   const fx = Math.cos(P.a), fy = Math.sin(P.a);
   let fwd = P.vx * fx + P.vy * fy, lat = -P.vx * fy + P.vy * fx;
   P.stun = Math.max(0, (P.stun || 0) - dt);
   const gr = !P.air; // no throttle, brakes or grip while flying
-  const up = K('KeyW', 'ArrowUp') && P.stun <= 0 && gr, dn = K('KeyS', 'ArrowDown') && gr, hb = K('Space') && gr, lt = K('KeyA', 'ArrowLeft'), rt = K('KeyD', 'ArrowRight');
-  P.boost = K('ShiftLeft', 'ShiftRight') && P.nitro > .02;
+  const up = K('KeyW', 'ArrowUp') && P.stun <= 0 && gr && live, dn = K('KeyS', 'ArrowDown') && gr, hb = K('Space') && gr, lt = K('KeyA', 'ArrowLeft'), rt = K('KeyD', 'ArrowRight');
+  P.boost = K('ShiftLeft', 'ShiftRight') && P.nitro > .02 && live;
   const bm = P.boost ? 1.8 * S.nitroPow : 1, top = S.top * (P.boost ? 1.35 * S.nitroPow : 1);
   if (P.boost) { P.nitro = Math.max(0, P.nitro - dt * .45); puff(P.x - fx * P.len * .55, P.y - fy * P.len * .55, 2, { c: 0x7fd4ff, glow: true, a: P.a + Math.PI, sp: .25, s0: 90, s1: 180, l0: .12, l1: .25, z0: 3, z1: 5, z: 8 }) }
   if (up) fwd += S.accel * bm * dt;
@@ -550,7 +569,7 @@ export function update(dt) {
     G.groundDirty = true;
     const back = Math.atan2(-P.vy, -P.vx), sparkC = drift.heat > .66 ? 0xff5a1f : drift.heat > .33 ? 0xff9a2a : 0xffd27a;
     for (const w of wl) {
-      if (Math.random() < (isDrift ? .9 : .3)) puff(w[0], w[1], 1, { c: isDrift ? 0xf4f0e8 : 0xdccbad, s0: 5, s1: 40, l0: .6, l1: isDrift ? 1.5 : .9, z0: isDrift ? 5 : 3, z1: isDrift ? 9 : 5, grow: isDrift ? 18 : 9, drag: 1.5, z: 4, vz0: 8, vz1: 30, vx: -P.vx * .15, vy: -P.vy * .15 });
+      if (Math.random() < (isDrift ? .5 : .3)) puff(w[0], w[1], 1, { c: isDrift ? 0xf4f0e8 : 0xdccbad, s0: 5, s1: 40, l0: .5, l1: isDrift ? 1.05 : .9, z0: isDrift ? 4 : 3, z1: isDrift ? 7 : 5, grow: isDrift ? 12 : 9, drag: 1.5, z: 4, vz0: 8, vz1: 30, vx: -P.vx * .15, vy: -P.vy * .15 });
       if (isDrift && Math.random() < .45 + drift.heat * .55) puff(w[0], w[1], 1, { c: sparkC, glow: true, k: 's', a: back, sp: .7, s0: 60, s1: 200, l0: .12, l1: .3, z: 3, vz0: 20, vz1: 90, grav: 400 });
     }
   }
@@ -574,9 +593,8 @@ export function update(dt) {
   const rateMul = S.rate * (1 + drift.heat * .8);
 
   /* waves */
-  fuelStep(dt);
-  G.spawnT -= dt;
-  if (G.spawnT <= 0 && G.fuel > 2) {
+  if (live) { fuelStep(dt); G.spawnT -= dt }
+  if (live && G.spawnT <= 0 && G.fuel > 2) {
     // early laps are calm: one car every ~3 s and a low cap, ramping up from lap 4
     G.spawnT = Math.max(.5, 3.2 - G.wave * .3) * rnd(.8, 1.2);
     const n = 1 + Math.floor((G.wave - 1) / 3) + (G.wave >= 4 && Math.random() < .3 ? 1 : 0), cap = Math.min(60, 4 + G.wave * 3);
@@ -600,7 +618,8 @@ export function update(dt) {
     let want = e.type === 'rust' ? Math.atan2(P.y + P.vy * .35 - e.y, P.x + P.vx * .35 - e.x) : Math.atan2(dy, dx);
     if (e.type === 'thief') { // siphon: grab fuel on contact, run off, come back for more
       if (e.flee > 0) { e.flee -= dt; want = Math.atan2(-dy, -dx); spd *= 1.15 }
-      else if (d < e.r + P.r + 10 && P.z < 10 && G.fuel > 0) {
+      else if (d < e.r + P.r + 10 && P.z < 10 && G.fuel > 0 && G.time > (G.stealCd || 0)) {
+        G.stealCd = G.time + 1.2; // one siphon at a time, even when a pack of thieves pins you
         const l = Math.min(THIEF_STEAL, G.fuel); G.fuel -= l; e.stolen = (e.stolen || 0) + l; e.flee = 3;
         txt(P.x, P.y - 40, t('fStolen', { l: fmtL(l) }), '#ff6b5a', 18, 1);
         puff(P.x, P.y, 8, { c: 0x9fe070, glow: true, s0: 40, s1: 140, l0: .3, l1: .6, z0: 2, z1: 4, z: 10, vz0: 20, vz1: 60 });
@@ -668,7 +687,7 @@ export function update(dt) {
   for (const e of E) rampSolid(e); rampSolid(P);
 
   /* weapons */
-  if (W.mg) {
+  if (W.mg && live) {
     CD.mg -= dt; const t = nearest(P.x, P.y, 520);
     if (t) P.gunA += angDiff(Math.atan2(t.y - P.y, t.x - P.x), P.gunA) * Math.min(1, dt * 14);
     if (t && CD.mg <= 0) {
@@ -680,7 +699,7 @@ export function update(dt) {
       puff(P.x + Math.cos(P.gunA) * 20, P.y + Math.sin(P.gunA) * 20, 2, { c: 0xffe08c, glow: true, a: P.gunA, sp: .3, s0: 60, s1: 160, l0: .05, l1: .1, z0: 3, z1: 5, z: 22 });
     }
   }
-  if (W.mines) {
+  if (W.mines && live) {
     CD.mines -= dt;
     if (CD.mines <= 0 && sp > 25) { CD.mines = (4.6 - .5 * W.mines) / rateMul; G.mines.push({ x: P.x - fx * P.len * .6, y: P.y - fy * P.len * .6, arm: .5, t: 0 }); if (G.mines.length > 14) G.mines.shift() }
   }
@@ -692,7 +711,7 @@ export function update(dt) {
     }
   }
   G.mines = G.mines.filter(m => !m.dead);
-  if (W.tesla) {
+  if (W.tesla && live) {
     CD.tesla -= dt;
     if (CD.tesla <= 0) {
       let t = nearest(P.x, P.y, 270);
@@ -702,7 +721,7 @@ export function update(dt) {
       }
     }
   }
-  if (W.flame) {
+  if (W.flame && live) {
     CD.flame -= dt; const R = 170 + W.flame * 20;
     const inCone = e => { const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy); return !e.dead && d < R + e.r && (dx * fx + dy * fy) / (d || 1) > .8 };
     if (E.some(inCone)) {

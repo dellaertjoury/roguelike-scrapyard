@@ -1,5 +1,5 @@
 // Static game data: cars, upgrades, weapons, enemy palette. Text lives in i18n.js.
-// Speeds are in world units per second (10 units ≈ 1 metre, so 190 ≈ 68 km/h).
+// Speeds are in world units per second. The HUD shows them as km/h × 0.6 (190 → 114 km/h) so the speedo reads like a race car.
 
 export const CARS = [
   {
@@ -74,22 +74,23 @@ export const PACKS = [
   { id: 'f1', cars: ['f1', 'safety'], colors: ['#e10600', '#15151e'] }
 ];
 
+// tag colours: weapons red, armour blue, ram yellow; the rest green (handling, utility, repair) or purple (engine, drift)
 export const TAGC = {
-  Weapon: '#ff7a52', 'Weapon mod': '#ffa261', Engine: '#ffc23d', Handling: '#8fd0ea',
-  Armour: '#c9ccd2', Ram: '#ff6b5a', Drift: '#ffb347', Utility: '#a8d88a', Repair: '#7fdcaa'
+  Weapon: '#ff4d4d', 'Weapon mod': '#ff7f7f', Armour: '#4da3ff', Ram: '#ffd23d',
+  Engine: '#b57cff', Drift: '#d98cff', Handling: '#5fd88a', Utility: '#8fe06a', Repair: '#3fd6a8'
 };
 
 export const ECOL = ['#7c9a5e', '#a8452f', '#4f7a92', '#b49a5a', '#7a62a0', '#8a8a82', '#b8662e', '#3f7a5f', '#c2b8a0', '#5a6fb0'];
 
 // Enemy archetypes scale with lap number n.
 export const ENEMY = n => ({
-  rust:  { r: 17, len: 42, wid: 22, hp: 16 + n * 7, spd: 95 + n * 3, dmg: 8 + n * .8, mass: .9, turn: 2.4, sc: 1 },
-  spit:  { r: 17, len: 40, wid: 22, hp: 20 + n * 6, spd: 90 + n * 2, dmg: 6 + n * .6, mass: .8, turn: 2.6, sc: 2 },
+  rust:  { r: 17, len: 42, wid: 22, hp: 22 + n * 9, spd: 95 + n * 3, dmg: 8 + n * .8, mass: .9, turn: 2.4, sc: 1 },
+  spit:  { r: 17, len: 40, wid: 22, hp: 27 + n * 8, spd: 90 + n * 2, dmg: 6 + n * .6, mass: .8, turn: 2.6, sc: 2 },
   // fuel thief: fast, weak, steals fuel on contact, then flees; drops it back as a jerrycan when wrecked
-  thief: { r: 16, len: 40, wid: 22, hp: 24 + n * 8, spd: 140 + n * 4, dmg: 3, mass: .7, turn: 3, sc: 2, col: '#5fbf4a' },
-  brute: { r: 28, len: 62, wid: 32, hp: 80 + n * 20, spd: 70 + n * 2, dmg: 18 + n * 1.5, mass: 2.6, turn: 1.6, sc: 4 },
+  thief: { r: 16, len: 40, wid: 22, hp: 32 + n * 10, spd: 180 + n * 5, dmg: 3, mass: .7, turn: 3, sc: 2, col: '#5fbf4a' },
+  brute: { r: 28, len: 62, wid: 32, hp: 110 + n * 27, spd: 70 + n * 2, dmg: 18 + n * 1.5, mass: 2.6, turn: 1.6, sc: 4 },
   // elites: one every 5 laps, in this order, each with its own special move
-  harvester: { r: 46, len: 112, wid: 56, hp: 650 * (n / 5) + n * 60, spd: 80, dmg: 30 + n, mass: 8, turn: 1.3, sc: 40, elite: true, col: '#e0b040' },
-  monster:   { r: 36, len: 72, wid: 48, hp: 560 * (n / 5) + n * 55, spd: 88, dmg: 26 + n, mass: 6, turn: 1.7, sc: 40, elite: true, col: '#7a3ab0' },
-  tow:       { r: 36, len: 88, wid: 38, hp: 520 * (n / 5) + n * 50, spd: 96, dmg: 22 + n, mass: 5, turn: 1.6, sc: 40, elite: true, col: '#e8a020' }
+  harvester: { r: 46, len: 112, wid: 56, hp: 850 * (n / 5) + n * 80, spd: 80, dmg: 30 + n, mass: 8, turn: 1.3, sc: 40, elite: true, col: '#e0b040' },
+  monster:   { r: 36, len: 72, wid: 48, hp: 730 * (n / 5) + n * 72, spd: 88, dmg: 26 + n, mass: 6, turn: 1.7, sc: 40, elite: true, col: '#7a3ab0' },
+  tow:       { r: 36, len: 88, wid: 38, hp: 680 * (n / 5) + n * 65, spd: 96, dmg: 22 + n, mass: 5, turn: 1.6, sc: 40, elite: true, col: '#e8a020' }
 });

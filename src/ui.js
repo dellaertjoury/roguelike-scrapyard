@@ -1,5 +1,5 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
-import { G, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
+import { G, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
 import { CARS, PART, SLOTS, TAGC, PACKS } from './data.js';
 import { LANGS, t, L, lang, setLang } from './i18n.js';
 import { A } from './assets.js';
@@ -28,8 +28,7 @@ export function hideLoading() { clearInterval(tipTimer); const el = $('loading')
 /* ---------- static text, icons, language ---------- */
 export function applyStatic() {
   document.title = t('title');
-  for (const [id, key] of [['gface', 'fuel-gauge'], ['needle', 'fuel-needle']]) { const src = A.ui[key]; if (src) { $(id).classList.add('art'); $(id).style.setProperty('--art', `url(${src})`) } }
-  if (A.ui['fuel-gauge'] && A.ui['fuel-needle']) $('gface').parentElement.classList.add('art');
+  buildCluster();
   if (A.ui.pump) pbadge.src = A.ui.pump;
   for (const el of document.querySelectorAll('[data-i18n]')) set(el, t(el.dataset.i18n));
   for (const el of document.querySelectorAll('[data-ui]')) {
@@ -116,13 +115,15 @@ export function renderShop() {
   set($('lockHint'), t('lockHint'));
   renderBlueprint();
   const { S, P } = G, st = L().st;
-  const rows = [[st[0], `${Math.ceil(P.hp)} / ${S.maxhp}`], [st[1], `${Math.round(S.top * .36)} ${t('kmh').toLowerCase()}`], [st[2], S.grip.toFixed(1)],
+  const rows = [[st[0], `${Math.ceil(P.hp)} / ${S.maxhp}`], [st[1], `${Math.round(S.top * KMH)} ${t('kmh').toLowerCase()}`], [st[2], S.grip.toFixed(1)],
     [st[3], Math.round(Math.min(.7, S.armor) * 100) + '%'], [st[4], (S.ram * S.mass).toFixed(2) + '×'], [st[5], S.ramGuard.toFixed(2) + '×'],
     [st[6], S.dmg.toFixed(2) + '×'], [st[7], S.rate.toFixed(2) + '×'], [st[8], S.regen.toFixed(1) + ' /s'], [st[9], fmt(S.magnet)]];
   $('build').innerHTML = `<h3>${esc(L().cars[P.car.id][0])}</h3>${rows.map(([a, b]) => `<div class="stat"><span>${esc(a)}</span><span>${esc(b)}</span></div>`).join('')}`;
 }
 export function openShop() {
-  if (A.garageBg) $('shop').style.backgroundImage = `linear-gradient(rgba(24,26,30,.75),rgba(24,26,30,.9)),url(${A.garageBg.src})`;
+  // painted garage art if there is one, else the arena art, dimmed so the cards stay readable
+  const bg = A.garageBg || A.menuBg;
+  if (bg) $('shop').style.backgroundImage = `linear-gradient(rgba(20,21,25,${A.garageBg ? '.72' : '.86'}),rgba(20,21,25,.94)),url(${bg.src})`;
   renderShop(); show('shop');
 }
 
@@ -162,6 +163,96 @@ export function wire(onStart, onMenu, onLang) {
   $('resume').onclick = () => { G.state = 'play'; show(null) };
 }
 
+
+/* ---------- gauge cluster (bottom-left) ----------
+   One SVG in a 330×250 box, after a real tach/fuel/nitro cluster:
+   - speedo: 270° sweep 0–240 km/h, cream ticks on a rusty steel bezel, yellow/red zone at the top end;
+     the lap is shown in the gear window above the hub, the digital speed below it
+   - fuel: the painted half-dial (assets/ui/fuel-gauge.png + fuel-needle.png) overlapping top-left,
+     a procedural half-dial if that art is missing; litres underneath
+   - nitro: a round pod overlapping bottom-right with 8 LED segments
+   Optional full-face art: assets/ui/cluster-speedo.png and cluster-nitro.png (square, transparent). */
+const SPD_MAX = 240, SC = { x: 192, y: 138, r: 100 }, FU = { x: 72, y: 70, w: 150 }, NO = { x: 290, y: 208, r: 40 };
+const KMH = .6; // display factor: game units/s → km/h
+const ang = v => -135 + Math.max(0, Math.min(1, v / SPD_MAX)) * 270;
+const pol = (cx, cy, r, a) => [cx + r * Math.sin(a * Math.PI / 180), cy - r * Math.cos(a * Math.PI / 180)];
+const arc = (cx, cy, r, a0, a1) => { const [x0, y0] = pol(cx, cy, r, a0), [x1, y1] = pol(cx, cy, r, a1); return `M${x0.toFixed(1)} ${y0.toFixed(1)}A${r} ${r} 0 ${a1 - a0 > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}` };
+const bolts = (cx, cy, r, n, a0 = 45) => Array.from({ length: n }, (_, i) => { const [x, y] = pol(cx, cy, r, a0 + i * 360 / n); return `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="#8d8a84" stroke="#2a2826" stroke-width="1.5"/>` }).join('');
+const rust = (cx, cy, r, n, seed) => { let o = '', z = seed; const rn = () => (z = (z * 9301 + 49297) % 233280) / 233280; for (let i = 0; i < n; i++) { const [x, y] = pol(cx, cy, r * (.93 + rn() * .06), rn() * 360); o += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(1.5 + rn() * 3).toFixed(1)}" fill="#a0522d" opacity=".55"/>` } return o };
+let CL = null;
+function buildCluster() {
+  const el = $('cluster'); if (!el) return;
+  const cx = SC.x, cy = SC.y, R = SC.r;
+  let ticks = '', nums = '';
+  for (let v = 0; v <= SPD_MAX; v += 10) {
+    const a = ang(v), big = v % 40 === 0, [x0, y0] = pol(cx, cy, R - 12, a), [x1, y1] = pol(cx, cy, R - (big ? 26 : 19), a);
+    ticks += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${v >= 200 ? '#e24a32' : '#efe3c8'}" stroke-width="${big ? 4 : 2}" stroke-linecap="round"/>`;
+    if (big) { const [tx, ty] = pol(cx, cy, R - 40, a); nums += `<text x="${tx.toFixed(1)}" y="${(ty + 5).toFixed(1)}" text-anchor="middle" font-size="15" fill="#efe3c8">${v}</text>` }
+  }
+  const sArt = A.ui['cluster-speedo'], nArt = A.ui['cluster-nitro'], fArt = A.ui['fuel-gauge'], nd = A.ui['fuel-needle'];
+  const speedo = sArt ? `<image href="${sArt}" x="${cx - R - 8}" y="${cy - R - 8}" width="${2 * R + 16}" height="${2 * R + 16}"/>` : `
+    <circle cx="${cx}" cy="${cy}" r="${R + 6}" fill="#3b3936" stroke="#1d1c1a" stroke-width="4"/>
+    <circle cx="${cx}" cy="${cy}" r="${R - 2}" fill="#1c1b19" stroke="#55514b" stroke-width="3"/>
+    ${rust(cx, cy, R + 3, 14, 7)}${bolts(cx, cy, R + 1, 4, 0)}
+    <path d="${arc(cx, cy, R - 15, ang(170), ang(200))}" stroke="#ffc23d" stroke-width="9" fill="none"/>
+    <path d="${arc(cx, cy, R - 15, ang(200), ang(SPD_MAX))}" stroke="#e24a32" stroke-width="9" fill="none"/>
+    ${ticks}${nums}`;
+  // lap in the gear window under the hub, digital speed below it (between the 0 and 240 labels)
+  const gear = `<rect class="gearBox" x="${cx - 22}" y="${cy + 17}" width="44" height="38" rx="6" fill="#15130f" stroke="#55514b" stroke-width="2"/>
+    <text class="lcd" x="${cx}" y="${cy + 26}" text-anchor="middle" font-size="7" fill="#c3c7cf" letter-spacing=".8" id="clLapLbl"></text>
+    <text class="lcd" x="${cx}" y="${cy + 49}" text-anchor="middle" font-size="22" fill="#ffc23d" id="clLap">1</text>`;
+  const digits = `<text class="lcd" x="${cx}" y="${cy + 79}" text-anchor="middle" font-size="22" fill="#fff" id="clSpd">0</text>
+    <text x="${cx}" y="${cy + 90}" text-anchor="middle" font-size="7.5" fill="#c3c7cf" letter-spacing="1.5">${esc(t('kmh'))}</text>
+    <text class="lcd" x="${cx}" y="${cy - 30}" text-anchor="middle" font-size="12" fill="#e8553a" id="clAng"></text>`;
+  const sNeedle = `<g id="clSN" transform="rotate(-135 ${cx} ${cy})"><path class="sNeedle" d="M${cx - 3.5} ${cy + 14}L${cx - 1.2} ${cy - R + 16}L${cx + 1.2} ${cy - R + 16}L${cx + 3.5} ${cy + 14}Z" fill="#e24a32" stroke="#000" stroke-opacity=".35"/></g>
+    <circle cx="${cx}" cy="${cy}" r="12" fill="#2a2826" stroke="#8d8a84" stroke-width="3"/>`;
+  // fuel half-dial: hub at 50% / 87% of the painted face (600×327)
+  const fw = FU.w, fh = fw * 327 / 600, fx = FU.x - fw / 2, fy = FU.y - fh * .87;
+  let fuel;
+  if (fArt) fuel = `<image href="${fArt}" x="${fx}" y="${fy}" width="${fw}" height="${fh}"/>`;
+  else {
+    const fr = fh * .78;
+    fuel = `<path d="M${FU.x - fw / 2} ${FU.y + 8}A${fw / 2} ${fw / 2} 0 0 1 ${FU.x + fw / 2} ${FU.y + 8}Z" fill="#3b3936" stroke="#1d1c1a" stroke-width="3"/>
+      <path d="${arc(FU.x, FU.y, fr - 6, -84, -50)}" stroke="#e24a32" stroke-width="10" fill="none"/><path d="${arc(FU.x, FU.y, fr - 6, -50, 30)}" stroke="#ffc23d" stroke-width="10" fill="none"/><path d="${arc(FU.x, FU.y, fr - 6, 30, 84)}" stroke="#7fbf4a" stroke-width="10" fill="none"/>
+      <text x="${FU.x - fw / 2 + 18}" y="${FU.y + 2}" font-size="14" fill="#efe3c8">E</text><text x="${FU.x + fw / 2 - 28}" y="${FU.y + 2}" font-size="14" fill="#efe3c8">F</text>`;
+  }
+  const nh = fh * .56, nw = nh * 94 / 400;
+  const fNeedle = nd ? `<g id="clFN" transform="rotate(-84 ${FU.x} ${FU.y})"><image href="${nd}" x="${FU.x - nw / 2}" y="${FU.y - nh * .885}" width="${nw}" height="${nh}"/></g>`
+    : `<g id="clFN" transform="rotate(-84 ${FU.x} ${FU.y})"><path d="M${FU.x - 3} ${FU.y}L${FU.x} ${FU.y - nh}L${FU.x + 3} ${FU.y}Z" fill="#e24a32"/></g><circle cx="${FU.x}" cy="${FU.y}" r="7" fill="#2a2826" stroke="#8d8a84" stroke-width="2"/>`;
+  const fuelTxt = `<rect x="${FU.x - 34}" y="${FU.y + 14}" width="68" height="24" rx="6" fill="#15130f" stroke="#55514b" stroke-width="2"/>
+    <text class="lcd fuelL" x="${FU.x}" y="${FU.y + 32}" text-anchor="middle" font-size="16" fill="#efe3c8" id="clFuel">60 L</text>
+    <path class="fuelRing" d="M${FU.x - fw / 2 - 3} ${FU.y + 8}A${fw / 2 + 3} ${fw / 2 + 3} 0 0 1 ${FU.x + fw / 2 + 3} ${FU.y + 8}" fill="none" stroke-width="4"/>`;
+  // nitro pod: 8 LED bars, the bottom two red
+  let leds = '';
+  for (let i = 0; i < 8; i++) leds += `<rect class="led" x="${NO.x - 6}" y="${NO.y + 24 - i * 6.4}" width="22" height="4.6" rx="1.5" fill="#353d42"/>`;
+  const nitro = (nArt ? `<image href="${nArt}" x="${NO.x - NO.r - 4}" y="${NO.y - NO.r - 4}" width="${2 * NO.r + 8}" height="${2 * NO.r + 8}"/>` : `
+    <circle cx="${NO.x}" cy="${NO.y}" r="${NO.r + 4}" fill="#3b3936" stroke="#1d1c1a" stroke-width="4"/>${rust(NO.x, NO.y, NO.r + 2, 6, 3)}
+    <circle cx="${NO.x}" cy="${NO.y}" r="${NO.r - 6}" fill="#111" stroke="#55514b" stroke-width="2"/>${bolts(NO.x, NO.y, NO.r, 4, 45)}`) + `
+    <circle class="nosGlow" cx="${NO.x}" cy="${NO.y}" r="${NO.r + 6}" fill="none" stroke="#5fc8f0" stroke-width="4" style="filter:drop-shadow(0 0 6px #5fc8f0)"/>
+    <text x="${NO.x - 13}" y="${NO.y + 13}" font-size="9" fill="#5fc8f0" transform="rotate(-90 ${NO.x - 13} ${NO.y + 13})" letter-spacing="1">NOS</text>${leds}`;
+  el.innerHTML = `<svg viewBox="0 0 330 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${speedo}${gear}${digits}${sNeedle}${fuel}${fNeedle}${fuelTxt}${nitro}</svg>`;
+  CL = { sn: $('clSN'), fn: $('clFN'), spd: $('clSpd'), lap: $('clLap'), ang: $('clAng'), fuel: $('clFuel'), leds: [...el.querySelectorAll('.led')], el, lastLap: 0, s: -135 };
+  set($('clLapLbl'), t('lapShort'));
+}
+function clusterHud(P) {
+  if (!CL) return;
+  const kmh = Math.round(P.sp * KMH);
+  CL.s += (ang(kmh) - CL.s) * .35; // a touch of needle inertia
+  CL.sn.setAttribute('transform', `rotate(${CL.s.toFixed(1)} ${SC.x} ${SC.y})`);
+  set(CL.spd, String(kmh));
+  set(CL.lap, String(G.wave));
+  if (CL.lastLap !== G.wave) { CL.lastLap = G.wave; CL.el.classList.remove('shift'); void CL.el.offsetWidth; CL.el.classList.add('shift') }
+  set(CL.ang, P.air ? `↑ ${P.airT.toFixed(1)}s` : P.slipDeg > 12 ? `${P.slipDeg}°` : '');
+  const f = Math.max(0, G.fuel) / G.tank;
+  CL.fn.setAttribute('transform', `rotate(${(-84 + f * 168).toFixed(1)} ${FU.x} ${FU.y})`);
+  set(CL.fuel, (G.fuel >= 10 ? String(Math.ceil(G.fuel)) : fmtL(Math.max(0, G.fuel))) + ' L');
+  CL.el.classList.toggle('low', G.fuel < 10 && !G.filling);
+  CL.el.classList.toggle('filling', !!G.filling);
+  CL.el.classList.toggle('boost', !!P.boost);
+  const lit = Math.round(P.nitro * 8);
+  CL.leds.forEach((l, i) => { const c = i < lit ? (i < 2 ? '#e24a32' : P.boost ? '#bdf0ff' : '#5fc8f0') : '#353d42'; if (l._c !== c) { l._c = c; l.setAttribute('fill', c) } });
+}
+
 /* ---------- HUD ---------- */
 let bannerId = null;
 export function hud() {
@@ -169,20 +260,12 @@ export function hud() {
   $('hpBar').style.width = (P.hp / S.maxhp * 100) + '%';
   $('hpBar').classList.toggle('low', P.hp / S.maxhp < .3);
   set($('hpTxt'), `${Math.ceil(P.hp)} / ${S.maxhp}`);
-  $('nitroBar').style.width = (P.nitro * 100) + '%';
-  $('nitroBar').classList.toggle('on', P.boost);
   $('heatBar').style.width = (drift.heat * 100) + '%';
   set($('heatTxt'), drift.heat > .05 ? t('heatPct', { p: Math.round(drift.heat * 80) }) : t('heat'));
-  set($('waveLbl'), t('lap', { n: G.wave }));
-  // fuel gauge: needle from E (-90°) to F (+90°)
-  const f = Math.max(0, G.fuel) / G.tank;
-  $('needle').style.setProperty('--rot', `${(A.ui['fuel-needle'] ? -84 : -90) + f * (A.ui['fuel-needle'] ? 168 : 180)}deg`);
-  set($('fuelTxt'), G.fuel >= 10 ? String(Math.ceil(G.fuel)) : fmtL(Math.max(0, G.fuel)));
-  $('fuelPnl').classList.toggle('low', G.fuel < 10 && !G.filling);
-  $('fuelPnl').classList.toggle('filling', !!G.filling);
+  clusterHud(P);
+  const cd = $('count'), n = G.startT > 0 ? String(Math.ceil(G.startT)) : '';
+  if (cd._n !== n) { cd._n = n; if (n || cd.textContent) { cd.textContent = n || t('go'); cd.className = n ? 'tick' : 'tick go'; void cd.offsetWidth; cd.classList.add('on') } }
   set($('scrapTxt'), fmt(G.scrap)); set($('wreckTxt'), t('wrecks', { n: fmt(G.wrecks) }));
-  set($('spdTxt'), String(Math.round(P.sp * .36)));
-  set($('angTxt'), P.air ? `↑ ${P.airT.toFixed(1)}s` : `${P.slipDeg}°`);
   set($('driftNum'), fmt(drift.pts)); set($('driftMul'), `×${drift.mult.toFixed(1)}`);
   $('driftPnl').classList.toggle('hot', drift.on && drift.pts > 5);
   const elite = G.enemies.find(e => e.elite);
@@ -201,9 +284,33 @@ const fx = $('fx'), pool = [], arrows = [];
 for (let i = 0; i < 40; i++) { const d = document.createElement('div'); fx.appendChild(d); pool.push(d) }
 for (let i = 0; i < 14; i++) { const d = document.createElement('i'); d.className = 'edge'; fx.appendChild(d); arrows.push(d) }
 const pbadge = document.createElement('img'); pbadge.className = 'pbadge'; pbadge.alt = ''; fx.appendChild(pbadge);
+// tag over the gas pump: litres left as a bar, and what you gained while filling
+// health bars over damaged enemies
+const hbars = Array.from({ length: 60 }, () => { const d = document.createElement('div'); d.className = 'hbar'; d.innerHTML = '<i></i>'; fx.appendChild(d); return d });
+const ptag = document.createElement('div'); ptag.className = 'ptag'; ptag.innerHTML = '<b></b><i><u></u></i>'; fx.appendChild(ptag);
 export function texts(project) {
-  let i = 0, k = 0; pbadge.style.display = 'none';
+  let i = 0, k = 0, h = 0; pbadge.style.display = 'none'; ptag.style.display = 'none';
   if (project) {
+    for (const e of G.enemies) {
+      if (h >= hbars.length) break;
+      if (e.dead || e.hp >= e.max) continue;
+      const p = project(e.x, e.y, (e.z || 0) + e.r + 26); if (!p.ok) continue;
+      const b = hbars[h++], f = Math.max(0, e.hp / e.max);
+      b.style.display = 'block'; b.style.width = (e.elite ? 70 : e.type === 'brute' ? 44 : 32) + 'px';
+      b.style.transform = `translate(${p.x | 0}px,${p.y | 0}px) translate(-50%,-50%)`;
+      const c = e.elite ? '#e0b040' : f > .5 ? '#7fdc6a' : f > .25 ? '#ffc23d' : '#ff4a30';
+      if (b._f !== f) { b._f = f; b.firstChild.style.width = (f * 100).toFixed(1) + '%'; b.firstChild.style.background = c }
+    }
+    const pu = G.pump;
+    if (pu) {
+      const p = project(pu.x, pu.y, 62);
+      if (p.ok) {
+        ptag.style.display = 'block'; ptag.style.transform = `translate(${p.x}px,${p.y}px) translate(-50%,-100%)`;
+        ptag.classList.toggle('on', !!G.filling);
+        set(ptag.firstChild, G.filling || pu.got > .5 ? t('pumpGot', { l: Math.round(pu.got) }) : `${Math.ceil(pu.res)} L`);
+        ptag.querySelector('u').style.width = (pu.res / PUMP_RESERVE * 100) + '%';
+      }
+    }
     for (const tx of G.texts) {
       if (i >= pool.length) break;
       const p = project(tx.x, tx.y, 40 + (1 - tx.life / tx.max) * 30); if (!p.ok) continue;
@@ -228,6 +335,7 @@ export function texts(project) {
       if (el === 'pump' && pbadge.src) { const len = Math.hypot(dx, dy) || 1; pbadge.style.display = 'block'; pbadge.style.transform = `translate(${cx + dx * sc - dx / len * 34}px,${cy + dy * sc - dy / len * 34}px) translate(-50%,-50%)` }
     }
   }
+  for (; h < hbars.length; h++) hbars[h].style.display = 'none';
   for (; i < pool.length; i++) pool[i].style.display = 'none';
   for (; k < arrows.length; k++) arrows[k].style.display = 'none';
 }

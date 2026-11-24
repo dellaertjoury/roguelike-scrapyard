@@ -1,7 +1,7 @@
 // Low-poly three.js renderer. Reads the simulation state (G) and draws it.
 // Sim (x, y) maps to world (x, z); y is up.
 import * as THREE from 'three';
-import { G, AW, AH, EDGE, TAU, ground, rnd, clamp, sawLayout, harvesterBlades, PUMP_R, PUMP_TICK, PUMP_RESERVE } from './game.js';
+import { G, AW, AH, EDGE, TAU, ground, rnd, clamp, sawLayout, harvesterBlades, PUMP_R, PUMP_RESERVE, canZ } from './game.js';
 import { A } from './assets.js';
 import { SLOTS } from './data.js';
 import { ECOL } from './data.js';
@@ -213,6 +213,22 @@ function buildRamp(r) {
   g.position.set(r.x, 0, r.y); g.rotation.y = -r.d;
   return g;
 }
+// Painted hay bales (assets/obstacles/hay-side.jpg + hay-top.png): one instanced, textured mesh
+// kept outside the vertex-coloured batch. Without the art the bales are plain flat-shaded cylinders.
+let hayMats = null, hayInst = null;
+const hayArt = () => A.obs && A.obs.side && A.obs.top;
+function buildHay() {
+  if (hayInst) { scene.remove(hayInst); hayInst.geometry.dispose(); hayInst.dispose(); hayInst = null }
+  const bales = G.obs.filter(o => o.k !== 'tire'); if (!hayArt() || !bales.length) return;
+  if (!hayMats) {
+    const tex = (img, rep) => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.repeat.set(rep, 1); t.needsUpdate = true; return t };
+    hayMats = [new THREE.MeshLambertMaterial({ map: tex(A.obs.side, 3) }), new THREE.MeshLambertMaterial({ map: tex(A.obs.top, 1) }), new THREE.MeshLambertMaterial({ map: tex(A.obs.top, 1) })];
+  }
+  hayInst = new THREE.InstancedMesh(new THREE.CylinderGeometry(1, 1, 28, 18), hayMats, bales.length);
+  const m = new THREE.Matrix4(), q = new THREE.Quaternion(), up = new THREE.Vector3(0, 1, 0);
+  bales.forEach((o, i) => { q.setFromAxisAngle(up, (o.x * 7.3 + o.y) % 6.28); m.compose(new THREE.Vector3(o.x, 14, o.y), q, new THREE.Vector3(o.r, 1, o.r)); hayInst.setMatrixAt(i, m) });
+  hayInst.castShadow = hayInst.receiveShadow = true; scene.add(hayInst);
+}
 function buildObstacles() {
   dispose(obsGroup); obsGroup.clear();
   for (const o of G.obs) {
@@ -224,11 +240,12 @@ function buildObstacles() {
           t.scale.setScalar(s); t.position.set(o.x + Math.cos(a) * o.r * .42, 5.5 * s + l * 11 * s, o.y + Math.sin(a) * o.r * .42); obsGroup.add(t);
         }
       }
-    } else {
+    } else if (!hayArt()) {
       const b = mesh(new THREE.CylinderGeometry(o.r, o.r, 28, 10), [hayM, hayTop, hayTop]); b.position.set(o.x, 14, o.y); b.rotation.y = rnd(0, 3); obsGroup.add(b);
     }
   }
   for (const r of G.ramps) obsGroup.add(buildRamp(r));
+  buildHay();
   // one batched mesh for every tyre, bale and ramp of this run
   obsGroup.updateMatrixWorld(true); const ms = []; obsGroup.traverse(m => { if (m.isMesh) ms.push(m) });
   const keepMs = obsGroup.children.slice(); mergeInto(obsGroup, ms, m => m.matrixWorld);
@@ -659,7 +676,7 @@ export function render(dt) {
     const pulse = 1 + Math.sin(G.time * 4) * .03;
     if (nring < 118) {
       put(rings, nring++, pu.x, 1.4, pu.y, PUMP_R * pulse, 1, PUMP_R * pulse, 0, 0, G.filling ? 0x7fdcaa : 0xffc23d);
-      if (pu.acc > .05) { const k = Math.min(1, pu.acc / PUMP_TICK); put(rings, nring++, pu.x, 1.5, pu.y, PUMP_R * k, 1, PUMP_R * k, 0, 0, 0x7fdcaa) }
+      { const k = Math.max(.08, pu.res / PUMP_RESERVE); put(rings, nring++, pu.x, 1.5, pu.y, PUMP_R * .82 * k, 1, PUMP_R * .82 * k, 0, 0, k > .5 ? 0x7fdcaa : k > .2 ? 0xffc23d : 0xff4a30) } // reserve: the inner ring shrinks as the pump drains
     }
     if (nsoft < 500) put(soft, nsoft++, pu.x, 1.2, pu.y, PUMP_R * 2.4, 1, PUMP_R * 2.4, 0, 0, G.filling ? 0x0e2e1c : 0x241a04);
     pumpG.getObjectByName('screen').material.color.setHex(pu.res > PUMP_RESERVE * .5 ? 0x7fdcaa : pu.res > PUMP_RESERVE * .2 ? 0xffc23d : 0xff4a30);
@@ -668,7 +685,7 @@ export function render(dt) {
   let ncan = 0;
   for (const c of G.cans) {
     if (ncan >= 30) break;
-    const bob = 8 + Math.sin(G.time * 4 + c.x) * 2;
+    const bob = 8 + canZ(c) + Math.sin(G.time * 4 + c.x) * 2;
     if (canSprites) { canSprites[ncan].visible = true; canSprites[ncan].position.set(c.x, bob + 10, c.y); ncan++ }
     else put(canPool, ncan++, c.x, bob, c.y, 1, 1, 1, G.time * 2 + c.x);
     if (nring < 120) put(rings, nring++, c.x, 1.2, c.y, 22 + Math.sin(G.time * 6) * 3, 1, 22 + Math.sin(G.time * 6) * 3, 0, 0, 0x7fdcaa);
@@ -680,11 +697,6 @@ export function render(dt) {
     if (ns < 1598) { streak(ns++, s.x - r, s.y - r, 1, s.x + r, s.y + r, 1, 4, 0xff4a30); streak(ns++, s.x + r, s.y - r, 1, s.x - r, s.y + r, 1, 4, 0xff4a30) }
     if (nring < 119) { put(rings, nring++, s.x, 1.1, s.y, base * (1.6 + k * 1.4), 1, base * (1.6 + k * 1.4), 0, 0, 0xff3a2a); put(rings, nring++, s.x, 1.1, s.y, base * 1.5, 1, base * 1.5, 0, 0, 0x7a160c) }
     if (nsoft < 500) put(soft, nsoft++, s.x, 1, s.y, base * 5.5 * pulse, 1, base * 5.5 * pulse, 0, 0, 0x7a1408);
-  }
-  // underglow while drifting, from yellow to red as the heat builds
-  if (P && G.drift.on && ng < 1200 && !P.air) {
-    const h = G.drift.heat, c = h > .66 ? 0xff4a1a : h > .33 ? 0xff8a2a : 0xffc04a, pulse = 1 + Math.sin(G.time * 18) * .08;
-    put(glows, ng++, P.x, .8 + P.z, P.y, P.len * .62 * pulse, .3, P.wid * .95 * pulse, -P.a, 0, c);
   }
   finish(blobs, nb); finish(glows, ng); finish(streaks, ns); finish(soft, nsoft); finish(rings, nring); finish(eliteSaws, eliteSawN); eliteSawN = 0;
   if (fireDecal) finish(fireDecal, nfire);
