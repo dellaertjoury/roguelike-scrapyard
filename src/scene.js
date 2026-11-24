@@ -875,7 +875,7 @@ export function render(dt) {
       if (nb < 1200) put(blobs, nb++, hx, hz, hy, 4.5, 4.5, 4.5, G.time * 4, 0, 0x55585e);
     }
   }
-  for (const b of G.ebul) if (ng < 1200) put(glows, ng++, b.x, 14, b.y, 5.5, 5.5, 5.5, G.time * 5, G.time * 4, 0xff3a2a); // enemy shots: red
+  for (const b of G.ebul) if (ns < 1600) streak(ns++, b.x, b.y, 16, b.x - b.vx * .018, b.y - b.vy * .018, 16, 2.4, 0xff3a2a); // enemy shots: same tracer as yours, in red
   for (const m of G.mines) if (ng < 1200) put(glows, ng++, m.x, 5.5, m.y, 2.6, 2.6, 2.6, 0, 0, m.arm > 0 ? 0x888888 : (Math.sin(m.t * 10) > 0 ? 0xff3a2a : 0x6a1a10));
   for (const b of G.bullets) if (ns < 1600) streak(ns++, b.x, b.y, 16, b.x - b.vx * .018, b.y - b.vy * .018, 16, 2.4, 0xffffff); // your shots: white
   for (const z of G.zaps) {

@@ -1,6 +1,6 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
 import { G, CRANE, START_T, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
-import { CARS, PART, SLOTS, TAGC, PACKS } from './data.js';
+import { CARS, PART, SLOTS, TAGC, PACKS, WSTAT } from './data.js';
 import { t, L } from './i18n.js';
 import { A } from './assets.js';
 
@@ -76,28 +76,36 @@ const lockSvg = on => `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidd
 
 // Blueprint: top-down car outline (front up) with a numbered marker on each slot,
 // and a list underneath so part names are never cut off, in any language.
-const BP = { front: [180, 58], hood: [180, 118], roof: [180, 218], sides: [118, 218], trunk: [180, 318], rear: [180, 382] };
-function renderBlueprint() {
-  const marks = SLOTS.map((s, i) => { const [x, y] = BP[s]; return `<g class="mk${G.build[s] ? ' on' : ''}" data-slot="${s}"><circle cx="${x}" cy="${y}" r="13"/><text x="${x}" y="${y + 5}">${i + 1}</text></g>` }).join('')
-    + `<g class="mk${G.build.sides ? ' on' : ''}" data-slot="sides"><circle cx="242" cy="218" r="13"/><text x="242" y="223">6</text></g>`;
-  const svg = `<svg viewBox="80 40 200 360" aria-hidden="true">
-    <g class="car-o"><rect x="113" y="100" width="14" height="48" rx="4"/><rect x="233" y="100" width="14" height="48" rx="4"/>
-    <rect x="113" y="290" width="14" height="48" rx="4"/><rect x="233" y="290" width="14" height="48" rx="4"/>
-    <rect x="125" y="68" width="110" height="304" rx="30"/><rect x="138" y="165" width="84" height="108" rx="12"/>
-    <line x1="140" y1="160" x2="220" y2="160"/><line x1="140" y1="280" x2="220" y2="280"/>
-    <rect x="132" y="60" width="96" height="8" rx="3"/><rect x="132" y="372" width="96" height="8" rx="3"/></g>${marks}</svg>`;
-  const tb = G.build.turret; // the fixed MG mount, listed above the six slots
-  const turretRow = `<li class="bprow on fixed" data-slot="turret"><span class="num">★</span>
-      <span class="sl"><span class="sn">${esc(L().slots.turret)}</span><span class="pn${tb ? '' : ' empty'}">${tb ? esc(partName(tb.id)) : esc(t('empty'))}</span></span>
-      ${tb ? `${icon(tb.id, 'ico xs')}<span class="lv">Lv ${tb.lvl}/${PART[tb.id].max}</span>` : ''}</li>`;
-  const rows = turretRow + SLOTS.map((s, i) => {
-    const b = G.build[s];
-    return `<li class="bprow${b ? ' on' : ''}" data-slot="${s}"><span class="num">${i + 1}</span>
-      <span class="sl"><span class="sn">${esc(L().slots[s])}</span><span class="pn${b ? '' : ' empty'}">${b ? esc(partName(b.id)) : esc(t('empty'))}</span></span>
-      ${b ? `${icon(b.id, 'ico xs')}<span class="lv">Lv ${b.lvl}/${PART[b.id].max}</span>` : ''}</li>`;
-  }).join('');
-  $('blueprint').innerHTML = `<div class="bpwrap">${svg}</div><ol class="bplist">${rows}</ol>`;
+/* ---------- blueprint: a top view (bumpers, boot) and a side view (turret, roof, hood, skirts) ----------
+   Each slot has a marker on the drawing, a leader line and a label chip next to it; installed parts can be
+   hovered (or focused) for a card with what they do at their current level. */
+const VW = 600;
+const BPV = {
+  top: { h: 240, slots: { front: [438, 115, 470, 22, 'c'], rear: [162, 115, 130, 22, 'c'], trunk: [205, 115, 300, 218, 'c'] } },
+  side: { h: 250, slots: { turret: [318, 46, 400, 22, 'l'], roof: [262, 62, 200, 22, 'r'], hood: [418, 120, 470, 228, 'c'], sides: [300, 168, 230, 228, 'c'] } }
+};
+const BP_DRAW = {
+  top: `<g class="car-o"><rect x="196" y="52" width="40" height="16" rx="5"/><rect x="364" y="52" width="40" height="16" rx="5"/><rect x="196" y="162" width="40" height="16" rx="5"/><rect x="364" y="162" width="40" height="16" rx="5"/>
+    <rect x="160" y="64" width="280" height="102" rx="30"/><rect x="250" y="78" width="96" height="74" rx="10"/><line x1="236" y1="70" x2="236" y2="160"/><line x1="360" y1="70" x2="360" y2="160"/>
+    <rect x="148" y="72" width="10" height="86" rx="3"/><rect x="442" y="72" width="10" height="86" rx="3"/></g>`,
+  side: `<g class="car-o"><path d="M140 150 L140 118 Q142 104 158 102 L232 98 L270 60 Q276 54 286 54 L356 54 Q366 54 372 62 L396 98 L448 104 Q460 106 460 120 L460 150 Z"/>
+    <line x1="280" y1="62" x2="280" y2="98"/><line x1="350" y1="62" x2="350" y2="98"/><line x1="232" y1="98" x2="396" y2="98"/>
+    <circle cx="200" cy="152" r="26"/><circle cx="400" cy="152" r="26"/><circle cx="200" cy="152" r="10"/><circle cx="400" cy="152" r="10"/>
+    <rect x="176" y="158" width="250" height="8" rx="3"/></g>`
+};
+const partDescAt = (id, l) => { const d = PART[id]; return d.w ? L().w[d.w][1](l, ...WSTAT[d.w](l)) : L().parts[id][1] };
+function bpView(view) {
+  const V = BPV[view], marks = [], chips = [];
+  for (const [slot, [mx, my, cx, cy, al]] of Object.entries(V.slots)) {
+    const b = G.build[slot], on = b ? ' on' : '';
+    marks.push(`<line class="ld${on}" x1="${mx}" y1="${my}" x2="${cx}" y2="${cy}"/><g class="mk${on}" data-slot="${slot}"><circle cx="${mx}" cy="${my}" r="9"/></g>`);
+    const tip = b ? `<span class="tip"><b>${esc(partName(b.id))} · Lv ${b.lvl}/${PART[b.id].max}</b><span>${esc(partDescAt(b.id, b.lvl))}</span><i style="color:${TAGC[PART[b.id].tag]}">${esc(L().tags[PART[b.id].tag])}</i></span>` : '';
+    chips.push(`<div class="chip ${al}${on}${view === 'side' && cy < 60 ? ' up' : ''}" data-slot="${slot}" style="left:${cx / VW * 100}%;top:${cy / V.h * 100}%" tabindex="${b ? 0 : -1}">
+      ${b ? icon(b.id, 'ico xs') : '<span class="ico xs empty"></span>'}<span class="sl"><span class="sn">${esc(L().slots[slot])}</span><span class="pn${b ? '' : ' empty'}">${b ? esc(partName(b.id)) : esc(t('empty'))}</span></span>${b ? `<span class="lv">Lv ${b.lvl}</span>` : ''}${tip}</div>`);
+  }
+  return `<div class="bpview ${view}"><div class="vlbl">${esc(L().bpViews[view])}</div><div class="bpstage" style="aspect-ratio:${VW}/${V.h}"><svg viewBox="0 0 ${VW} ${V.h}" aria-hidden="true">${BP_DRAW[view]}${marks.join('')}</svg>${chips.join('')}</div></div>`;
 }
+function renderBlueprint() { $('blueprint').innerHTML = bpView('side') + bpView('top') }
 export function renderShop() {
   set($('shopTitle'), t('garage', { n: G.wave }));
   set($('shopScrap'), t('scrapAmt', { n: fmt(G.scrap) }));
@@ -119,6 +127,7 @@ export function renderShop() {
   const rows = [[st[0], `${Math.ceil(P.hp)} / ${S.maxhp}`], [st[1], `${Math.round(S.top * KMH)} ${t('kmh').toLowerCase()}`], [st[2], S.grip.toFixed(1)],
     [st[3], Math.round(Math.min(.7, S.armor) * 100) + '%'], [st[4], (S.ram * S.mass).toFixed(2) + '×'], [st[5], S.ramGuard.toFixed(2) + '×'],
     [st[6], S.dmg.toFixed(2) + '×'], [st[7], S.rate.toFixed(2) + '×'], [st[8], S.regen.toFixed(1) + ' /s'], [st[9], fmt(S.magnet)]];
+  $('build').className = 'plate static panel';
   $('build').innerHTML = `<h3>${esc(L().cars[P.car.id][0])}</h3>${rows.map(([a, b]) => `<div class="stat"><span>${esc(a)}</span><span>${esc(b)}</span></div>`).join('')}`;
 }
 export function openShop() {

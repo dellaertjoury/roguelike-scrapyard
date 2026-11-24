@@ -854,9 +854,10 @@ export function update(dt) {
       if (d < 220) want += Math.PI * .3; // gunners hang back a little, but keep you in range
       e.cd -= dt;
       if (e.cd <= 0 && d < 600) {
-        e.cd = rnd(1.8, 2.8); const a = Math.atan2(dy, dx);
-        G.ebul.push({ x: e.x + Math.cos(a) * 20, y: e.y + Math.sin(a) * 20, vx: Math.cos(a) * 200, vy: Math.sin(a) * 200, life: 4, dmg: e.dmg });
-        puff(e.x + Math.cos(a) * 22, e.y + Math.sin(a) * 22, 4, { c: 0xb8ff70, glow: true, a, sp: .4, s0: 60, s1: 160, l0: .1, l1: .25, z0: 3, z1: 5, z: 14 });
+        // same round as your MG (700 u/s), red, fired about once a second with a little spread; each hit is lighter to match
+        e.cd = rnd(.7, 1.1); const a = Math.atan2(dy, dx) + rnd(-.07, .07);
+        G.ebul.push({ x: e.x + Math.cos(a) * 20, y: e.y + Math.sin(a) * 20, vx: Math.cos(a) * 700 + e.vx * .3, vy: Math.sin(a) * 700 + e.vy * .3, life: .9, dmg: e.dmg * .55 });
+        puff(e.x + Math.cos(a) * 22, e.y + Math.sin(a) * 22, 4, { c: 0xff5a40, glow: true, a, sp: .4, s0: 60, s1: 160, l0: .1, l1: .25, z0: 3, z1: 5, z: 14 });
       }
     }
     if (e.elite) spd *= eliteMove(e, dt, d);
@@ -977,7 +978,7 @@ export function update(dt) {
   G.bullets = G.bullets.filter(b => b.life > 0);
   for (const b of G.ebul) {
     b.life -= dt; b.x += b.vx * dt; b.y += b.vy * dt;
-    if (P.z < 20 && Math.hypot(P.x - b.x, P.y - b.y) < P.r + 5) { hitPlayer(b.dmg); b.life = 0 }
+    if (P.z < 20 && Math.hypot(P.x - b.x, P.y - b.y) < P.r + 3) { hitPlayer(b.dmg); b.life = 0 }
     if (G.obs.some(o => Math.hypot(o.x - b.x, o.y - b.y) < o.r)) b.life = 0;
   }
   G.ebul = G.ebul.filter(b => b.life > 0);

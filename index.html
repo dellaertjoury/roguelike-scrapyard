@@ -210,7 +210,8 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 #shop{background-color:#1b1c20;background-image:radial-gradient(120% 80% at 50% 0%,#2a2c32,#17181b 70%)}
 .shophead{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:flex-end;gap:8px}
 .scrapct{font:800 24px Rubik,sans-serif;color:var(--haz)}
-.garage{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr) minmax(0,.75fr);gap:16px;align-items:start}
+#shop>*{width:min(1640px,100%)}
+.garage{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.6fr) minmax(0,.62fr);gap:20px;align-items:start}
 .col{display:grid;gap:10px}
 #cards{display:grid;gap:8px}
 .card{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:start;background:var(--glass2);border:2px solid transparent;border-radius:14px;padding:10px 12px;cursor:pointer;transition:border-color .12s,transform .12s}
@@ -233,12 +234,30 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 .lockbtn:focus-visible{outline:2px solid var(--haz)}
 .hint{font-size:13px;color:var(--mute);margin:0}
 .bp{background:rgba(22,40,58,.85);border:1px solid rgba(143,208,234,.35);border-radius:16px;padding:12px;background-image:linear-gradient(rgba(143,208,234,.08) 1px,transparent 1px),linear-gradient(90deg,rgba(143,208,234,.08) 1px,transparent 1px);background-size:20px 20px}
-.bpwrap{width:100%;max-width:180px;margin:0 auto}
-.bpwrap svg{display:block;width:100%;height:auto}
+/* blueprint views: drawing + markers in SVG, label chips laid over it in % so they track the drawing */
+.bpview{position:relative;margin-top:6px;z-index:1}.bpview:hover,.bpview:focus-within{z-index:4}.chip:hover,.chip:focus{z-index:6}.bpview+.bpview{margin-top:14px;padding-top:12px;border-top:1px dashed rgba(143,208,234,.3)}
+.vlbl{font:800 11px Rubik,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(143,208,234,.75)}
+.bpstage{position:relative;width:100%}.bpstage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.car-o path,.car-o circle{fill:rgba(143,208,234,.08);stroke:var(--bp);stroke-width:2}
+.ld{stroke:rgba(143,208,234,.45);stroke-width:1.5;stroke-dasharray:4 4}.ld.on{stroke:var(--bp);stroke-dasharray:none}
+.chip{position:absolute;display:flex;align-items:center;gap:8px;max-width:52%;padding:6px 10px 6px 6px;border-radius:10px;background:rgba(16,28,40,.92);border:1.5px solid rgba(143,208,234,.35);white-space:nowrap;transform:translate(0,-50%);outline:none}
+.chip.r{transform:translate(-100%,-50%)}.chip.c{transform:translate(-50%,-50%)}
+.chip.on{border-color:var(--bp);cursor:help}.chip.hl{border-color:var(--haz);box-shadow:0 0 0 3px rgba(255,194,61,.3)}
+.chip .sl{display:grid;gap:1px;min-width:0}.chip .sn{font:800 9.5px Rubik,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--bp)}
+.chip .pn{font:700 13px Inter,sans-serif;color:#fff;overflow:hidden;text-overflow:ellipsis}.chip .pn.empty{color:var(--mute);font-style:italic;font-weight:500}
+.chip .lv{font:800 11px Rubik,sans-serif;color:var(--haz)}
+.ico.xs.empty{display:inline-block;width:26px;height:26px;border-radius:7px;border:1.5px dashed rgba(143,208,234,.4)}
+.chip .tip{display:none;position:absolute;left:50%;top:calc(100% + 8px);transform:translateX(-50%);z-index:5;width:min(280px,70vw);white-space:normal;padding:10px 12px;border-radius:10px;background:#0e1820;border:1.5px solid var(--bp);box-shadow:0 10px 24px rgba(0,0,0,.5);text-align:left}
+.chip.up .tip{top:auto;bottom:calc(100% + 8px)}
+.chip .tip b{display:block;font:800 14px Rubik,sans-serif;color:#fff;margin-bottom:4px}.chip .tip span{display:block;font:500 13px/1.35 Inter,sans-serif;color:#d9dde3}.chip .tip i{display:block;margin-top:6px;font:800 11px Rubik,sans-serif;font-style:normal;letter-spacing:.08em;text-transform:uppercase}
+.chip.on:hover .tip,.chip.on:focus .tip{display:block}
 .car-o rect{fill:rgba(143,208,234,.08);stroke:var(--bp);stroke-width:2}.car-o line{stroke:var(--bp);stroke-width:1.5;stroke-dasharray:4 4}
-.mk circle{fill:#16283a;stroke:rgba(143,208,234,.6);stroke-width:2}.mk.on circle{fill:var(--bp);stroke:var(--bp)}
+.mk circle{fill:#16283a;stroke:rgba(143,208,234,.7);stroke-width:2}.mk.on circle{fill:var(--bp);stroke:#fff}
 .mk text{font:800 14px Rubik,sans-serif;text-anchor:middle;fill:var(--bp)}.mk.on text{fill:#16283a}
 .mk.hl circle{stroke:var(--haz);stroke-width:4}
+/* car stats on a riveted plate, like the in-game HUD */
+.plate.static{position:relative;padding:16px 18px 16px 24px;display:block}.plate.static h3{margin:0 0 8px;font:900 20px Rubik,sans-serif;color:#ffc23d;letter-spacing:.02em}
+.plate.static .stat{border-bottom:1px solid rgba(255,255,255,.08);padding:5px 0;font:600 14px Inter,sans-serif;color:#d9d3c4}.plate.static .stat span+span{font:800 14px Rubik,sans-serif;color:#fff}
 .bplist{list-style:none;margin:8px 0 0;padding:0;display:grid;gap:5px}
 .bprow{display:grid;grid-template-columns:24px minmax(0,1fr) auto auto;align-items:center;gap:8px;background:rgba(16,28,40,.85);border:1.5px solid rgba(143,208,234,.3);border-radius:10px;padding:5px 8px;transition:border-color .12s,box-shadow .12s}
 .bprow.on{border-color:rgba(143,208,234,.7)}.bprow.hl{border-color:var(--haz);box-shadow:0 0 0 3px rgba(255,194,61,.3)}
@@ -279,7 +298,8 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 @media(max-width:900px){.tl{width:min(240px,30vw)}#bossPnl{width:min(360px,36vw)}}
 @media(max-width:700px){.plate .hd{font-size:9.5px;letter-spacing:.05em}.tl{width:52vw;padding:8px 10px 8px 14px;gap:6px}.badge{width:30px;height:30px}.badge.sm{width:24px;height:24px}.plate .hd .val{font-size:13px}.plate .hd .chip{display:none}.tr{padding:8px 12px 8px 16px;gap:8px}.sico{width:44px;height:44px}.snum{font-size:26px}.num{font-size:22px}
   #bossPnl{top:84px;width:min(300px,76vw)}#cluster{width:205px}#banner{top:26%}#count{top:60%}.meter span{font-size:9.5px;padding:0 6px}#driftMtr{width:60px;padding:8px 6px}#driftMtr .bars{height:clamp(100px,19vh,160px)}#driftMtr .mul{font-size:18px}#driftMtr .pts{font-size:13px}.big{font-size:36px}}
-@media(max-width:1000px){.garage{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.garage .panel{grid-column:1/-1}}
+@media(max-width:1200px){.garage{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr)}.garage .panel{grid-column:1/-1}}
+@media(max-width:600px){.chip{padding:4px 6px 4px 4px;gap:5px}.chip .pn{font-size:11px}.chip .sn{font-size:8px}.chip .lv{display:none}.ico.xs.empty,.chip .ico.xs{width:20px;height:20px}}
 @media(max-width:820px){.grid3{grid-template-columns:minmax(0,1fr)}.car{display:grid;grid-template-columns:150px minmax(0,1fr);column-gap:12px}.car img{grid-row:span 7}.garage{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:600px){#banner{padding:16px 14px 18px}#banner b{font-size:34px;padding:10px 34px 11px}#banner span{font-size:16px;margin-top:22px}.gfoot .btn{padding:10px 14px;font-size:14px;min-height:44px}.gfoot{gap:8px}.grid2{grid-template-columns:minmax(0,1fr)}.car{grid-template-columns:minmax(0,1fr)}.car img{grid-row:auto}.tl{width:44vw;padding:10px}.lockbtn span{display:none}}
 @media(prefers-reduced-motion:reduce){#vign.on{animation:none;opacity:.7}.car,.card,#driftMtr{transition:none}#driftMtr.bank{animation:none}#banner.go{animation-duration:.01s;opacity:1}.ld .tyre{animation:none}}
