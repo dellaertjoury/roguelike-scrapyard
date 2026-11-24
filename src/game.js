@@ -9,7 +9,7 @@ export const AW = 2000, AH = 1360, EDGE = 34, GS = .6;
 export const OPTS = Object.assign({ zoom: 1, shake: true, fx: 1 }, (() => { try { return JSON.parse(localStorage.getItem('ottokeirkhof-opts')) || {} } catch (e) { return {} } })());
 export function saveOpts() { try { localStorage.setItem('ottokeirkhof-opts', JSON.stringify(OPTS)) } catch (e) { } }
 // pit entry: a gate in the bottom tyre wall; every lap the car rolls in from the garage during the countdown
-export const GATE = { x: 520, w: 140, y0: AH + 230, y1: AH - 210 };
+export const GATE = { x: 520, w: 140, y0: AH + 470, y1: AH - 210, drive: 720 }; // drive: driveway length outside the wall
 export const TAU = Math.PI * 2;
 export const rnd = (a, b) => a + Math.random() * (b - a);
 export const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -166,7 +166,7 @@ export function start(i) {
 export function nextWave() {
   G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = []; resetCones();
   G.crane = { st: 'idle', t: rnd(16, 26), side: G.crane ? G.crane.side : 0, a: CRANE.rest[G.crane ? G.crane.side : 0], R: 900, hit: new Set() };
-  Object.assign(G.P, { x: GATE.x, y: GATE.y0, a: -Math.PI / 2, vx: 0, vy: 0, z: 0, vz: 0, air: false, intro: true, iy: GATE.y0, stun: 0 }); G.cam.x = GATE.x; G.cam.y = GATE.y0 - 120;
+  Object.assign(G.P, { x: GATE.x, y: GATE.y0, a: -Math.PI / 2, vx: 0, vy: 0, z: 0, vz: 0, air: false, intro: true, iy: GATE.y0, ix: GATE.x, iwl: null, stun: 0 }); G.cam.x = GATE.x; G.cam.y = AH + 300;
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
   G.banner = { s: ['lap', { n: G.wave }], elite, sub: elite ? ['eliteSub', { name: L().elites[elite][0], hint: L().elites[elite][1] }] : ['tankFull', { l: G.tank }], id: Math.random() };
   // each enemy type gets a line in the banner the lap it first shows up
@@ -234,7 +234,7 @@ function endWave() {
   G.enemies = []; G.pend = []; G.ebul = [];
   for (const s of G.scraps) G.scrap += s.v; G.scraps = [];
   G.P.hp = Math.min(G.S.maxhp, G.P.hp + G.S.maxhp * .2);
-  bankDrift(); G.state = 'clear'; G.clearT = 1.1;
+  bankDrift(); G.state = 'clear'; G.clearT = 2.8; // let the 'out of fuel' sign hang a while before the garage
   G.banner = { s: ['outOfFuel'], sub: ['garageOpen'], id: Math.random() };
 }
 function die() {
@@ -269,7 +269,7 @@ function dropHose(e, snapped) {
   if (snapped) puff((e.x + P.x) / 2, (e.y + P.y) / 2, 6, { c: 0x9fe070, glow: true, s0: 40, s1: 140, l0: .3, l1: .6, z0: 2, z1: 4, z: 10, vz0: 20, vz1: 60 });
   e.siph = 0;
 }
-export const PUMP_WARN = 4, PUMP_POST = 28; // marker shows 4 s before the pump opens; solid post radius
+export const PUMP_WARN = 4, PUMP_POST = 18; // marker shows 4 s before the pump opens; solid post radius
 export const BURN = 1, PUMP_R = 140, PUMP_FLOW = 6, PUMP_RESERVE = 30, PUMP_FIRST = 8, THIEF_STEAL = 6;
 export const fmtL = l => (Math.round(l * 10) / 10).toLocaleString('nl-BE');
 // Is (x, y) within m of a ramp's lane: 260 of run-up, the ramp, and the flight/landing strip?
@@ -510,15 +510,26 @@ const CRANE_DMG = 26;
 /* ---------- pit entry ---------- */
 // The countdown drives the car up the driveway, through the gate and into the arena: it arrives as the
 // count hits 2 and the gate swings shut before 1. gateOpen() feeds the gate animation in scene.js.
-const INTRO_END = 1.6;
+const INTRO_END = 1.3;
 function pitIntro(P, dt) {
-  const k = clamp((START_T - G.startT) / (START_T - INTRO_END), 0, 1), e = 1 - (1 - k) * (1 - k);
-  const y = GATE.y0 + (GATE.y1 - GATE.y0) * e;
-  P.vy = dt > 0 ? (y - (P.iy ?? y)) / dt : 0; P.iy = y; P.vx = 0; P.x = GATE.x; P.y = y; P.a = -Math.PI / 2;
-  P.fwd = -P.vy; P.lat = 0; P.sp = Math.abs(P.vy); P.slipDeg = 0; P.z = 0; P.wl = null;
-  if (k >= 1) { P.intro = false; P.vy = 0; P.fwd = 0; P.sp = 0 }
+  // flat out up the muddy driveway, through the gate, then a drift that swings the car sideways to a stop
+  // flat out for the first half (2/3 of the way), then braking into the drift; the speed is continuous at the switch
+  const k = clamp((START_T - G.startT) / (START_T - INTRO_END), 0, 1), e = k < .5 ? (2 / 3) * (k / .5) : 2 / 3 + (1 - Math.pow(1 - (k - .5) / .5, 2)) / 3;
+  const d = k < .58 ? 0 : (t => t * t * (3 - 2 * t))((k - .58) / .42); // drift phase, once through the gate
+  const x = GATE.x + 38 * d, y = GATE.y0 + (GATE.y1 - GATE.y0) * e, a = -Math.PI / 2 + 1.25 * d;
+  const px = P.ix ?? x, py = P.iy ?? y; P.ix = x; P.iy = y;
+  P.vx = dt > 0 ? (x - px) / dt : 0; P.vy = dt > 0 ? (y - py) / dt : 0; P.x = x; P.y = y; P.a = a; P.z = 0;
+  const c = Math.cos(a), s = Math.sin(a); P.fwd = P.vx * c + P.vy * s; P.lat = -P.vx * s + P.vy * c; P.sp = Math.hypot(P.vx, P.vy);
+  P.slipDeg = P.sp > 30 ? Math.round(Math.atan2(Math.abs(P.lat), Math.abs(P.fwd)) * 180 / Math.PI) : 0;
+  if (d > .04 && d < .98) { // rubber and smoke from the rear wheels
+    const wl = [[x - c * P.len * .32 - s * P.wid * .42, y - s * P.len * .32 + c * P.wid * .42], [x - c * P.len * .32 + s * P.wid * .42, y - s * P.len * .32 - c * P.wid * .42]];
+    if (P.iwl) { g.strokeStyle = 'rgba(40,28,18,.4)'; g.lineWidth = 6; for (let i = 0; i < 2; i++) { g.beginPath(); g.moveTo(P.iwl[i][0], P.iwl[i][1]); g.lineTo(wl[i][0], wl[i][1]); g.stroke() } G.groundDirty = true }
+    P.iwl = wl; for (const w of wl) if (Math.random() < .7) puff(w[0], w[1], 1, { c: 0xf4f0e8, s0: 5, s1: 40, l0: .5, l1: 1.1, z0: 4, z1: 8, grow: 14, drag: 1.5, z: 4, vz0: 8, vz1: 30, vx: -P.vx * .1, vy: -P.vy * .1 });
+  } else if (k < .5 && Math.random() < .5) puff(x, y + P.len * .5, 1, { c: 0x8a6a48, s0: 20, s1: 60, l0: .4, l1: .8, z0: 4, z1: 8, grow: 12, z: 3, vz0: 10, vz1: 40 }); // mud spray up the driveway
+  else P.iwl = null;
+  if (k >= 1) { P.intro = false; P.vx = P.vy = 0; P.fwd = P.lat = 0; P.sp = 0; P.iwl = null }
 }
-export const gateOpen = () => G.state === 'play' && G.startT > 0 ? clamp((G.startT - 1.05) / (INTRO_END - .1 - 1.05), 0, 1) : 0;
+export const gateOpen = () => G.state === 'play' && G.startT > 0 ? clamp((G.startT - 1.05) / (1.5 - 1.05), 0, 1) : 0;
 
 /* ---------- ramps & air time ---------- */
 const GRAV = 560;
@@ -969,7 +980,7 @@ export function update(dt) {
   /* camera target: ahead of the car */
   G.cam.x += (P.x + P.vx * .3 - G.cam.x) * Math.min(1, dt * 5);
   G.cam.y += (P.y + P.vy * .3 - G.cam.y) * Math.min(1, dt * 5);
-  G.cam.x = clamp(G.cam.x, 420, AW - 420); G.cam.y = clamp(G.cam.y, 300, AH - (P.intro || G.startT > 0 ? 160 : 300)); // let the camera peek at the driveway during the pit entry
+  G.cam.x = clamp(G.cam.x, 420, AW - 420); G.cam.y = clamp(G.cam.y, 300, P.intro ? AH + 300 : AH - (G.startT > 0 ? 160 : 300)); // let the camera peek at the driveway during the pit entry
 }
 
 // Side-saw layout, shared with the 3D rig so the visible blades match the hitbox.
