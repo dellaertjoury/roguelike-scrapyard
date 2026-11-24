@@ -1,5 +1,5 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
-import { G, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
+import { G, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
 import { CARS, PART, SLOTS, TAGC, PACKS } from './data.js';
 import { t, L } from './i18n.js';
 import { A } from './assets.js';
@@ -7,12 +7,12 @@ import { A } from './assets.js';
 const $ = id => document.getElementById(id);
 const set = (el, v) => { if (el._v !== v) { el._v = v; el.textContent = v } };
 const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
-const OVS = ['menu', 'shop', 'over', 'pause'];
+const OVS = ['menu', 'shop', 'over', 'pause', 'settings'];
 const tr = v => Array.isArray(v) ? t(v[0], v[1]) : v; // banner parts are [key, vars]
 
 export function show(id) {
   for (const o of OVS) $(o).classList.toggle('hide', o !== id);
-  $('hud').classList.toggle('hide', !(id === null || id === 'pause'));
+  $('hud').classList.toggle('hide', !(id === null || id === 'pause' || (id === 'settings' && G.state === 'pause')));
 }
 
 /* ---------- loading screen ---------- */
@@ -30,7 +30,9 @@ export function applyStatic() {
   document.title = t('title');
   buildCluster();
   if (A.ui.pump) pbadge.src = A.ui.pump;
+  { const [a, b, c] = L().craneSign; set($('csTop'), a); set($('csBig'), b); set($('csSub'), c); if (A.ui['sign-crane']) { $('craneSign').classList.add('art'); $('craneSign').style.setProperty('--art', `url(${A.ui['sign-crane']})`) } }
   for (const el of document.querySelectorAll('[data-i18n]')) set(el, t(el.dataset.i18n));
+  for (const el of document.querySelectorAll('[data-ico]')) { const src = A.ui[el.dataset.ico]; if (src && !el.firstChild) el.innerHTML = `<img src="${src}" alt="">` }
   for (const el of document.querySelectorAll('[data-ui]')) {
     const src = A.ui[el.dataset.ui];
     if (src && !el.querySelector('img.uico')) el.insertAdjacentHTML('afterbegin', `<img class="uico" src="${src}" alt="">`);
@@ -152,8 +154,23 @@ export function wire(onStart, onMenu, onLang) {
   $('go').onclick = () => nextWave();
   $('again').onclick = onMenu;
   $('resume').onclick = () => { G.state = 'play'; show(null) };
+  // pause menu: settings, end the lap and go to the garage, or cancel the run and go back to the main menu
+  let optFrom = 'menu';
+  const openOpts = from => { optFrom = from; renderOpts(); show('settings') };
+  $('pSettings').onclick = () => openOpts('pause');
+  $('mSettings').onclick = () => openOpts('menu');
+  $('optBack').onclick = () => show(optFrom);
+  $('pGarage').onclick = () => { quitLap(); show(null) };
+  $('pMenu').onclick = onMenu;
+  $('optList').addEventListener('click', ev => { const b = ev.target.closest('[data-opt]'); if (!b) return; const v = JSON.parse(b.dataset.v); OPTS[b.dataset.opt] = v; saveOpts(); renderOpts() });
 }
 
+
+/* ---------- settings ---------- */
+function renderOpts() {
+  const O = L().opts, row = (key, label, choices) => `<div class="opt"><b>${esc(label)}</b><div class="seg3">${choices.map(([v, txt]) => `<button data-opt="${key}" data-v='${JSON.stringify(v)}' class="${OPTS[key] === v ? 'on' : ''}" aria-pressed="${OPTS[key] === v}">${esc(txt)}</button>`).join('')}</div></div>`;
+  $('optList').innerHTML = row('zoom', O.zoom, [[1.25, O.near], [1, O.normal], [.82, O.far]]) + row('shake', O.shake, [[true, O.on], [false, O.off]]) + row('fx', O.fx, [[1, O.many], [.5, O.few]]);
+}
 
 /* ---------- gauge cluster (bottom-left) ----------
    One SVG in a 360×250 box, after a real tach/fuel/nitro cluster:
@@ -245,19 +262,25 @@ function clusterHud(P) {
 }
 
 /* ---------- HUD ---------- */
-let bannerId = null;
+let bannerId = null; const hudMem = { scrap: null, hp: null };
 export function hud() {
   const { P, S, drift } = G; if (!P) return;
   $('hpBar').style.width = (P.hp / S.maxhp * 100) + '%';
   $('hpBar').classList.toggle('low', P.hp / S.maxhp < .3);
   set($('hpTxt'), `${Math.ceil(P.hp)} / ${S.maxhp}`);
   $('heatBar').style.width = (drift.heat * 100) + '%';
-  set($('heatTxt'), drift.heat > .05 ? t('heatPct', { p: Math.round(drift.heat * 80) }) : t('heat'));
+  set($('heatTxt'), drift.heat > .05 ? `+${Math.round(drift.heat * 80)}% ${t('fireRate')}` : '');
   clusterHud(P);
+  const cs = $('craneSign'), cw = G.crane && (G.crane.st === 'warn' || G.crane.st === 'swing') && G.state === 'play';
+  cs.classList.toggle('on', !!cw);
   $('vign').classList.toggle('on', !!G.siphon && G.state === 'play');
   const cd = $('count'), n = G.startT > 0 ? String(Math.ceil(G.startT)) : '';
   if (cd._n !== n) { cd._n = n; if (n || cd.textContent) { cd.textContent = n || t('go'); cd.className = n ? 'tick' : 'tick go'; void cd.offsetWidth; cd.classList.add('on') } }
   set($('scrapTxt'), fmt(G.scrap)); set($('wreckTxt'), t('wrecks', { n: fmt(G.wrecks) }));
+  // scrap bump (+N) and a shake on the hull plate when you take damage
+  if (hudMem.scrap != null && G.scrap > hudMem.scrap) { const b = $('scrapBump'), n = $('scrapTxt'); b.textContent = '+' + fmt(G.scrap - hudMem.scrap); b.classList.remove('go'); void b.offsetWidth; b.classList.add('go'); n.classList.add('pop'); clearTimeout(hudMem.pt); hudMem.pt = setTimeout(() => n.classList.remove('pop'), 150) }
+  if (hudMem.hp != null && P.hp < hudMem.hp - 1) { const h = $('hullPlate'); h.classList.remove('hit'); void h.offsetWidth; h.classList.add('hit') }
+  hudMem.scrap = G.scrap; hudMem.hp = P.hp;
   // drift meter: tube = multiplier ×1 → ×5, thin white clock = time left in this combo (8 s max), green pulse when it banks
   const dm = $('driftMtr'), live = drift.on && drift.pts > 5;
   set($('driftNum'), fmt(drift.pts)); set($('driftMul'), `×${drift.mult.toFixed(1)}`);
@@ -298,14 +321,14 @@ export function texts(project) {
       const c = e.elite ? '#e0b040' : f > .5 ? '#7fdc6a' : f > .25 ? '#ffc23d' : '#ff4a30';
       if (b._f !== f) { b._f = f; b.firstChild.style.width = (f * 100).toFixed(1) + '%'; b.firstChild.style.background = c }
     }
-    const pu = G.pump;
-    if (pu) {
-      const p = project(pu.x, pu.y, 62);
+    const pu = G.pump, nx = !pu && G.pumpNext;
+    if (pu || nx) {
+      const q = pu || nx, p = project(q.x, q.y, pu ? 110 : 30);
       if (p.ok) {
         ptag.style.display = 'block'; ptag.style.transform = `translate(${p.x}px,${p.y}px) translate(-50%,-100%)`;
-        ptag.classList.toggle('on', !!G.filling);
-        set(ptag.firstChild, G.filling || pu.got > .5 ? t('pumpGot', { l: Math.round(pu.got) }) : `${Math.ceil(pu.res)} L`);
-        ptag.querySelector('u').style.width = (pu.res / PUMP_RESERVE * 100) + '%';
+        ptag.classList.toggle('on', !!G.filling); ptag.classList.toggle('dry', !!(pu && pu.empty)); ptag.classList.toggle('soon', !!nx);
+        set(ptag.firstChild, nx ? t('pumpSoon', { s: Math.max(1, Math.ceil(G.pumpT)) }) : pu.empty ? t('pumpDry') : G.filling || pu.got > .5 ? t('pumpGot', { l: Math.round(pu.got) }) : `${Math.ceil(pu.res)} L`);
+        ptag.querySelector('u').style.width = (pu ? pu.res / PUMP_RESERVE * 100 : 100) + '%';
       }
     }
     for (const tx of G.texts) {
@@ -322,7 +345,7 @@ export function texts(project) {
     const W = fx.clientWidth, H = fx.clientHeight, m = 26, cx = W / 2, cy = H / 2;
     const targets = G.pend.map(s => [s.x, s.y, s.elite]);
     for (const e of G.enemies) if (e.elite) targets.push([e.x, e.y, true]);
-    if (G.pump) targets.unshift([G.pump.x, G.pump.y, 'pump']);
+    if (G.pump && !G.pump.empty) targets.unshift([G.pump.x, G.pump.y, 'pump']); else if (G.pumpNext) targets.unshift([G.pumpNext.x, G.pumpNext.y, 'pump']);
     for (const [x, y, el] of targets) {
       if (k >= arrows.length) break;
       const p = project(x, y, 0); if (p.x > m && p.x < W - m && p.y > m && p.y < H - m) continue;

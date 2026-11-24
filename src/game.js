@@ -5,6 +5,11 @@ import { CARS, BASE, PARTS, PART, SLOTS, WSTAT, ENEMY, ECOL, ELITES } from './da
 import { t, L, num, lang } from './i18n.js';
 
 export const AW = 2000, AH = 1360, EDGE = 34, GS = .6;
+// player settings (pause menu / main menu): camera zoom, screen shake, amount of particles
+export const OPTS = Object.assign({ zoom: 1, shake: true, fx: 1 }, (() => { try { return JSON.parse(localStorage.getItem('ottokeirkhof-opts')) || {} } catch (e) { return {} } })());
+export function saveOpts() { try { localStorage.setItem('ottokeirkhof-opts', JSON.stringify(OPTS)) } catch (e) { } }
+// pit entry: a gate in the bottom tyre wall; every lap the car rolls in from the garage during the countdown
+export const GATE = { x: 520, w: 140, y0: AH + 230, y1: AH - 210 };
 export const TAU = Math.PI * 2;
 export const rnd = (a, b) => a + Math.random() * (b - a);
 export const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
@@ -22,44 +27,55 @@ export const G = {
 };
 
 /* ---------- ground texture (dirt, skid marks, scorch decals) ---------- */
+// three canvases: `base` (dirt, paint, title), `marks` (skids, scorches; fades out over ~30 s)
+// and `ground`, the composite the 3D floor uses as its texture
 export const ground = document.createElement('canvas');
 ground.width = Math.round(AW * GS); ground.height = Math.round(AH * GS);
-const g = ground.getContext('2d');
+const base = document.createElement('canvas'), marks = document.createElement('canvas');
+base.width = marks.width = ground.width; base.height = marks.height = ground.height;
+const bg = base.getContext('2d'), g = marks.getContext('2d'), gc = ground.getContext('2d');
+let fadeT = 0;
+export function composeGround() { gc.drawImage(base, 0, 0); gc.drawImage(marks, 0, 0) }
+function fadeMarks(dt) {
+  fadeT += dt; if (fadeT < .5) return; fadeT = 0;
+  g.save(); g.setTransform(1, 0, 0, 1, 0, 0); g.globalCompositeOperation = 'destination-out'; g.fillStyle = 'rgba(0,0,0,.035)'; g.fillRect(0, 0, marks.width, marks.height); g.restore();
+  G.groundDirty = true;
+}
 let dirtImg = null;
 export const setDirt = img => { dirtImg = img };
 
 export function makeGround() {
-  g.setTransform(1, 0, 0, 1, 0, 0);
-  g.fillStyle = '#a47f57'; g.fillRect(0, 0, ground.width, ground.height);
-  g.setTransform(GS, 0, 0, GS, 0, 0);
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, marks.width, marks.height); g.setTransform(GS, 0, 0, GS, 0, 0); g.lineCap = 'round';
+  bg.setTransform(1, 0, 0, 1, 0, 0);
+  bg.fillStyle = '#a47f57'; bg.fillRect(0, 0, ground.width, ground.height);
+  bg.setTransform(GS, 0, 0, GS, 0, 0);
   if (dirtImg) {
-    const p = g.createPattern(dirtImg, 'repeat');
+    const p = bg.createPattern(dirtImg, 'repeat');
     p.setTransform(new DOMMatrix().scale(420 / dirtImg.width));
-    g.fillStyle = p; g.fillRect(0, 0, AW, AH);
+    bg.fillStyle = p; bg.fillRect(0, 0, AW, AH);
   }
   const k = dirtImg ? .5 : 1;
   for (let i = 0; i < 200; i++) {
     const x = rnd(0, AW), y = rnd(0, AH), r = rnd(40, 220);
-    const gr = g.createRadialGradient(x, y, 0, x, y, r);
+    const gr = bg.createRadialGradient(x, y, 0, x, y, r);
     const c = Math.random() < .55 ? '96,70,44' : '206,170,122';
     gr.addColorStop(0, `rgba(${c},${rnd(.12, .3) * k})`); gr.addColorStop(1, `rgba(${c},0)`);
-    g.fillStyle = gr; g.fillRect(x - r, y - r, r * 2, r * 2);
+    bg.fillStyle = gr; bg.fillRect(x - r, y - r, r * 2, r * 2);
   }
   for (let i = 0; i < (dirtImg ? 0 : 4500); i++) {
-    g.fillStyle = Math.random() < .5 ? 'rgba(70,50,32,.4)' : 'rgba(225,200,160,.35)';
-    const s = rnd(2, 4); g.fillRect(rnd(0, AW), rnd(0, AH), s, s);
+    bg.fillStyle = Math.random() < .5 ? 'rgba(70,50,32,.4)' : 'rgba(225,200,160,.35)';
+    const s = rnd(2, 4); bg.fillRect(rnd(0, AW), rnd(0, AH), s, s);
   }
   for (let i = 0; i < 6; i++) {
     const x = rnd(250, AW - 250), y = rnd(250, AH - 250), a = rnd(0, 3);
-    g.fillStyle = 'rgba(120,92,64,.28)'; g.beginPath(); g.ellipse(x, y, rnd(50, 90), rnd(24, 40), a, 0, TAU); g.fill();
-    g.fillStyle = 'rgba(150,175,190,.22)'; g.beginPath(); g.ellipse(x - 6, y - 4, rnd(20, 36), rnd(8, 14), a, 0, TAU); g.fill();
+    bg.fillStyle = 'rgba(120,92,64,.28)'; bg.beginPath(); bg.ellipse(x, y, rnd(50, 90), rnd(24, 40), a, 0, TAU); bg.fill();
+    bg.fillStyle = 'rgba(150,175,190,.22)'; bg.beginPath(); bg.ellipse(x - 6, y - 4, rnd(20, 36), rnd(8, 14), a, 0, TAU); bg.fill();
   }
-  g.strokeStyle = 'rgba(250,245,232,.32)'; g.lineWidth = 8; g.setLineDash([36, 28]);
-  g.strokeRect(300, 300, AW - 600, AH - 600); g.setLineDash([]);
-  g.fillStyle = 'rgba(250,245,232,.16)'; g.font = '800 120px Rubik, Impact, sans-serif'; g.textAlign = 'center';
-  g.fillText(t('title').toUpperCase(), AW / 2, 210);
-  g.lineCap = 'round';
-  G.groundDirty = true;
+  bg.strokeStyle = 'rgba(250,245,232,.32)'; bg.lineWidth = 8; bg.setLineDash([36, 28]);
+  bg.strokeRect(300, 300, AW - 600, AH - 600); bg.setLineDash([]);
+  bg.fillStyle = 'rgba(250,245,232,.16)'; bg.font = '800 120px Rubik, Impact, sans-serif'; bg.textAlign = 'center';
+  bg.fillText(t('title').toUpperCase(), AW / 2, 210);
+  composeGround(); G.groundDirty = true;
 }
 
 // Ramps: a wedge that rises from (x, y) along direction d to height H over length L.
@@ -74,7 +90,7 @@ export function makeObs() {
   while (ramps.length < 2 && n++ < 2000) {
     const d = rnd(0, TAU), L = 150, W = 80, H = 30, x = rnd(300, AW - 300), y = rnd(260, AH - 260);
     const c = Math.cos(d), s = Math.sin(d), cx = x + c * L / 2, cy = y + s * L / 2, lx = x + c * (L + 170), ly = y + s * (L + 170);
-    if (Math.hypot(cx - AW / 2, cy - AH / 2) < 300) continue;
+    if (Math.hypot(cx - AW / 2, cy - AH / 2) < 300 || Math.hypot(cx - GATE.x, cy - GATE.y1) < 320) continue;
     if (wallDist(x + c * L, y + s * L, c, s) < RUNWAY) continue; // room to fly and land
     if (wallDist(x, y, -c, -s) < 300) continue;                  // room for a run-up
     if (Math.min(wallDist(cx, cy, -s, c), wallDist(cx, cy, s, -c)) < 140) continue; // not hugging a side wall
@@ -83,8 +99,8 @@ export function makeObs() {
   }
   const obs = []; n = 0;
   while (obs.length < 12 && n++ < 600) {
-    const o = { x: rnd(220, AW - 220), y: rnd(220, AH - 220), r: rnd(26, 42), k: Math.random() < .6 ? 'tire' : 'hay' };
-    if (Math.hypot(o.x - AW / 2, o.y - AH / 2) < 280) continue;
+    const o = { x: rnd(220, AW - 220), y: rnd(220, AH - 220), r: rnd(26, 42), k: Math.random() < .6 ? 'tire' : 'hay', v: Math.random() * 5 | 0 }; // v: tyre pile style
+    if (Math.hypot(o.x - AW / 2, o.y - AH / 2) < 280 || Math.hypot(o.x - GATE.x, o.y - GATE.y1) < 260 || (Math.abs(o.x - GATE.x) < 140 && o.y > GATE.y1)) continue;
     if (obs.some(b => Math.hypot(b.x - o.x, b.y - o.y) < b.r + o.r + 140)) continue;
     if (ramps.some(r => Math.hypot(r.cx - o.x, r.cy - o.y) < r.L / 2 + o.r + 110 || Math.hypot(r.lx - o.x, r.ly - o.y) < o.r + 190 || Math.hypot(r.x - r.c * 120 - o.x, r.y - r.s * 120 - o.y) < o.r + 90)) continue;
     obs.push(o);
@@ -92,7 +108,7 @@ export function makeObs() {
   // single tyre stacks hug both sides (from a quarter of the way up) and the back of every ramp,
   // so nothing can wedge itself into the steep faces
   for (const r of ramps) {
-    const at = (u, v) => obs.push({ x: r.x + r.c * u - r.s * v, y: r.y + r.s * u + r.c * v, r: RT_R, k: 'rt' });
+    const at = (u, v) => obs.push({ x: r.x + r.c * u - r.s * v, y: r.y + r.s * u + r.c * v, r: RT_R, k: 'rt', h: 14 }); // low enough to fly over from halfway up the ramp
     for (let u = r.L * .25; u <= r.L + 1; u += RT_R * 2) for (const sd of [-1, 1]) at(u, sd * (r.W / 2 + RT_R + 2));
     for (let v = -r.W / 2 - RT_R + 2; v <= r.W / 2 + RT_R - 2; v += RT_R * 2) at(r.L + RT_R + 4, v);
   }
@@ -102,6 +118,7 @@ export function makeObs() {
 /* ---------- particles & floating text ----------
    k: 'b' blob (icosahedron) or 's' streak; glow: unlit bright; c: hex colour */
 export function puff(x, y, n, o) {
+  n *= OPTS.fx; n = Math.floor(n) + (Math.random() < n % 1 ? 1 : 0); // fewer particles on the 'weinig' setting
   for (let i = 0; i < n; i++) {
     if (G.parts.length > 900) G.parts.shift();
     const a = o.a !== undefined ? o.a + rnd(-(o.sp || .4), o.sp || .4) : rnd(0, TAU);
@@ -139,7 +156,9 @@ export function start(i) {
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = [];
+  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = [];
+  G.crane = { st: 'idle', t: rnd(16, 26), side: G.crane ? G.crane.side : 0, a: CRANE.rest[G.crane ? G.crane.side : 0], R: 900, hit: new Set() };
+  Object.assign(G.P, { x: GATE.x, y: GATE.y0, a: -Math.PI / 2, vx: 0, vy: 0, z: 0, vz: 0, air: false, intro: true, iy: GATE.y0, stun: 0 }); G.cam.x = GATE.x; G.cam.y = GATE.y0 - 120;
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
   G.banner = { s: ['lap', { n: G.wave }], elite, sub: elite ? ['eliteSub', { name: L().elites[elite][0], hint: L().elites[elite][1] }] : ['tankFull', { l: G.tank }], id: Math.random() };
   // each enemy type gets a line in the banner the lap it first shows up
@@ -200,6 +219,8 @@ function kill(e, scored) {
     for (let i = 0; i < Math.min(n, 14); i++) { const a = rnd(0, TAU), s = rnd(40, 200); G.scraps.push({ x: e.x, y: e.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, v: n > 14 && i === 0 ? n - 13 : 1, t: 0 }) }
   } // cars still alive at the end of a lap just explode: no scrap for them
 }
+// pause menu → garage: the lap ends right here, like running dry (cars still alive pay nothing)
+export function quitLap() { if (G.state !== 'pause' && G.state !== 'play') return; G.state = 'play'; endWave(); G.banner = { s: ['lapQuit'], sub: ['garageOpen'], id: Math.random() } }
 function endWave() {
   for (const e of G.enemies) kill(e, false);
   G.enemies = []; G.pend = []; G.ebul = [];
@@ -240,32 +261,40 @@ function dropHose(e, snapped) {
   if (snapped) puff((e.x + P.x) / 2, (e.y + P.y) / 2, 6, { c: 0x9fe070, glow: true, s0: 40, s1: 140, l0: .3, l1: .6, z0: 2, z1: 4, z: 10, vz0: 20, vz1: 60 });
   e.siph = 0;
 }
-export const BURN = 1, PUMP_R = 92, PUMP_FLOW = 6, PUMP_RESERVE = 30, PUMP_FIRST = 8, THIEF_STEAL = 6;
+export const PUMP_WARN = 4, PUMP_POST = 28; // marker shows 4 s before the pump opens; solid post radius
+export const BURN = 1, PUMP_R = 140, PUMP_FLOW = 6, PUMP_RESERVE = 30, PUMP_FIRST = 8, THIEF_STEAL = 6;
 export const fmtL = l => (Math.round(l * 10) / 10).toLocaleString('nl-BE');
 // Is (x, y) within m of a ramp's lane: 260 of run-up, the ramp, and the flight/landing strip?
 export function inLane(r, x, y, m) {
   const dx = x - r.x, dy = y - r.y, u = dx * r.c + dy * r.s, v = -dx * r.s + dy * r.c;
   return u > -260 - m && u < r.L + JUMP_MAX + 60 + m && Math.abs(v) < r.W / 2 + m;
 }
-function openPump() {
+// where the next pump goes: shown as a green marker a few seconds before it opens
+function pumpSpot() {
   const P = G.P;
   for (let i = 0; i < 80; i++) {
-    const x = rnd(220, AW - 220), y = rnd(220, AH - 220);
-    if (Math.hypot(x - P.x, y - P.y) < 350) continue;
+    const x = rnd(240, AW - 240), y = rnd(240, AH - 240);
+    if (Math.hypot(x - P.x, y - P.y) < 380) continue;
     if (G.obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + PUMP_R + 30)) continue;
     if (G.ramps.some(r => inLane(r, x, y, PUMP_R + 40))) continue;
-    G.pump = { x, y, res: PUMP_RESERVE, got: 0, id: Math.random() }; txt(P.x, P.y - 60, t('pumpOpen'), '#7fdcaa', 22, 1.6); return;
+    if (Math.hypot(x - GATE.x, y - (AH - 200)) < PUMP_R + 160) continue; // keep the pit entry clear
+    return { x, y };
   }
-  G.pumpT = 2; // no room right now, try again shortly
+  return null;
+}
+function openPump() {
+  const P = G.P, sp = G.pumpNext || pumpSpot(); G.pumpNext = null;
+  if (!sp) { G.pumpT = 2; return } // no room right now, try again shortly
+  G.pump = { x: sp.x, y: sp.y, res: PUMP_RESERVE, got: 0, empty: false, id: Math.random() }; txt(P.x, P.y - 60, t('pumpOpen'), '#7fdcaa', 22, 1.6);
 }
 function fuelStep(dt) {
   const P = G.P, pu = G.pump;
-  if (!pu) { G.pumpT -= dt; if (G.pumpT <= 0) openPump() }
-  const filling = pu && G.fuel < G.tank - .5 && P.z < 6 && Math.hypot(P.x - pu.x, P.y - pu.y) < PUMP_R;
+  if (!pu) { G.pumpT -= dt; if (G.pumpT < PUMP_WARN && !G.pumpNext) G.pumpNext = pumpSpot(); if (G.pumpT <= 0) openPump() }
+  const filling = pu && !pu.empty && G.fuel < G.tank - .5 && P.z < 6 && Math.hypot(P.x - pu.x, P.y - pu.y) < PUMP_R;
   G.filling = !!filling;
   if (filling) {
     const l = Math.min(PUMP_FLOW * dt, pu.res, G.tank - G.fuel); G.fuel += l; pu.res -= l; pu.got += l;
-    if (pu.res <= .01) { txt(pu.x, pu.y - 40, t('pumpEmpty'), '#ffc23d', 18, 1.2); G.pump = null; G.pumpT = Infinity } // one pump per lap: the next one opens next lap
+    if (pu.res <= .01) { pu.res = 0; pu.empty = true; txt(pu.x, pu.y - 40, t('pumpEmpty'), '#ffc23d', 18, 1.2) } // one pump per lap: it stays, dry, until the lap ends
   }
   G.fuel -= dt * (BURN + (P.boost ? 1 : 0));
   for (const c of G.cans) {
@@ -348,7 +377,8 @@ function bounceOff(o, nx, ny, bounce, tire, cx, cy) {
   puff(cx, cy, 5, { c: 0xdccbad, s0: 10, s1: 50, l0: .5, l1: .9, z0: 3, z1: 6, grow: 10, z: 4, vz0: 10, vz1: 30 });
 }
 function collideStatic(o, r, bounce) {
-  if (o.z < 26) for (const b of G.obs) {
+  for (const b of G.obs) {
+    if (o.z >= (b.h || 26)) continue; // flying (or riding a ramp) above it
     const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy), m = r + b.r;
     if (d < m) {
       const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = b.x + nx * m; o.y = b.y + ny * m;
@@ -356,13 +386,58 @@ function collideStatic(o, r, bounce) {
     }
   }
   const pu = G.pump; // the pump itself is a small solid post
-  if (pu && o.z < 26) { const dx = o.x - pu.x, dy = o.y - pu.y, d = Math.hypot(dx, dy), m = r + 13; if (d < m) { const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = pu.x + nx * m; o.y = pu.y + ny * m; const vn = o.vx * nx + o.vy * ny; if (vn < 0) { o.vx -= 1.3 * vn * nx; o.vy -= 1.3 * vn * ny } } }
+  if (pu && o.z < 26) { const dx = o.x - pu.x, dy = o.y - pu.y, d = Math.hypot(dx, dy), m = r + PUMP_POST; if (d < m) { const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = pu.x + nx * m; o.y = pu.y + ny * m; const vn = o.vx * nx + o.vy * ny; if (vn < 0) { o.vx -= 1.3 * vn * nx; o.vy -= 1.3 * vn * ny } } }
   const lo = EDGE + r;
   if (o.x < lo) { o.x = lo; bounceOff(o, 1, 0, bounce, true, EDGE, o.y) }
   if (o.x > AW - lo) { o.x = AW - lo; bounceOff(o, -1, 0, bounce, true, AW - EDGE, o.y) }
   if (o.y < lo) { o.y = lo; bounceOff(o, 0, 1, bounce, true, o.x, EDGE) }
   if (o.y > AH - lo) { o.y = AH - lo; bounceOff(o, 0, -1, bounce, true, o.x, AH - EDGE) }
 }
+/* ---------- wrecking-ball crane ---------- */
+// A tower crane stands outside the top-left corner. Now and then (from lap 2) its jib sweeps a wrecking ball in a
+// quarter circle across the arena: a 3 s warning (road sign + red arc on the ground), then a 2.4 s swing.
+export const CRANE = { x: -150, y: -150, ball: 38, warn: 3, swing: 2.4, rest: [-.42, Math.PI / 2 + .42], ends: [-.12, Math.PI / 2 + .12] };
+function craneStep(dt, live) {
+  const C = G.crane, P = G.P;
+  if (C.st === 'idle') {
+    if (!live || G.wave < 2) return;
+    C.t -= dt; if (C.t > 0) return;
+    // aim the sweep at the player's distance from the pivot, with a little slop
+    C.R = clamp(Math.hypot(P.x - CRANE.x, P.y - CRANE.y) + rnd(-90, 90), 420, 1560);
+    C.from = C.side; C.to = 1 - C.side; C.st = 'warn'; C.t = CRANE.warn; C.hit = new Set();
+    txt(P.x, P.y - 70, t('craneWarn'), '#ffc23d', 24, 1.6);
+  } else if (C.st === 'warn') {
+    C.t -= dt; const k = 1 - C.t / CRANE.warn; // jib swings from its rest spot to the start of the arc
+    C.a = CRANE.rest[C.from] + (CRANE.ends[C.from] - CRANE.rest[C.from]) * Math.min(1, k * 1.6);
+    if (C.t <= 0) { C.st = 'swing'; C.t = 0 }
+  } else if (C.st === 'swing') {
+    C.t += dt; const k = Math.min(1, C.t / CRANE.swing), e = .5 - .5 * Math.cos(Math.PI * k);
+    const a0 = CRANE.ends[C.from], a1 = CRANE.ends[C.to], prev = C.a; C.a = a0 + (a1 - a0) * e;
+    const bx = CRANE.x + Math.cos(C.a) * C.R, by = CRANE.y + Math.sin(C.a) * C.R, w = (C.a - prev) / Math.max(dt, 1e-4);
+    const tx = -Math.sin(C.a) * w * C.R, ty = Math.cos(C.a) * w * C.R; // ball velocity
+    G.shake = Math.max(G.shake, 3);
+    if (Math.random() < .5) puff(bx, by, 1, { c: 0xdccbad, s0: 20, s1: 80, l0: .5, l1: .9, z0: 8, z1: 14, grow: 14, z: 4, vz0: 10, vz1: 40 });
+    const smack = (o, r) => { const d = Math.hypot(o.x - bx, o.y - by); return d < r + CRANE.ball && !C.hit.has(o) && (o.z || 0) < 60 };
+    if (smack(P, P.r)) { C.hit.add(P); hitPlayer(CRANE_DMG); const sp = Math.hypot(tx, ty) || 1; P.vx += tx / sp * 560; P.vy += ty / sp * 560; boom(P.x, P.y, 18); G.shake = 16 }
+    for (const e of G.enemies) if (!e.dead && smack(e, e.r)) { C.hit.add(e); const sp = Math.hypot(tx, ty) || 1; e.vx += tx / sp * 600; e.vy += ty / sp * 600; hurt(e, e.elite ? 120 : 400) }
+    if (k >= 1) { C.st = 'idle'; C.side = C.to; C.t = rnd(22, 34) }
+  }
+}
+const CRANE_DMG = 26;
+
+/* ---------- pit entry ---------- */
+// The countdown drives the car up the driveway, through the gate and into the arena: it arrives as the
+// count hits 2 and the gate swings shut before 1. gateOpen() feeds the gate animation in scene.js.
+const INTRO_END = 1.6;
+function pitIntro(P, dt) {
+  const k = clamp((START_T - G.startT) / (START_T - INTRO_END), 0, 1), e = 1 - (1 - k) * (1 - k);
+  const y = GATE.y0 + (GATE.y1 - GATE.y0) * e;
+  P.vy = dt > 0 ? (y - (P.iy ?? y)) / dt : 0; P.iy = y; P.vx = 0; P.x = GATE.x; P.y = y; P.a = -Math.PI / 2;
+  P.fwd = -P.vy; P.lat = 0; P.sp = Math.abs(P.vy); P.slipDeg = 0; P.z = 0; P.wl = null;
+  if (k >= 1) { P.intro = false; P.vy = 0; P.fwd = 0; P.sp = 0 }
+}
+export const gateOpen = () => G.state === 'play' && G.startT > 0 ? clamp((G.startT - 1.05) / (INTRO_END - .1 - 1.05), 0, 1) : 0;
+
 /* ---------- ramps & air time ---------- */
 const GRAV = 560;
 export const canZ = c => { const ra = rampAt(c.x, c.y); return ra ? ra.h : 0 };
@@ -549,6 +624,7 @@ export function update(dt) {
   }
   if (G.state !== 'play') return;
   const P = G.P, S = G.S, W = G.W, CD = G.CD, drift = G.drift;
+  fadeMarks(dt);
   if (G.startT > 0) { G.startT = Math.max(0, G.startT - dt); if (G.startT === 0) { for (let i = 0; i < (G.openers || 0); i++) queue('rust'); G.openers = 0; if (G.eliteDue) { queue(G.eliteDue); G.eliteDue = null } } }
   const live = G.startT <= 0; // nothing spawns, moves in or shoots until the countdown says GO
   G.siphon = false;
@@ -579,6 +655,7 @@ export function update(dt) {
   P.inv = Math.max(0, P.inv - dt);
   P.hp = Math.min(S.maxhp, P.hp + S.regen * dt);
   P.lat = lat; P.fwd = fwd; P.sp = sp; P.slipDeg = sp > 30 ? Math.round(Math.atan2(Math.abs(lat), Math.abs(fwd)) * 180 / Math.PI) : 0;
+  if (P.intro) pitIntro(P, dt);
 
   /* drifting: skid marks, combo, heat (fire-rate boost), nitro refill */
   const slip = Math.abs(lat), isDrift = gr && slip > 36 && sp > 72;
@@ -637,6 +714,8 @@ export function update(dt) {
   }
   G.pend = G.pend.filter(s => !s.done);
   if (G.fuel <= 0) { G.fuel = 0; endWave(); return }
+
+  craneStep(dt, live);
 
   /* enemies */
   for (const e of G.enemies) {
@@ -796,7 +875,7 @@ export function update(dt) {
   /* camera target: ahead of the car */
   G.cam.x += (P.x + P.vx * .3 - G.cam.x) * Math.min(1, dt * 5);
   G.cam.y += (P.y + P.vy * .3 - G.cam.y) * Math.min(1, dt * 5);
-  G.cam.x = clamp(G.cam.x, 420, AW - 420); G.cam.y = clamp(G.cam.y, 300, AH - 300);
+  G.cam.x = clamp(G.cam.x, 420, AW - 420); G.cam.y = clamp(G.cam.y, 300, AH - (P.intro || G.startT > 0 ? 160 : 300)); // let the camera peek at the driveway during the pit entry
 }
 
 // Side-saw layout, shared with the 3D rig so the visible blades match the hitbox.

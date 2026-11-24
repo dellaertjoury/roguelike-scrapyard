@@ -39,7 +39,7 @@ addEventListener('keydown', e => {
   if (G.state === 'play' && GAMEKEYS.includes(e.code)) e.preventDefault();
   if (e.code === 'KeyP' || e.code === 'Escape') {
     if (G.state === 'play') pause();
-    else if (G.state === 'pause') { G.state = 'play'; UI.show(null) }
+    else if (G.state === 'pause') { G.state = 'play'; UI.show(null) } // Esc also closes the pause settings back into the game
   }
 });
 addEventListener('keyup', e => { G.keys[e.code] = false });

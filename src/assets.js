@@ -2,11 +2,15 @@
 // falls back to procedural art. See ART_PROMPTS.md for what to generate.
 import { CARS, PARTS, PACKS } from './data.js';
 
-export const A = { fx: {}, elites: {}, dirt: null, menuBg: null, garageBg: null, logos: {}, cars: {}, icons: {}, ui: {}, packs: {}, obs: {}, skins: {} };
+export const A = { fx: {}, elites: {}, dirt: null, menuBg: null, garageBg: null, logos: {}, cars: {}, icons: {}, ui: {}, packs: {}, obs: {}, skins: {}, pit: {} };
 // Car skins that exist in assets/skins/ (add an id here when its <id>-top.png and <id>-side.png arrive).
 // Possible ids: hatch, muscle, hearse, rust, spit, brute, thief, harvester, monster, tow.
 export const SKINS = [];
-export const UI_ICONS = ['hull', 'nitro', 'heat', 'scrap', 'lap', 'drift', 'boss', 'fuel-gauge', 'fuel-needle', 'pump', 'jerrycan', 'cluster-speedo', 'cluster-nitro'];
+// Pit entry art that exists in assets/pit/ (add 'gate' / 'driveway' when gate.png / driveway.jpg arrive).
+export const PIT_ART = [];
+export const UI_ICONS = ['hull', 'nitro', 'heat', 'scrap', 'lap', 'drift', 'boss', 'fuel-gauge', 'fuel-needle', 'pump', 'jerrycan'];
+// art with a slot in the game but no file yet; move an id into UI_ICONS when assets/ui/<id>.png arrives:
+// 'cluster-speedo', 'cluster-nitro', 'sign-crane'
 
 const img = src => new Promise(res => {
   const i = new Image();
@@ -24,6 +28,7 @@ export async function loadAssets(onProgress = () => { }) {
     img('assets/obstacles/hay-top.png').then(i => { if (i) A.obs.top = i }),
     img('assets/fx/pump-pad.png').then(i => { if (i) A.fx.pad = i }),
     // painted car skins: both halves must exist for a skin to be used
+    ...PIT_ART.map(k => img(`assets/pit/${k}.${k === 'gate' ? 'png' : 'jpg'}`).then(i => { if (i) A.pit[k] = i })),
     ...SKINS.map(k => Promise.all([img(`assets/skins/${k}-top.png`), img(`assets/skins/${k}-side.png`)]).then(([a, b]) => { if (a && b) A.skins[k] = { top: a, side: b } })),
     // assets/elites/*.png are reference portraits for the 3D enemy models, not loaded in game
     ...PACKS.map(p => img(`assets/packs/${p.id}.jpg`).then(i => { if (i) A.packs[p.id] = i.src })),

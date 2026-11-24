@@ -1,8 +1,9 @@
 // Low-poly three.js renderer. Reads the simulation state (G) and draws it.
 // Sim (x, y) maps to world (x, z); y is up.
 import * as THREE from 'three';
-import { G, AW, AH, EDGE, TAU, ground, rnd, clamp, sawLayout, harvesterBlades, PUMP_R, PUMP_RESERVE, canZ } from './game.js';
+import { G, OPTS, AW, AH, EDGE, GATE, gateOpen, CRANE, ground, composeGround, TAU, rnd, clamp, sawLayout, harvesterBlades, PUMP_R, PUMP_RESERVE, PUMP_WARN, canZ } from './game.js';
 import { A } from './assets.js';
+import { t } from './i18n.js';
 import { SLOTS } from './data.js';
 import { ECOL } from './data.js';
 
@@ -114,7 +115,7 @@ const tireGeo = keep(new THREE.TorusGeometry(11, 5.5, 5, 10).rotateX(Math.PI / 2
 const STATIC = new THREE.Group(); scene.add(STATIC);
 {
   const spots = [];
-  for (let x = EDGE / 2; x < AW; x += 34) spots.push([x, EDGE / 2], [x, AH - EDGE / 2]);
+  for (let x = EDGE / 2; x < AW; x += 34) { spots.push([x, EDGE / 2]); if (Math.abs(x - GATE.x) > GATE.w / 2 + 6) spots.push([x, AH - EDGE / 2]) } // gap for the pit gate
   for (let y = EDGE / 2 + 34; y < AH - 20; y += 34) spots.push([EDGE / 2, y], [AW - EDGE / 2, y]);
   const im = new THREE.InstancedMesh(tireGeo, lam(0xffffff), spots.length * 2);
   im.castShadow = im.receiveShadow = true;
@@ -151,7 +152,8 @@ const crowdMesh = (() => {
   const trunkG = new THREE.CylinderGeometry(4, 6, 30, 5), crownG = new THREE.IcosahedronGeometry(1, 0), rockG = new THREE.DodecahedronGeometry(1, 0);
   const trunkM = lam(0x7a5434), crownMs = [0x4f9a4a, 0x5fae52, 0x3f8a46, 0x6dbb5a].map(c => lam(c)), rockM = lam(0x9a9a94);
   const outside = (x, z, m) => x < -m || x > AW + m || z < -m || z > AH + m;
-  const nearStand = (x, z) => (z < 0 && z > -260 && ((x > AW * .3 - 230 && x < AW * .3 + 230) || (x > AW * .7 - 230 && x < AW * .7 + 230))) || (z > AH && z < AH + 260 && x > AW * .5 - 230 && x < AW * .5 + 230);
+  const nearGate = (x, z) => z > AH - 40 && z < AH + 520 && Math.abs(x - GATE.x) < 260;
+  const nearStand = (x, z) => nearGate(x, z) || (z < 0 && z > -260 && ((x > AW * .3 - 230 && x < AW * .3 + 230) || (x > AW * .7 - 230 && x < AW * .7 + 230))) || (z > AH && z < AH + 260 && x > AW * .5 - 230 && x < AW * .5 + 230);
   let placed = 0;
   for (let t = 0; t < 2000 && placed < 110; t++) {
     const x = rnd(-1100, AW + 1100), z = rnd(-900, AH + 900);
@@ -167,9 +169,9 @@ const crowdMesh = (() => {
     const r = mesh(rockG, rockM); r.scale.set(rnd(10, 30), rnd(8, 20), rnd(10, 30)); r.rotation.set(rnd(0, 3), rnd(0, 3), 0); r.position.set(x, 4, z); STATIC.add(r);
   }
   // crushed-car piles in the corners
-  const crushed = new THREE.InstancedMesh(new THREE.BoxGeometry(48, 14, 26), lam(0xffffff), 4 * 14);
+  const crushed = new THREE.InstancedMesh(new THREE.BoxGeometry(48, 14, 26), lam(0xffffff), 3 * 14);
   crushed.castShadow = crushed.receiveShadow = true; let i = 0;
-  for (const [cx, cz] of [[-150, -150], [AW + 150, -150], [-150, AH + 150], [AW + 150, AH + 150]]) {
+  for (const [cx, cz] of [[AW + 150, -150], [-150, AH + 150], [AW + 150, AH + 150]]) { // top-left corner holds the crane
     for (let k = 0; k < 14; k++) {
       const layer = k < 7 ? 0 : k < 11 ? 1 : k < 13 ? 2 : 3;
       dummy.position.set(cx + rnd(-50, 50) * (1 - layer * .25), 7 + layer * 14, cz + rnd(-50, 50) * (1 - layer * .25));
@@ -191,6 +193,64 @@ const crowdMesh = (() => {
   }
 }
 
+// wrecking-ball crane: a yellow lattice tower outside the top-left corner, a long jib that rotates,
+// a trolley that runs out to the swing radius, a cable and a big iron ball
+const craneG = new THREE.Group(); craneG.position.set(CRANE.x, 0, CRANE.y); scene.add(craneG);
+const JIB_Y = 210, jib = new THREE.Group(), trolley = new THREE.Group(), ballG = new THREE.Group();
+{
+  const yel = lam(0xf2b83a), dark = lam(0x2f2d2a), conc = lam(0xb8b2a6);
+  const base = mesh(new THREE.BoxGeometry(80, 16, 80), conc); base.position.y = 8; craneG.add(base);
+  for (const [x, z] of [[-10, -10], [10, -10], [-10, 10], [10, 10]]) { const leg = mesh(new THREE.BoxGeometry(4, JIB_Y, 4), yel); leg.position.set(x, JIB_Y / 2 + 8, z); craneG.add(leg) }
+  for (let y = 30; y < JIB_Y; y += 26) for (const r of [0, Math.PI / 2]) { const br = mesh(new THREE.BoxGeometry(30, 3, 3), yel, false); br.position.set(0, y + 8, 0); br.rotation.set(0, r, .7); craneG.add(br) }
+  jib.position.y = JIB_Y + 10; craneG.add(jib);
+  const cab = mesh(new THREE.BoxGeometry(26, 20, 24), yel); cab.position.set(6, 6, 18); jib.add(cab);
+  const glass = new THREE.Mesh(new THREE.BoxGeometry(4, 10, 20), lam(0x26313a)); glass.position.set(20, 8, 18); jib.add(glass);
+  const boom = mesh(new THREE.BoxGeometry(1720, 10, 12), yel); boom.position.set(860, 12, 0); jib.add(boom);
+  for (let x = 40; x < 1700; x += 60) { const r = mesh(new THREE.BoxGeometry(3, 3, 14), dark, false); r.position.set(x, 18, 0); jib.add(r) }
+  const counter = mesh(new THREE.BoxGeometry(220, 8, 12), yel); counter.position.set(-110, 12, 0); jib.add(counter);
+  const weight = mesh(new THREE.BoxGeometry(50, 30, 30), conc); weight.position.set(-200, 0, 0); jib.add(weight);
+  const tip = mesh(new THREE.ConeGeometry(6, 40, 4), yel); tip.position.set(0, 40, 0); jib.add(tip);
+  const tr = mesh(new THREE.BoxGeometry(24, 8, 20), dark); trolley.add(tr); trolley.position.y = 2; jib.add(trolley);
+  const cable = mesh(new THREE.CylinderGeometry(1.2, 1.2, 1, 5), dark, false); cable.name = 'cable'; ballG.add(cable);
+  const ball = mesh(new THREE.IcosahedronGeometry(CRANE.ball, 1), new THREE.MeshLambertMaterial({ color: 0x3a3c40, flatShading: true })); ball.name = 'ball'; ballG.add(ball);
+  const ring = mesh(new THREE.TorusGeometry(8, 2.5, 4, 8), dark); ring.position.y = CRANE.ball + 6; ring.name = 'eye'; ball.add(ring);
+  scene.add(ballG);
+}
+// pit entry: a concrete driveway from a garage shed, through two hazard-striped gate doors in the tyre wall.
+// Optional art: assets/pit/gate.png (one door leaf, front view) and assets/pit/driveway.jpg (tileable, top view).
+const pitG = new THREE.Group(); scene.add(pitG); const gateDoors = [];
+function stripeTex(w, h, draw) { const c = document.createElement('canvas'); c.width = w; c.height = h; draw(c.getContext('2d'), w, h); const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t }
+function buildPit() {
+  const X = GATE.x, W = GATE.w, top = AH;
+  const drTex = A.pit && A.pit.driveway ? (() => { const t = new THREE.Texture(A.pit.driveway); t.needsUpdate = true; t.colorSpace = THREE.SRGBColorSpace; t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(1, 3); return t })()
+    : stripeTex(128, 512, (c, w, h) => { c.fillStyle = '#8e8a82'; c.fillRect(0, 0, w, h); for (let i = 0; i < 400; i++) { c.fillStyle = Math.random() < .5 ? 'rgba(60,55,50,.25)' : 'rgba(200,196,186,.25)'; c.fillRect(Math.random() * w, Math.random() * h, 3, 3) } c.fillStyle = '#f2ede2'; for (let y = 10; y < h; y += 64) c.fillRect(w / 2 - 3, y, 6, 34); c.fillStyle = '#ffc23d'; c.fillRect(0, 0, 8, h); c.fillRect(w - 8, 0, 8, h) });
+  const drive = new THREE.Mesh(new THREE.PlaneGeometry(W, 520).rotateX(-Math.PI / 2), new THREE.MeshLambertMaterial({ map: drTex })); drive.position.set(X, .8, top + 250); drive.receiveShadow = true; pitG.add(drive);
+  // posts with red/white bands
+  for (const sx of [-1, 1]) {
+    const post = mesh(new THREE.BoxGeometry(16, 44, 16), lam(0xd8d2c4)); post.position.set(X + sx * (W / 2 + 6), 22, top - EDGE / 2); pitG.add(post);
+    for (const y of [10, 30]) { const band = mesh(new THREE.BoxGeometry(17, 7, 17), lam(0xe24a32), false); band.position.set(X + sx * (W / 2 + 6), y, top - EDGE / 2); pitG.add(band) }
+    const lamp = new THREE.Mesh(new THREE.BoxGeometry(8, 6, 8), new THREE.MeshBasicMaterial({ color: 0xffa020 })); lamp.position.set(X + sx * (W / 2 + 6), 47, top - EDGE / 2); lamp.name = 'lamp'; pitG.add(lamp);
+  }
+  // two door leaves hinged on the posts; they swing outwards (toward the driveway)
+  const gTex = A.pit && A.pit.gate ? (() => { const t = new THREE.Texture(A.pit.gate); t.needsUpdate = true; t.colorSpace = THREE.SRGBColorSpace; return t })()
+    : stripeTex(256, 128, (c, w, h) => { c.fillStyle = '#ffc23d'; c.fillRect(0, 0, w, h); c.fillStyle = '#1d1b1a'; for (let x = -h; x < w; x += 48) { c.beginPath(); c.moveTo(x, h); c.lineTo(x + 24, h); c.lineTo(x + 24 + h, 0); c.lineTo(x + h, 0); c.fill() } c.strokeStyle = '#55514b'; c.lineWidth = 14; c.strokeRect(0, 0, w, h); c.fillStyle = '#8a857c'; for (const [x, y] of [[14, 14], [w - 14, 14], [14, h - 14], [w - 14, h - 14]]) { c.beginPath(); c.arc(x, y, 5, 0, 7); c.fill() } });
+  const dm = new THREE.MeshLambertMaterial({ map: gTex }), dEnd = lam(0x55514b);
+  for (const sx of [-1, 1]) {
+    const hinge = new THREE.Group(); hinge.position.set(X + sx * W / 2, 0, top - EDGE / 2); pitG.add(hinge);
+    const leaf = new THREE.Mesh(new THREE.BoxGeometry(W / 2, 30, 4), [dEnd, dEnd, dEnd, dEnd, dm, dm]); leaf.position.set(-sx * W / 4, 16, 0); leaf.castShadow = true; hinge.add(leaf);
+    gateDoors.push({ hinge, sx });
+  }
+  // the garage shed at the end of the driveway, roll-up door open toward the arena
+  const sy = top + 470, shed = new THREE.Group(); shed.position.set(X, 0, sy); pitG.add(shed);
+  const wallM = lam(0x9a6a48), roofM2 = lam(0x5d6064);
+  for (const sx of [-1, 1]) { const w = mesh(new THREE.BoxGeometry(50, 70, 120), wallM); w.position.set(sx * (W / 2 + 25), 35, 0); shed.add(w) }
+  const back = mesh(new THREE.BoxGeometry(W + 100, 70, 14), wallM); back.position.set(0, 35, 55); shed.add(back);
+  const lintel = mesh(new THREE.BoxGeometry(W + 100, 18, 14), wallM); lintel.position.set(0, 61, -55); shed.add(lintel);
+  const roofS = mesh(new THREE.BoxGeometry(W + 120, 8, 140), roofM2); roofS.position.set(0, 74, 0); roofS.rotation.x = -.06; shed.add(roofS);
+  const signTex = stripeTex(256, 64, (c, w, h) => { c.fillStyle = '#e8553a'; c.fillRect(0, 0, w, h); c.fillStyle = '#fff'; c.font = '800 40px Rubik, Impact, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(t('pitSign'), w / 2, h / 2 + 2) });
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(110, 28), new THREE.MeshBasicMaterial({ map: signTex })); sign.rotation.x = -Math.PI / 2 + .9; sign.rotation.y = Math.PI; sign.position.set(0, 84, -60); shed.add(sign);
+  const inside = mesh(new THREE.BoxGeometry(W, 2, 110), lam(0x3a3835), false); inside.position.set(0, .6, 0); shed.add(inside);
+}
 // bake all static scenery (stands, trees, rocks, poles, flags) into two meshes
 { STATIC.updateMatrixWorld(true); const ms = []; STATIC.traverse(m => { if (m.isMesh) ms.push(m) }); mergeInto(STATIC, ms, m => m.matrixWorld, VC_LIT2) }
 
@@ -237,13 +297,24 @@ function buildObstacles() {
       for (let l = 0; l < 2; l++) { const t = mesh(tireGeo, l ? ((o.x + o.y) % 3 < 1 ? tireRed : tireM) : tireM); t.scale.setScalar(s); t.position.set(o.x, 5.5 * s + l * 11 * s, o.y); obsGroup.add(t) }
       continue;
     }
-    if (o.k === 'tire') {
-      for (let i = 0; i < 3; i++) {
+    if (o.k === 'tire') { // five pile styles, picked per obstacle (o.v)
+      const T = (x, y, z, s, red, tilt) => { const t = mesh(tireGeo, red ? tireRed : tireM); t.scale.setScalar(s); t.position.set(x, y, z); if (tilt) t.rotation.set(tilt[0], tilt[1], tilt[2]); obsGroup.add(t) };
+      const sd = o.x * 13.7 + o.y, rr = k => ((Math.sin(sd + k * 91.3) + 1) / 2);
+      if (o.v === 1) { // pyramid 3-2-1
+        const s = o.r * .42 / 16;
+        [[3, 0], [2, 1], [1, 2]].forEach(([n, l]) => { for (let i = 0; i < n; i++) T(o.x + (i - (n - 1) / 2) * 22 * s, 5.5 * s + l * 11 * s, o.y + (l % 2) * 4 * s, s, l === 2) });
+      } else if (o.v === 2) { // one tall wobbly stack
+        const s = o.r * .8 / 16;
+        for (let l = 0; l < 5; l++) T(o.x + (rr(l) - .5) * 4, 5.5 * s + l * 11 * s, o.y + (rr(l + 9) - .5) * 4, s, l === 4 || l === 1, [0, rr(l) * 3, 0]);
+      } else if (o.v === 3) { // tractor tyre lying flat with a small stack inside
+        const s = o.r * .95 / 16; T(o.x, 5.5 * s * 1.3, o.y, s, false); const t2 = obsGroup.children[obsGroup.children.length - 1]; t2.scale.y = s * 1.3;
+        for (let l = 0; l < 2; l++) T(o.x, 5.5 * s * .4 + l * 11 * s * .4 + 4, o.y, s * .4, l === 1);
+      } else if (o.v === 4) { // a heap: tyres on their side, leaning every which way
+        const s = o.r * .5 / 16;
+        for (let i = 0; i < 6; i++) { const a = rr(i) * TAU, d = rr(i + 3) * o.r * .5; T(o.x + Math.cos(a) * d, 8 * s + (i > 3 ? 9 * s : 0), o.y + Math.sin(a) * d, s, i === 5, [rr(i + 5) * 1.4, rr(i + 7) * 3, rr(i + 11) * 1.2]) }
+      } else for (let i = 0; i < 3; i++) { // three short stacks
         const a = i / 3 * TAU + o.x, s = o.r * .55 / 16;
-        for (let l = 0; l < 3 - (i === 2 ? 1 : 0); l++) {
-          const t = mesh(tireGeo, l === 2 && i === 0 ? tireRed : tireM);
-          t.scale.setScalar(s); t.position.set(o.x + Math.cos(a) * o.r * .42, 5.5 * s + l * 11 * s, o.y + Math.sin(a) * o.r * .42); obsGroup.add(t);
-        }
+        for (let l = 0; l < 3 - (i === 2 ? 1 : 0); l++) T(o.x + Math.cos(a) * o.r * .42, 5.5 * s + l * 11 * s, o.y + Math.sin(a) * o.r * .42, s, l === 2 && i === 0);
       }
     } else if (!hayArt()) {
       const b = mesh(new THREE.CylinderGeometry(o.r, o.r, 28, 10), [hayM, hayTop, hayTop]); b.position.set(o.x, 14, o.y); b.rotation.y = rnd(0, 3); obsGroup.add(b);
@@ -556,7 +627,15 @@ const addMat = map => new THREE.MeshBasicMaterial({ map, transparent: true, dept
 const soft = pool(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), addMat(glowTex), 500);
 const rings = pool(new THREE.RingGeometry(.88, 1, 48).rotateX(-Math.PI / 2), addMat(null), 120);
 let fireDecal = null; // optional painted flame sprite (assets/fx/fire-trail.png)
+let scrapPts = null;
 export function initFx() {
+  if (!pitG.children.length) buildPit();
+  if (A.ui.scrap && !scrapPts) {
+    const tx = new THREE.TextureLoader().load(A.ui.scrap); tx.colorSpace = THREE.SRGBColorSpace;
+    const gm = new THREE.BufferGeometry(); gm.setAttribute('position', new THREE.BufferAttribute(new Float32Array(1200), 3)); gm.setAttribute('color', new THREE.BufferAttribute(new Float32Array(1200), 3)); gm.setDrawRange(0, 0);
+    scrapPts = new THREE.Points(gm, new THREE.PointsMaterial({ map: tx, size: 22, sizeAttenuation: true, transparent: true, alphaTest: .35, depthWrite: false, vertexColors: true }));
+    scrapPts.frustumCulled = false; scene.add(scrapPts);
+  }
   if (A.ui.jerrycan && !canSprites) {
     const tx = new THREE.TextureLoader().load(A.ui.jerrycan); tx.colorSpace = THREE.SRGBColorSpace;
     const mt = new THREE.SpriteMaterial({ map: tx, depthWrite: false });
@@ -573,12 +652,13 @@ let eliteSawN = 0;
 const pumpG = new THREE.Group(); pumpG.visible = false; scene.add(pumpG);
 {
   const pad = mesh(new THREE.CylinderGeometry(PUMP_R, PUMP_R, 1.2, 20), lam(0x8a857c), false); pad.position.y = .6; pad.name = 'pad'; pumpG.add(pad);
-  const body = mesh(new THREE.BoxGeometry(14, 26, 11), lam(0xd23a2a)); body.position.y = 14; pumpG.add(body);
-  const top = mesh(new THREE.BoxGeometry(15, 6, 12), lam(0xa82a20)); top.position.y = 29; pumpG.add(top);
-  const screen = new THREE.Mesh(new THREE.BoxGeometry(.6, 4, 7), new THREE.MeshBasicMaterial({ color: 0x7fdcaa })); screen.position.set(7.4, 20, 0); screen.name = 'screen'; pumpG.add(screen);
-  const hose = mesh(new THREE.BoxGeometry(2, 18, 2), lam(0x1d1b1a)); hose.position.set(0, 12, 7); hose.rotation.x = .25; pumpG.add(hose);
-  const noz = mesh(new THREE.BoxGeometry(3, 3, 6), lam(0x55585e)); noz.position.set(0, 20, 8.5); pumpG.add(noz);
-  const base = mesh(new THREE.BoxGeometry(20, 2, 16), lam(0x8d9096)); base.position.y = 1.8; pumpG.add(base);
+  const mdl = new THREE.Group(); mdl.scale.setScalar(2.2); mdl.name = 'model'; pumpG.add(mdl); // the pump itself, at 2.2× (post radius PUMP_POST)
+  const body = mesh(new THREE.BoxGeometry(14, 26, 11), lam(0xd23a2a)); body.position.y = 14; mdl.add(body);
+  const top = mesh(new THREE.BoxGeometry(15, 6, 12), lam(0xa82a20)); top.position.y = 29; mdl.add(top);
+  const screen = new THREE.Mesh(new THREE.BoxGeometry(.6, 4, 7), new THREE.MeshBasicMaterial({ color: 0x7fdcaa })); screen.position.set(7.4, 20, 0); screen.name = 'screen'; mdl.add(screen);
+  const hose = mesh(new THREE.BoxGeometry(2, 18, 2), lam(0x1d1b1a)); hose.position.set(0, 12, 7); hose.rotation.x = .25; mdl.add(hose);
+  const noz = mesh(new THREE.BoxGeometry(3, 3, 6), lam(0x55585e)); noz.position.set(0, 20, 8.5); mdl.add(noz);
+  const base = mesh(new THREE.BoxGeometry(20, 2, 16), lam(0x8d9096)); base.position.y = 1.8; mdl.add(base);
 }
 let padDecal = null;
 const canPool = pool(new THREE.BoxGeometry(9, 12, 6), lam(0xd23a2a), 30); canPool.castShadow = true;
@@ -597,7 +677,8 @@ function finish(m, n) { m.count = n; m.instanceMatrix.needsUpdate = true; if (m.
 let camH = 1000;
 function placeCamera(cx, cz, shake) {
   const asp = VW / VH, t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
-  camH = (asp > 1 ? 1180 : 820) / (2 * t * asp);
+  camH = (asp > 1 ? 1180 : 820) / (2 * t * asp) / OPTS.zoom;
+  if (!OPTS.shake) shake = 0;
   const sx = shake ? rnd(-shake, shake) : 0, sz = shake ? rnd(-shake, shake) : 0;
   camera.position.set(cx + sx, camH, cz + camH * .34 + sz); camera.lookAt(cx + sx, 0, cz + sz);
   scene.fog.near = camH + 700; scene.fog.far = camH + 2800;
@@ -607,7 +688,7 @@ function placeCamera(cx, cz, shake) {
 let texT = 0;
 function syncGround(dt) {
   texT -= dt;
-  if (G.groundDirty && texT <= 0) { groundTex.needsUpdate = true; G.groundDirty = false; texT = .25 } // ~4 uploads/s max
+  if (G.groundDirty && texT <= 0) { composeGround(); groundTex.needsUpdate = true; G.groundDirty = false; texT = .25 } // ~4 uploads/s max
   if (obsBuilt !== G.obsVersion) buildObstacles();
 }
 let cheer = 0;
@@ -635,6 +716,16 @@ export function render(dt) {
   syncGround(dt); animateCrowd(dt);
   const P = G.P;
   placeCamera(G.cam.x, G.cam.y, G.shake * .6);
+  { // crane: jib angle, trolley out at the swing radius, ball hanging under it; red dashed arc while the warning runs
+    const C = G.crane || { st: 'idle', a: CRANE.rest[0], R: 900 }, a = C.a ?? CRANE.rest[0], R = C.R || 900;
+    jib.rotation.y = -a; trolley.position.x = R;
+    const bx = CRANE.x + Math.cos(a) * R, bz = CRANE.y + Math.sin(a) * R, by = C.st === 'swing' ? CRANE.ball + 4 : CRANE.ball + 30;
+    ballG.getObjectByName('ball').position.set(bx, by, bz); ballG.getObjectByName('ball').rotation.y = a * 6;
+    const cb = ballG.getObjectByName('cable'), top = JIB_Y + 10; cb.position.set(bx, (top + by) / 2, bz); cb.scale.y = top - by;
+    G._craneArc = C.st === 'warn' || C.st === 'swing' ? { R, from: CRANE.ends[C.from], to: CRANE.ends[C.to], k: C.st === 'warn' ? 1 - C.t / CRANE.warn : 1 } : null;
+  }
+  { const op = gateOpen(); for (const d of gateDoors) d.hinge.rotation.y = d.sx * op * 1.6; // pit gate swings shut as the countdown ends
+    for (const c of pitG.children) if (c.name === 'lamp') c.material.color.setHex(op > 0 && Math.sin(G.time * 12) > 0 ? 0xffa020 : 0x553810) }
 
   // player car
   if (P) {
@@ -718,7 +809,19 @@ export function render(dt) {
   }
   // gas pump: zone ring, fill progress ring, and the reserve shown by the screen colour
   const pu = G.pump; pumpG.visible = !!pu;
-  if (pu) {
+  // the next pump's spot: a pulsing green ring and glow before it opens
+  const nx = G.pumpNext;
+  if (nx && !pu && nring < 118) {
+    const k = 1 - Math.max(0, G.pumpT) / PUMP_WARN, pulse = .85 + .15 * Math.abs(Math.sin(G.time * 6));
+    put(rings, nring++, nx.x, 1.3, nx.y, PUMP_R * pulse, 1, PUMP_R * pulse, 0, 0, 0x2f8a5a);
+    put(rings, nring++, nx.x, 1.4, nx.y, PUMP_R * k, 1, PUMP_R * k, 0, 0, 0x1f6a44);
+    if (nsoft < 500) put(soft, nsoft++, nx.x, 1.2, nx.y, PUMP_R * 2.2 * pulse, 1, PUMP_R * 2.2 * pulse, 0, 0, 0x0e3a22);
+  }
+  if (pu && pu.empty) { // dry pump: grey ring, red blinking screen
+    pumpG.position.set(pu.x, 0, pu.y);
+    if (nring < 118) put(rings, nring++, pu.x, 1.4, pu.y, PUMP_R, 1, PUMP_R, 0, 0, 0x6a6560);
+    pumpG.getObjectByName('screen').material.color.setHex(Math.sin(G.time * 8) > 0 ? 0xff3a2a : 0x401010);
+  } else if (pu) {
     pumpG.position.set(pu.x, 0, pu.y);
     const pulse = 1 + Math.sin(G.time * 4) * .03;
     if (nring < 118) {
@@ -753,12 +856,28 @@ export function render(dt) {
     for (let k = 0; k < N; k++) { const a = pt(k), b = pt(k + 1); streak(ns++, a[0], a[1], a[2], b[0], b[1], b[2], 4, 0x1d1b1a) }
     for (let j = 0; j < 3 && ng < 1200; j++) { const u = (G.time * 1.6 + j / 3) % 1, a = pt(u * N); put(glows, ng++, a[0], a[2] + 1, a[1], 2.6, 2.6, 2.6, 0, 0, 0x9fe070) }
   }
+  // crane danger zone: two red dashed arcs (the ball's path, edge to edge) that blink faster as the swing nears
+  const ca = G._craneArc;
+  if (ca && ns < 1500) {
+    const blink = ca.k < 1 ? Math.sin(G.time * (8 + ca.k * 16)) > -.2 : true, N = 48;
+    if (blink) for (const rr of [ca.R - CRANE.ball - 6, ca.R + CRANE.ball + 6]) for (let i = 0; i < N; i += 2) {
+      const u0 = ca.from + (ca.to - ca.from) * i / N, u1 = ca.from + (ca.to - ca.from) * (i + 1) / N;
+      streak(ns++, CRANE.x + Math.cos(u0) * rr, CRANE.y + Math.sin(u0) * rr, 1.2, CRANE.x + Math.cos(u1) * rr, CRANE.y + Math.sin(u1) * rr, 1.2, 5, 0xff3a2a);
+    }
+    if (nsoft < 480) for (let i = 0; i <= 8; i++) { const u = ca.from + (ca.to - ca.from) * i / 8; put(soft, nsoft++, CRANE.x + Math.cos(u) * ca.R, 1, CRANE.y + Math.sin(u) * ca.R, CRANE.ball * 3.2, 1, CRANE.ball * 3.2, 0, 0, 0x5a0a04) }
+  }
   finish(blobs, nb); finish(glows, ng); finish(streaks, ns); finish(soft, nsoft); finish(rings, nring); finish(eliteSaws, eliteSawN); eliteSawN = 0;
   if (fireDecal) finish(fireDecal, nfire);
 
   let nsc = 0;
-  for (const s of G.scraps) if (nsc < 400) put(scrapPool, nsc++, s.x, 4 + Math.sin(G.time * 4 + s.x) * 1.5, s.y, 1, 1, 1, G.time * 3 + s.x, .5, s.v > 1 ? 0xffc23d : 0xb9bcc0);
-  finish(scrapPool, nsc);
+  if (scrapPts) { // painted scrap icons (assets/ui/scrap.png) as camera-facing points, one draw call
+    const pa = scrapPts.geometry.attributes.position, ca = scrapPts.geometry.attributes.color;
+    for (const s of G.scraps) { if (nsc >= 400) break; pa.setXYZ(nsc, s.x, 9 + Math.sin(G.time * 4 + s.x) * 2, s.y); const c = s.v > 1 ? [1, .85, .45] : [1, 1, 1]; ca.setXYZ(nsc, c[0], c[1], c[2]); nsc++ }
+    scrapPts.geometry.setDrawRange(0, nsc); pa.needsUpdate = ca.needsUpdate = true; finish(scrapPool, 0);
+  } else {
+    for (const s of G.scraps) if (nsc < 400) put(scrapPool, nsc++, s.x, 4 + Math.sin(G.time * 4 + s.x) * 1.5, s.y, 1, 1, 1, G.time * 3 + s.x, .5, s.v > 1 ? 0xffc23d : 0xb9bcc0);
+    finish(scrapPool, nsc);
+  }
   let nm = 0; for (const m of G.mines) put(minePool, nm++, m.x, 2, m.y, 1, 1, 1); finish(minePool, nm);
 
   renderer.render(scene, camera);
@@ -784,7 +903,7 @@ export function attract(dt) {
   const ca = demoT * .05;
   placeCamera(AW / 2 + Math.cos(ca) * 120, AH / 2 + Math.sin(ca) * 80, 0);
   let nb = 0; for (const p of G.parts) { const s = p.size * Math.min(1, p.life / p.max * 2.5); put(blobs, nb++, p.x, p.z, p.y, s, s, s, p.rot, p.rot, p.c) }
-  finish(blobs, nb); finish(glows, 0); finish(streaks, 0); finish(scrapPool, 0); finish(minePool, 0); finish(canPool, 0); if (canSprites) for (const sp of canSprites) sp.visible = false; pumpG.visible = false; finish(soft, 0); finish(rings, 0); finish(eliteSaws, 0); if (fireDecal) finish(fireDecal, 0);
+  finish(blobs, nb); finish(glows, 0); finish(streaks, 0); finish(scrapPool, 0); if (scrapPts) scrapPts.geometry.setDrawRange(0, 0); finish(minePool, 0); finish(canPool, 0); if (canSprites) for (const sp of canSprites) sp.visible = false; pumpG.visible = false; finish(soft, 0); finish(rings, 0); finish(eliteSaws, 0); if (fireDecal) finish(fireDecal, 0);
   renderer.render(scene, camera);
 }
 export function hideDemo() { for (const o of demo) o.root.visible = false; G.parts = [] }

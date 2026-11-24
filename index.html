@@ -48,7 +48,27 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 /* HUD */
 #hud{position:absolute;inset:0;pointer-events:none}
 .pnl{position:absolute;background:var(--glass);backdrop-filter:blur(6px);border-radius:14px;padding:12px 16px;box-shadow:0 8px 24px rgba(0,0,0,.25)}
-.tl{left:16px;top:16px;width:min(280px,40vw);display:grid;gap:7px}
+.tl{left:16px;top:16px;width:min(300px,40vw)}
+/* riveted steel plates for the top HUD: gunmetal gradient, a bolt in each corner, a hazard stripe along one edge */
+.plate{position:absolute;padding:12px 14px 12px 18px;border-radius:12px;background:linear-gradient(160deg,#4a4844,#2b2a27 55%,#232220);box-shadow:inset 0 1px 0 rgba(255,255,255,.14),inset 0 -2px 0 rgba(0,0,0,.4),0 0 0 2px #1a1917,0 10px 24px rgba(0,0,0,.35);display:grid;gap:10px}
+.plate::before{content:"";position:absolute;inset:6px;pointer-events:none;background:radial-gradient(circle,#9a968e 0 2.2px,#3a3835 2.6px,transparent 3.4px) 0 0/100% 100% no-repeat,radial-gradient(circle at 3px 3px,#9a968e 0 2.2px,#3a3835 2.6px,transparent 3.4px) left top/7px 7px no-repeat,radial-gradient(circle at 3px 3px,#9a968e 0 2.2px,#3a3835 2.6px,transparent 3.4px) right top/7px 7px no-repeat,radial-gradient(circle at 3px 3px,#9a968e 0 2.2px,#3a3835 2.6px,transparent 3.4px) left bottom/7px 7px no-repeat,radial-gradient(circle at 3px 3px,#9a968e 0 2.2px,#3a3835 2.6px,transparent 3.4px) right bottom/7px 7px no-repeat}
+.plate::after{content:"";position:absolute;left:0;top:10px;bottom:10px;width:6px;border-radius:0 3px 3px 0;background:repeating-linear-gradient(-45deg,#ffc23d 0 6px,#1a1917 6px 12px)}
+.plate .row{display:flex;align-items:center;gap:10px}.plate .col{flex:1;display:grid;gap:4px;min-width:0}
+.badge{flex:none;width:40px;height:40px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 30%,#5a5752,#1f1e1c);box-shadow:0 0 0 2px #e8553a,inset 0 2px 4px rgba(0,0,0,.6)}
+.badge.sm{width:30px;height:30px;box-shadow:0 0 0 2px #ffc23d,inset 0 2px 4px rgba(0,0,0,.6)}
+.badge img{width:72%;height:72%;object-fit:contain;filter:drop-shadow(0 1px 1px rgba(0,0,0,.6))}
+.plate .hd{display:flex;justify-content:space-between;align-items:baseline;gap:8px;font:800 11px Rubik,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#d9d3c4;white-space:nowrap}
+.plate .hd .val{font:800 15px Rubik,sans-serif;letter-spacing:0;color:#fff;font-variant-numeric:tabular-nums;overflow:hidden;text-overflow:ellipsis}
+.plate .hd .chip{font:700 10.5px Inter,sans-serif;color:#ffc23d;letter-spacing:.02em}
+/* segmented bars: a 10-cell grille over the fill */
+.seg{position:relative;height:14px;border-radius:4px;background:#121110;box-shadow:inset 0 2px 3px rgba(0,0,0,.7),0 0 0 1px rgba(255,255,255,.08);overflow:hidden}
+.seg.heat{height:9px}
+.seg i{position:absolute;inset:0 auto 0 0;width:0;transition:width .12s;background:linear-gradient(180deg,#ff8a5a,#e8553a 55%,#b83a22)}
+.seg.heat i{background:linear-gradient(90deg,#ffd45a,#ff9a2a 55%,#ff3b2a)}
+.seg::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(90deg,transparent 0 calc(10% - 2px),#121110 calc(10% - 2px) 10%)}
+.seg i.low{background:linear-gradient(180deg,#ff6a5a,#ff2a1a);animation:blink .5s steps(2) infinite}
+#hullPlate.hit{animation:shakeP .3s}
+@keyframes shakeP{25%{transform:translateX(-4px)}50%{transform:translateX(4px)}75%{transform:translateX(-2px)}}
 .meter{position:relative;height:18px;background:rgba(0,0,0,.35);border-radius:6px;overflow:hidden}
 .meter.sm{height:12px}
 .meter i{position:absolute;inset:0 auto 0 0;background:var(--rust);border-radius:6px;transition:width .1s}
@@ -75,7 +95,16 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 @keyframes blink{50%{opacity:.35}}
 #bossPnl{left:50%;top:16px;transform:translateX(-50%);width:min(440px,70vw);display:grid;gap:6px}
 #bossPnl .meter i{background:#e0b040}
-.tr{right:16px;top:16px;text-align:right;min-width:120px}
+.tr{right:16px;top:16px;grid-auto-flow:column;align-items:center;gap:12px;padding:10px 18px 10px 22px}
+.sico{width:64px;height:64px;display:grid;place-items:center;border-radius:14px;background:radial-gradient(circle at 40% 35%,rgba(255,194,61,.35),rgba(255,194,61,0) 70%)}
+.sico img{width:100%;height:100%;object-fit:contain;filter:drop-shadow(0 3px 3px rgba(0,0,0,.6))}
+.lbl2{font:800 11px Rubik,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:#d9d3c4}
+.snum{font:800 clamp(30px,3.6vw,42px)/1 Rubik,sans-serif;color:#ffc23d;font-variant-numeric:tabular-nums;text-shadow:0 3px 0 #7a4a10,0 0 18px rgba(255,194,61,.35);transition:transform .15s}
+.snum.pop{transform:scale(1.18)}
+.wrk{font:600 12px Inter,sans-serif;color:#c3c7cf}
+.bump{position:absolute;right:14px;top:-6px;font:800 18px Rubik,sans-serif;color:#7fdcaa;text-shadow:0 2px 0 rgba(0,0,0,.5);opacity:0;pointer-events:none}
+.bump.go{animation:bumpUp .9s ease-out}
+@keyframes bumpUp{0%{opacity:0;transform:translateY(6px)}20%{opacity:1}100%{opacity:0;transform:translateY(-18px)}}
 .num{font:600 clamp(26px,3.4vw,36px)/1.1 Inter,sans-serif;font-variant-numeric:tabular-nums;margin-top:4px}
 .small{color:var(--mute);font-size:13px}
 .ang{color:var(--rust);font:600 18px Inter,sans-serif}
@@ -96,6 +125,28 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 #driftMtr.bank{animation:bank .5s ease-out}
 @keyframes bank{0%{transform:translateY(-50%) scale(1.12);box-shadow:0 0 0 3px #7fdcaa,0 0 30px rgba(127,220,170,.8)}100%{transform:translateY(-50%) scale(1)}}
 /* red pulse on the screen edges while a thief's hose drains your tank */
+#craneSign{position:absolute;left:50%;top:96px;width:min(340px,80vw);padding:12px 16px 14px;transform:translate(-50%,-30px) rotate(-2deg);opacity:0;pointer-events:none;text-align:center;
+  background:linear-gradient(170deg,#f4f1ea,#d9d4c8 60%,#c7c0b0);border-radius:6px;box-shadow:0 0 0 3px #2a2826,0 0 0 6px #d9d4c8,0 14px 30px rgba(0,0,0,.5);color:#1d1b1a;transition:opacity .2s,transform .25s}
+#craneSign::before,#craneSign::after{content:"";position:absolute;top:8px;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle,#8a857c 40%,#55514b 45%)}#craneSign::before{left:8px}#craneSign::after{right:8px}
+#craneSign.on{opacity:1;transform:translate(-50%,0) rotate(-2deg);animation:signShake .45s ease-in-out infinite}
+#craneSign.art{background:center/100% 100% no-repeat var(--art);box-shadow:none}
+#craneSign.art>*{visibility:hidden}
+#craneSign .oval{display:inline-block;margin:0 auto 6px;padding:4px 26px;border-radius:50%;background:#d62a1f;color:#fff;font:900 22px/1.1 Rubik,Impact,sans-serif;letter-spacing:.08em;box-shadow:0 0 0 3px #1d1b1a,0 0 0 5px #fff,0 0 0 7px #1d1b1a}
+#craneSign b{display:block;font:900 clamp(26px,5vw,38px)/1 Rubik,Impact,sans-serif;letter-spacing:.02em}
+#craneSign span{display:block;margin-top:6px;font:700 13px Inter,sans-serif;color:#3a2a20}
+#craneSign .cs-ball{position:absolute;right:16px;bottom:12px;width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#7a7c80,#1d1b1a);transform-origin:50% -26px;animation:swingB .9s ease-in-out infinite alternate}
+#craneSign .cs-ball::before{content:"";position:absolute;left:12px;top:-26px;width:2px;height:26px;background:#1d1b1a}
+@keyframes signShake{0%,100%{transform:translate(-50%,0) rotate(-2deg)}50%{transform:translate(-50%,2px) rotate(1.5deg)}}
+@keyframes swingB{from{transform:rotate(-35deg)}to{transform:rotate(35deg)}}
+@media(prefers-reduced-motion:reduce){#craneSign.on,#craneSign .cs-ball{animation:none}}
+/* pause menu and settings */
+.pmenu{display:grid;gap:10px;width:min(320px,90vw)}.pmenu .btn{width:100%}.pmenu .small{text-align:center;margin:0}
+.btn.warnb{background:#5a2a22;box-shadow:0 4px 0 #3a1a14}
+.opts{display:grid;gap:14px;width:min(460px,92vw)}
+.opt{display:grid;gap:6px;background:var(--glass);border-radius:12px;padding:12px 14px}.opt b{font:700 14px Inter,sans-serif}
+.seg3{display:flex;gap:6px;flex-wrap:wrap}.seg3 button{flex:1;min-height:40px;border:0;border-radius:8px;background:rgba(255,255,255,.08);color:#fff;font:700 14px Inter,sans-serif;cursor:pointer}
+.seg3 button.on{background:var(--rust)}.seg3 button:focus-visible{outline:2px solid var(--haz)}
+.gear{margin-left:auto}
 #vign{position:absolute;inset:0;pointer-events:none;opacity:0;box-shadow:inset 0 0 70px 18px rgba(255,40,25,.55);transition:opacity .25s}
 #vign.on{animation:vign .8s ease-in-out infinite}
 @keyframes vign{0%,100%{opacity:.35}50%{opacity:1}}
@@ -103,8 +154,9 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 #count.on{animation:cnt .95s ease-out forwards}#count.go{color:var(--haz)}
 @keyframes cnt{0%{opacity:0;transform:scale(1.6)}15%{opacity:1;transform:scale(1)}80%{opacity:1}100%{opacity:0;transform:scale(.9)}}
 #fx .hbar{position:absolute;left:0;top:0;display:none;height:6px;border-radius:3px;background:rgba(15,15,14,.75);box-shadow:0 0 0 1.5px rgba(0,0,0,.5);overflow:hidden}.hbar i{display:block;height:100%;border-radius:3px}
-#fx .ptag{position:absolute;left:0;top:0;display:none;padding:4px 8px 5px;border-radius:8px;background:rgba(20,20,18,.82);font:700 13px Inter,sans-serif;color:#efe3c8;text-align:center;min-width:64px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+#fx .ptag{position:absolute;left:0;top:0;width:max-content;display:none;padding:4px 8px 5px;border-radius:8px;background:rgba(20,20,18,.82);font:700 13px Inter,sans-serif;color:#efe3c8;text-align:center;min-width:64px;box-shadow:0 2px 8px rgba(0,0,0,.4)}
 #fx .ptag i{display:block;height:5px;margin-top:3px;border-radius:3px;background:rgba(255,255,255,.15);overflow:hidden}.ptag u{display:block;height:100%;background:#7fdcaa}
+#fx .ptag.dry{color:#ff6b5a;box-shadow:0 0 0 2px #ff4a30}#fx .ptag.dry i{display:none}#fx .ptag.soon{color:#7fdcaa;animation:blink .8s steps(2) infinite}#fx .ptag.soon i{display:none}
 #fx .ptag.on{color:#7fdcaa;box-shadow:0 0 0 2px #7fdcaa,0 0 14px rgba(127,220,170,.6)}
 #banner{position:absolute;left:0;right:0;top:30%;text-align:center;opacity:0}
 #banner b{display:block;font:800 clamp(36px,7vw,72px)/1 Rubik,sans-serif;text-transform:uppercase;color:#ff3b2a;text-shadow:0 4px 0 rgba(60,8,4,.55),0 0 22px rgba(255,59,42,.35)}
@@ -212,7 +264,7 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 #tPause{position:absolute;left:16px;bottom:116px;width:48px;height:48px;font-size:14px}
 @media(pointer:coarse){#touch{display:block}#driftMtr{top:42%}#cluster{bottom:184px;left:8px;width:clamp(190px,34vw,260px)}#tPause{bottom:116px}}
 @media(max-width:900px){.tl{width:min(240px,30vw)}#bossPnl{width:min(360px,36vw)}}
-@media(max-width:700px){.tl{width:46vw;padding:8px 10px;gap:5px}.tr{min-width:0;padding:8px 12px}.num{font-size:22px}
+@media(max-width:700px){.tl{width:52vw;padding:8px 10px 8px 14px;gap:6px}.badge{width:30px;height:30px}.badge.sm{width:24px;height:24px}.plate .hd .val{font-size:13px}.plate .hd .chip{display:none}.tr{padding:8px 12px 8px 16px;gap:8px}.sico{width:44px;height:44px}.snum{font-size:26px}.num{font-size:22px}
   #bossPnl{top:84px;width:min(300px,76vw)}#cluster{width:205px}#banner{top:40%}.meter span{font-size:9.5px;padding:0 6px}#driftMtr{width:60px;padding:8px 6px}#driftMtr .bars{height:clamp(100px,19vh,160px)}#driftMtr .mul{font-size:18px}#driftMtr .pts{font-size:13px}.big{font-size:36px}}
 @media(max-width:1000px){.garage{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.garage .panel{grid-column:1/-1}}
 @media(max-width:820px){.grid3{grid-template-columns:minmax(0,1fr)}.car{display:grid;grid-template-columns:150px minmax(0,1fr);column-gap:12px}.car img{grid-row:span 7}.garage{grid-template-columns:minmax(0,1fr)}}
@@ -229,16 +281,23 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
   <div id="fx"></div>
 
   <div id="hud" class="hide">
-    <div class="pnl tl">
-      <div class="meter"><i id="hpBar"></i><span><b data-ui="hull" data-i18n="hull">Hull</b><b id="hpTxt"></b></span></div>
-      <div class="meter sm heat"><i id="heatBar"></i><span data-ui="heat"><b id="heatTxt">Heat</b></span></div>
+    <!-- top left: riveted steel plate with hull and heat gauges -->
+    <div class="plate tl" id="hullPlate">
+      <div class="row"><span class="badge" data-ico="hull"></span>
+        <div class="col"><div class="hd"><b data-i18n="hull">Hull</b><b class="val" id="hpTxt"></b></div><div class="seg hull"><i id="hpBar"></i></div></div></div>
+      <div class="row"><span class="badge sm" data-ico="heat"></span>
+        <div class="col"><div class="hd"><b data-i18n="heat">Heat</b><b class="val chip" id="heatTxt"></b></div><div class="seg heat"><i id="heatBar"></i></div></div></div>
     </div>
     <div class="pnl hide" id="bossPnl"><div class="lbl" data-ui="boss"><span id="eliteName"></span></div><div class="meter"><i id="bossBar"></i></div></div>
-    <div class="pnl tr"><div class="lbl" data-ui="scrap"><span data-i18n="scrap">Scrap</span></div><div class="num" id="scrapTxt">0</div><div class="small" id="wreckTxt">0 wrecks</div></div>
+    <!-- top right: the scrap counter, a big painted icon and a punchy number that bumps when it grows -->
+    <div class="plate tr" id="scrapPlate"><span class="sico" data-ico="scrap"></span>
+      <div class="col"><b class="lbl2" data-i18n="scrap">Scrap</b><div class="snum" id="scrapTxt">0</div><div class="wrk" id="wreckTxt">0 wrecks</div></div><b class="bump" id="scrapBump"></b></div>
     <!-- gauge cluster: speedo with the lap shown as a gear, fuel dial top-left, nitro LEDs bottom-right (built in ui.js) -->
     <div id="cluster" role="img" aria-label="Speed, lap, fuel and nitro"></div>
     <div id="driftMtr" aria-label="Drift"><div class="lbl" data-ui="drift"><span data-i18n="drift">Drift</span></div><div class="mul" id="driftMul">×1.0</div><div class="bars"><div class="clock"><i id="driftClock"></i></div><div class="tube"><i id="driftFill"></i><b style="bottom:25%"></b><b style="bottom:50%"></b><b style="bottom:75%"></b></div></div><div class="pts" id="driftNum">0</div></div>
     <div id="vign"></div>
+    <!-- wrecking-ball warning: a battered DANGER road sign that drops in during the crane warning -->
+    <div id="craneSign" aria-live="assertive"><div class="oval" id="csTop">GEVAAR</div><b id="csBig">SLOOPKOGEL</b><span id="csSub"></span><i class="cs-ball"></i></div>
     <div id="count" aria-live="polite"></div>
     <div id="banner"><b></b><span></span></div>
     <div id="touch" aria-hidden="true">
@@ -250,7 +309,7 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
   </div>
 
   <div class="ov" id="menu">
-    <div class="menuhead"><h1 id="title">Ottokeirkhof</h1></div>
+    <div class="menuhead"><h1 id="title">Ottokeirkhof</h1><button class="btn alt gear" id="mSettings" aria-label="Settings">⚙ <span data-i18n="settings">Settings</span></button></div>
     <p class="sub" id="bestLine"></p>
     <div class="grid3" id="cars"></div>
     <div id="packs"></div>
@@ -285,7 +344,19 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 
   <div class="ov hide center" id="pause">
     <h2 data-i18n="paused">Paused</h2>
-    <div class="row" style="justify-content:center"><button class="btn" id="resume" data-i18n="resume">Resume</button></div>
+    <div class="pmenu">
+      <button class="btn" id="resume" data-i18n="resume">Resume</button>
+      <button class="btn alt" id="pSettings" data-i18n="settings">Settings</button>
+      <button class="btn alt" id="pGarage" data-i18n="toGarage">Garage</button>
+      <button class="btn alt warnb" id="pMenu" data-i18n="toMenu">Main menu</button>
+      <p class="small" data-i18n="toMenuHint"></p>
+    </div>
+  </div>
+
+  <div class="ov hide center" id="settings">
+    <h2 data-i18n="settings">Settings</h2>
+    <div class="opts" id="optList"></div>
+    <div class="row" style="justify-content:center"><button class="btn" id="optBack" data-i18n="back2">Back</button></div>
   </div>
 
   <div id="loading">

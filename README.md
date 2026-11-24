@@ -12,6 +12,8 @@ Drifting heats your weapons (up to +80% fire rate), ramming at speed wrecks cars
 - **Laps** end when the tank runs dry. Every fifth lap brings an elite with its own special move: the Harvester shoots chained saw blades, Big Wheel leaps and slams, the Wrecker hooks you and reels you in (nitro breaks free).
 - **Garage blueprint**: six fixed slots on your car (roof, hood, front bumper, rear bumper, trunk, sides). Each slot holds one part, which you can level up or swap out. Every part is visible on the car. Five parts are for sale each visit, and you can lock the ones you want to keep.
 - **Fuel thieves** (green, from lap 2) hook a hose onto your car when they get close and drain 3 L/s, up to 6 L each; the screen edges pulse red while it happens. Break away or wreck them: a wrecked thief drops a jerrycan with your fuel, which evaporates after 3 s.
+- **Pit entry**: every lap starts in the garage below the arena; during the 3-2-1 countdown the car rolls up the driveway and the gate shuts behind it. Nothing spawns before GO.
+- **Wrecking ball**: from lap 2 a tower crane in the top-left corner sweeps a wrecking ball across the arena every 22-34 s, after a 3 s road-sign warning and a red arc on the ground. It wrecks most cars it touches.
 - **Ramps** to jump over the pack. Land on a car to crush it.
 - **Ramming** hurts both cars, depending on impact speed and weight.
 - **Languages**: English, Français, Deutsch, Español and West-Vlams.
