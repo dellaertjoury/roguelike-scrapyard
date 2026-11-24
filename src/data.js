@@ -22,7 +22,7 @@ export const CARS = [
   }
 ];
 
-export const BASE = {
+export const BASE = { tank: 30,
   maxhp: 100, top: 190, accel: 255, grip: 4.8, turn: 3.0, mass: 1, ram: 1, armor: 0, dmg: 1, rate: 1,
   magnet: 110, regen: 0, driftGain: 1, exhaust: 0, spikes: 0, nitroPow: 1, nitroFill: 1, luck: 0, ramGuard: 1
 };
@@ -57,6 +57,7 @@ export const PARTS = [
   { id: 'spoiler', slot: 'rear', tag: 'Handling', cost: 12, max: 3, f: (S, l) => { S.grip *= 1 + .1 * l; S.turn *= 1 + .05 * l } },
   { id: 'nitro', slot: 'trunk', tag: 'Engine', cost: 14, max: 3, f: (S, l) => { S.nitroPow *= 1 + .1 * l; S.nitroFill *= 1 + .4 * l } },
   { id: 'ballast', slot: 'trunk', tag: 'Ram', cost: 10, max: 3, f: (S, l) => { S.mass *= 1 + .3 * l; S.accel *= 1 - .05 * l; S.maxhp += 10 * l } },
+  { id: 'tank', slot: 'trunk', tag: 'Utility', cost: 14, max: 3, f: (S, l) => { S.tank += 10 * l } }, // +10 L (= +10 s per lap) per level
   { id: 'toolbox', slot: 'trunk', tag: 'Repair', cost: 12, max: 3, f: (S, l) => { S.regen += .8 * l } },
   { id: 'scrapbin', slot: 'trunk', tag: 'Utility', cost: 12, max: 3, f: (S, l) => { S.luck += .2 * l } },
   { id: 'saw', slot: 'sides', w: 'saw', tag: 'Weapon', cost: 24, max: 4 },

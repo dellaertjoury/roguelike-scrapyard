@@ -8,7 +8,7 @@ Drifting heats your weapons (up to +80% fire rate), ramming at speed wrecks cars
 
 ## What's in it
 
-- **Fuel is the lap clock**: a 60 L tank burns 1 L/s (2 L/s on nitro), so a lap lasts a minute unless you refuel. A gas pump opens somewhere on the map: drive onto its pad and it pours its 30 L (= +30 s) straight in at 6 L/s; a ring on the pad and a tag above it show what is left. There is one pump per lap, so a lap lasts at most 90 s.
+- **Fuel is the lap clock**: a 30 L tank burns 1 L/s (2 L/s on nitro), so a lap lasts 30 s unless you refuel; the Reservetank part adds 10 L per level (up to 60 L). A gas pump opens somewhere on the map: drive onto its pad and it pours its 30 L (= +30 s) straight in at 6 L/s; a ring on the pad and a tag above it show what is left. There is one pump per lap.
 - **Laps** end when the tank runs dry. Every fifth lap brings an elite with its own special move: the Harvester shoots chained saw blades, Big Wheel leaps and slams, the Wrecker hooks you and reels you in (nitro breaks free).
 - **Garage blueprint**: six fixed slots on your car (roof, hood, front bumper, rear bumper, trunk, sides). Each slot holds one part, which you can level up or swap out. Every part is visible on the car. Five parts are for sale each visit, and you can lock the ones you want to keep.
 - **Fuel thieves** (green, from lap 2) hook a hose onto your car when they get close and drain 3 L/s, up to 6 L each; the screen edges pulse red while it happens. Break away or wreck them: a wrecked thief drops a jerrycan with your fuel, which evaporates after 3 s.

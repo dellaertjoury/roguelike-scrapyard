@@ -614,6 +614,10 @@ function partMesh(o, id, l, P) {
       break;
     }
     case 'ballast': box(10 + l * 2, 4 + l, W * .6, M.concrete, tx, top + 2 + l / 2, 0, g); break;
+    case 'tank': { // red jerrycans strapped in the boot, one per level
+      for (let i = 0; i < l; i++) { const x = tx + (i - (l - 1) / 2) * 8; box(6, 9, 7, M.red, x, top + 4.5, 0, g); box(2, 2, 4, M.dark, x, top + 9.8, 0, g) }
+      break;
+    }
     case 'toolbox': {
       for (let i = 0; i < l; i++) { box(8, 4, 6, M.red, tx + (i - (l - 1) / 2) * 9, top + 2, 0, g); box(4, 1.2, 1.2, M.dark, tx + (i - (l - 1) / 2) * 9, top + 4.6, 0, g) }
       break;
@@ -685,7 +689,7 @@ export function initFx() {
   if (A.ui.scrap && !scrapPts) {
     const tx = new THREE.TextureLoader().load(A.ui.scrap); tx.colorSpace = THREE.SRGBColorSpace;
     const gm = new THREE.BufferGeometry(); gm.setAttribute('position', new THREE.BufferAttribute(new Float32Array(1200), 3)); gm.setAttribute('color', new THREE.BufferAttribute(new Float32Array(1200), 3)); gm.setDrawRange(0, 0);
-    scrapPts = new THREE.Points(gm, new THREE.PointsMaterial({ map: tx, size: 34, sizeAttenuation: true, transparent: true, alphaTest: .35, depthWrite: false, vertexColors: true }));
+    scrapPts = new THREE.Points(gm, new THREE.PointsMaterial({ map: tx, size: 80, sizeAttenuation: true, transparent: true, alphaTest: .35, depthWrite: false, vertexColors: true }));
     scrapPts.frustumCulled = false; scene.add(scrapPts);
   }
   if (A.ui.jerrycan && !canSprites) {
@@ -704,13 +708,27 @@ let eliteSawN = 0;
 const pumpG = new THREE.Group(); pumpG.visible = false; scene.add(pumpG);
 {
   const pad = mesh(new THREE.CylinderGeometry(PUMP_R, PUMP_R, 1.2, 20), lam(0x8a857c), false); pad.position.y = .6; pad.name = 'pad'; pumpG.add(pad);
-  const mdl = new THREE.Group(); mdl.scale.setScalar(1.35); mdl.name = 'model'; pumpG.add(mdl); // the pump itself, at 1.35× (car-sized) (post radius PUMP_POST)
-  const body = mesh(new THREE.BoxGeometry(14, 26, 11), lam(0xd23a2a)); body.position.y = 14; mdl.add(body);
-  const top = mesh(new THREE.BoxGeometry(15, 6, 12), lam(0xa82a20)); top.position.y = 29; mdl.add(top);
-  const screen = new THREE.Mesh(new THREE.BoxGeometry(.6, 4, 7), new THREE.MeshBasicMaterial({ color: 0x7fdcaa })); screen.position.set(7.4, 20, 0); screen.name = 'screen'; mdl.add(screen);
-  const hose = mesh(new THREE.BoxGeometry(2, 18, 2), lam(0x1d1b1a)); hose.position.set(0, 12, 7); hose.rotation.x = .25; mdl.add(hose);
-  const noz = mesh(new THREE.BoxGeometry(3, 3, 6), lam(0x55585e)); noz.position.set(0, 20, 8.5); mdl.add(noz);
-  const base = mesh(new THREE.BoxGeometry(20, 2, 16), lam(0x8d9096)); base.position.y = 1.8; mdl.add(base);
+  const mdl = new THREE.Group(); mdl.scale.setScalar(1.25); mdl.name = 'model'; pumpG.add(mdl); // the pump itself, at 1.35× (car-sized) (post radius PUMP_POST)
+  // a retro 1950s pump: red cabinet on a black foot, white rim, red dome, a glowing GAS globe that spins on top,
+  // a chrome counter window (its little screen shows the reserve), a GAS STATION plate, nozzle and hose on the side
+  const red = lam(0xd8261c), cream = lam(0xf2ede2), chrome = lam(0xc9ccd2), black = lam(0x1d1b1a);
+  const foot = mesh(new THREE.BoxGeometry(17, 2.4, 14), black); foot.position.y = 1.2; mdl.add(foot);
+  const body = mesh(new THREE.BoxGeometry(14, 28, 11), red); body.position.y = 16; mdl.add(body);
+  for (const sx of [-1, 1]) { const rib = mesh(new THREE.BoxGeometry(1.4, 28, 11.6), lam(0xb81c14)); rib.position.set(sx * 6.6, 16, 0); mdl.add(rib) }
+  const rim = mesh(new THREE.BoxGeometry(15, 1.6, 12), cream); rim.position.y = 30.8; mdl.add(rim);
+  const dome = mesh(new THREE.CylinderGeometry(3.6, 6.4, 3.2, 10), red); dome.position.y = 33.2; mdl.add(dome);
+  const panel = mesh(new THREE.BoxGeometry(.6, 10, 8), chrome, false); panel.position.set(7.3, 22.5, 0); mdl.add(panel);
+  const screen = new THREE.Mesh(new THREE.BoxGeometry(.6, 3, 6), new THREE.MeshBasicMaterial({ color: 0x7fdcaa })); screen.position.set(7.7, 24, 0); screen.name = 'screen'; mdl.add(screen);
+  const logoTex = stripeTex(128, 128, (c, w, h) => { c.fillStyle = '#f4efe2'; c.fillRect(0, 0, w, h); c.strokeStyle = '#d8261c'; c.lineWidth = 9; c.beginPath(); c.arc(w / 2, h / 2, 52, 0, 7); c.stroke(); c.fillStyle = '#d8261c'; c.font = '900 44px Rubik, Impact, sans-serif'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText('GAS', w / 2, h / 2 + 3) });
+  const plateTex = stripeTex(128, 96, (c, w, h) => { c.fillStyle = '#d8261c'; c.fillRect(0, 0, w, h); c.strokeStyle = '#f4efe2'; c.lineWidth = 5; c.strokeRect(6, 6, w - 12, h - 12); c.fillStyle = '#f4efe2'; c.textAlign = 'center'; c.font = '900 36px Rubik, Impact, sans-serif'; c.fillText('GAS', w / 2, 48); c.font = '800 18px Rubik, Impact, sans-serif'; c.fillText('STATION', w / 2, 76) });
+  const plate = new THREE.Mesh(new THREE.PlaneGeometry(8, 6), new THREE.MeshLambertMaterial({ map: plateTex })); plate.rotation.y = Math.PI / 2; plate.position.set(7.35, 9, 0); mdl.add(plate);
+  const globe = new THREE.Group(); globe.position.y = 44; globe.name = 'globe'; mdl.add(globe);
+  const ball = new THREE.Mesh(new THREE.SphereGeometry(8, 14, 10), new THREE.MeshBasicMaterial({ color: 0xfff6dc })); globe.add(ball);
+  for (const sx of [1, -1]) { const disc = new THREE.Mesh(new THREE.CircleGeometry(7, 24), new THREE.MeshBasicMaterial({ map: logoTex })); disc.position.z = sx * 8.05; if (sx < 0) disc.rotation.y = Math.PI; globe.add(disc) }
+  const neck = mesh(new THREE.CylinderGeometry(2, 2.6, 2.4, 8), red); neck.position.y = 35.6; neck.scale.y = 1.4; mdl.add(neck);
+  const noz = mesh(new THREE.BoxGeometry(2.6, 5, 2.2), chrome); noz.position.set(0, 20, 6.8); mdl.add(noz);
+  const crank = mesh(new THREE.BoxGeometry(1.4, 4, 1.4), chrome); crank.position.set(0, 20, -6.4); mdl.add(crank);
+  for (let i = 0; i < 6; i++) { const u = i / 5; const hs = mesh(new THREE.BoxGeometry(1.4, 1.4, 4.2), black, false); hs.position.set(Math.sin(u * 3) * 3, 18 - u * 16, 8 + Math.sin(u * Math.PI) * 5); hs.rotation.x = u * 1.2; mdl.add(hs) }
 }
 let padDecal = null;
 const canPool = pool(new THREE.BoxGeometry(9, 12, 6), lam(0xd23a2a), 30); canPool.castShadow = true;
@@ -869,6 +887,7 @@ export function render(dt) {
   }
   // gas pump: zone ring, fill progress ring, and the reserve shown by the screen colour
   const pu = G.pump; pumpG.visible = !!pu;
+  if (pu) pumpG.getObjectByName('globe').rotation.y = G.time * 1.6; // the GAS globe spins
   // the next pump's spot: a pulsing green ring and glow before it opens
   const nx = G.pumpNext;
   if (nx && !pu && nring < 118) {
@@ -933,7 +952,7 @@ export function render(dt) {
   let nsc = 0;
   if (scrapPts) { // painted scrap icons (assets/ui/scrap.png) as camera-facing points, one draw call
     const pa = scrapPts.geometry.attributes.position, ca = scrapPts.geometry.attributes.color;
-    for (const s of G.scraps) { if (nsc >= 400) break; const pr = (s.v > 1 ? 17 : 14) * (1 + Math.sin(G.time * 5 + s.x) * .08); put(scrapRings, nsc, s.x, 1.3, s.y, pr, 1, pr, 0, 0, s.v > 1 ? 0xffd36a : 0xffffff); pa.setXYZ(nsc, s.x, 11 + Math.sin(G.time * 4 + s.x) * 2, s.y); const c = s.v > 1 ? [1, .85, .45] : [1, 1, 1]; ca.setXYZ(nsc, c[0], c[1], c[2]); nsc++ }
+    for (const s of G.scraps) { if (nsc >= 400) break; const pr = (s.v > 1 ? 20 : 17) * (1 + Math.sin(G.time * 5 + s.x) * .08); put(scrapRings, nsc, s.x, 1.3, s.y, pr, 1, pr, 0, 0, s.v > 1 ? 0xffd36a : 0xffffff); pa.setXYZ(nsc, s.x, 15 + Math.sin(G.time * 4 + s.x) * 2, s.y); const c = s.v > 1 ? [1, .85, .45] : [1, 1, 1]; ca.setXYZ(nsc, c[0], c[1], c[2]); nsc++ }
     scrapPts.geometry.setDrawRange(0, nsc); pa.needsUpdate = ca.needsUpdate = true; finish(scrapPool, 0); finish(scrapRings, nsc);
   } else {
     for (const s of G.scraps) if (nsc < 400) { put(scrapRings, nsc, s.x, 1.3, s.y, 14, 1, 14, 0, 0, 0xffffff); put(scrapPool, nsc++, s.x, 4 + Math.sin(G.time * 4 + s.x) * 1.5, s.y, 1, 1, 1, G.time * 3 + s.x, .5, s.v > 1 ? 0xffc23d : 0xb9bcc0) }

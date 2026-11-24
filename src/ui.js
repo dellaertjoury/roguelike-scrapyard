@@ -1,5 +1,5 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
-import { G, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
+import { G, START_T, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
 import { CARS, PART, SLOTS, TAGC, PACKS } from './data.js';
 import { t, L } from './i18n.js';
 import { A } from './assets.js';
@@ -278,8 +278,12 @@ export function hud() {
   const cs = $('craneSign'), cw = G.crane && (G.crane.st === 'warn' || G.crane.st === 'swing') && G.state === 'play';
   cs.classList.toggle('on', !!cw);
   $('vign').classList.toggle('on', !!G.siphon && G.state === 'play');
-  const cd = $('count'), n = G.startT > 0 ? String(Math.ceil(G.startT)) : '';
-  if (cd._n !== n) { cd._n = n; if (n || cd.textContent) { cd.textContent = n || t('go'); cd.className = n ? 'tick' : 'tick go'; void cd.offsetWidth; cd.classList.add('on') } }
+  // F1 start lights: one red light per 0.6 s of countdown, all five lit just before GO, then green for a moment
+  const lt = $('lights'), lit = G.state === 'play' && G.startT > 0 ? Math.min(5, Math.floor((START_T - G.startT) / (START_T / 5)) + 1) : 0;
+  if (G.startT > 0 && G.state === 'play') hudMem.goT = .9; else if (hudMem.goT > 0) hudMem.goT -= 1 / 60;
+  const showGo = !(G.startT > 0) && hudMem.goT > 0 && G.state === 'play';
+  lt.classList.toggle('on', lit > 0 || showGo); lt.classList.toggle('go', showGo);
+  if (lt._lit !== lit) { lt._lit = lit; [...lt.children].forEach((p, i) => p.classList.toggle('lit', i < lit)) }
   set($('scrapTxt'), fmt(G.scrap)); set($('wreckTxt'), t('wrecks', { n: fmt(G.wrecks) }));
   // scrap bump (+N) and a shake on the hull plate when you take damage
   if (hudMem.scrap != null && G.scrap > hudMem.scrap) { const b = $('scrapBump'), n = $('scrapTxt'); b.textContent = '+' + fmt(G.scrap - hudMem.scrap); b.classList.remove('go'); void b.offsetWidth; b.classList.add('go'); n.classList.add('pop'); clearTimeout(hudMem.pt); hudMem.pt = setTimeout(() => n.classList.remove('pop'), 150) }
