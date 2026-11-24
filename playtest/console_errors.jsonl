@@ -393,3 +393,15 @@
 {"run": "c29", "kind": "http", "text": "404 http://localhost:8790/assets/garage-bg.jpg", "t": 1795544427.248458}
 {"run": "c29", "kind": "http", "text": "404 http://localhost:8790/assets/icons/tank.png", "t": 1795544427.4242454}
 {"run": "c29", "kind": "warning", "text": "[.WebGL-0x1b400170400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795544428.6268027}
+{"run": "c30", "kind": "http", "text": "404 http://localhost:8790/assets/garage-bg.jpg", "t": 1795544502.4783895}
+{"run": "c30", "kind": "http", "text": "404 http://localhost:8790/assets/icons/tank.png", "t": 1795544502.5854497}
+{"run": "c30", "kind": "warning", "text": "[.WebGL-0x78c00199c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795544503.9050705}
+{"run": "c30", "kind": "http", "text": "404 http://localhost:8790/assets/garage-bg.jpg", "t": 1795544511.4128876}
+{"run": "c30", "kind": "http", "text": "404 http://localhost:8790/assets/icons/tank.png", "t": 1795544511.5761244}
+{"run": "c30", "kind": "warning", "text": "[.WebGL-0x3afc00921200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795544512.8044157}
+{"run": "c30", "kind": "http", "text": "404 http://localhost:8790/assets/garage-bg.jpg", "t": 1795544532.007558}
+{"run": "c30", "kind": "http", "text": "404 http://localhost:8790/assets/icons/tank.png", "t": 1795544532.1797543}
+{"run": "c30", "kind": "warning", "text": "[.WebGL-0x233c001b2000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795544533.5016859}
+{"run": "c30", "kind": "http", "text": "404 http://localhost:8790/assets/garage-bg.jpg", "t": 1795544543.1533694}
+{"run": "c30", "kind": "http", "text": "404 http://localhost:8790/assets/icons/tank.png", "t": 1795544543.3766682}
+{"run": "c30", "kind": "warning", "text": "[.WebGL-0x62400166200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795544544.472526}
