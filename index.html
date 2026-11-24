@@ -176,8 +176,8 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 .sn{font:700 10px Inter,sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--bp)}
 .pn{font-size:13.5px;font-weight:600;line-height:1.2;overflow-wrap:anywhere}.pn.empty{color:var(--mute);font-weight:500;font-style:italic}
 .bprow .lv{font-size:11px;color:var(--haz);white-space:nowrap}
-/* sticky footer: a full-width frosted bar (box-shadow + clip-path bleed it to both screen edges) */
-.gfoot{position:sticky;bottom:calc(-1 * clamp(18px,4vw,44px));margin-bottom:calc(-1 * clamp(18px,4vw,44px));padding:14px 0 clamp(18px,4vw,44px);background:rgba(20,21,25,.9);box-shadow:0 0 0 100vmax rgba(20,21,25,.9);clip-path:inset(0 -100vmax);border-top:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px);z-index:2}
+/* sticky footer, pushed to the bottom of the screen when the garage is shorter than the window: a full-width frosted bar (box-shadow + clip-path bleed it to both screen edges) */
+.gfoot{margin-top:auto;position:sticky;bottom:calc(-1 * clamp(18px,4vw,44px));margin-bottom:calc(-1 * clamp(18px,4vw,44px));padding:14px 0 clamp(18px,4vw,44px);background:rgba(20,21,25,.9);box-shadow:0 0 0 100vmax rgba(20,21,25,.9);clip-path:inset(0 -100vmax);border-top:1px solid rgba(255,255,255,.08);backdrop-filter:blur(8px);z-index:2}
 .panel{background:var(--glass2);border-radius:16px;padding:14px 16px}
 .panel h3{margin:0 0 8px;font:800 17px Rubik,sans-serif}
 .stat{display:flex;justify-content:space-between;gap:10px;border-bottom:1px solid var(--line);padding:3px 0;font-size:14px}

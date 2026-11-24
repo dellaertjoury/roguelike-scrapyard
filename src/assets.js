@@ -21,7 +21,7 @@ export async function loadAssets(onProgress = () => { }) {
     img('assets/obstacles/hay-side.jpg').then(i => { if (i) A.obs.side = i }),
     img('assets/obstacles/hay-top.png').then(i => { if (i) A.obs.top = i }),
     img('assets/fx/pump-pad.png').then(i => { if (i) A.fx.pad = i }),
-    ...[...ELITES, 'thief'].map(k => img(`assets/elites/${k}.png`).then(i => { if (i) A.elites[k] = i.src })),
+    ...[...ELITES, 'thief', 'rust', 'spit', 'brute'].map(k => img(`assets/elites/${k}.png`).then(i => { if (i) A.elites[k] = i.src })),
     ...PACKS.map(p => img(`assets/packs/${p.id}.jpg`).then(i => { if (i) A.packs[p.id] = i.src })),
     img('assets/logo.png').then(i => { if (i) A.logos.en = i.src }),
     ...LANGS.filter(l => l.id !== 'en').map(l => img(`assets/logo-${l.id}.png`).then(i => { if (i) A.logos[l.id] = i.src })),

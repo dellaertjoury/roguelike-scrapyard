@@ -289,7 +289,7 @@ export function buildCar({ len: L, wid: W, color, kind, shape }) {
   if (kind === 'spit') {
     turret = new THREE.Group(); turret.position.set(L * shape.cabX - cabL * .12, by + bh / 2 + cabH + 1.2, 0);
     const base = mesh(new THREE.CylinderGeometry(5.5, 6.5, 4, 8), lam(0x3a3c40)); base.position.y = 2; turret.add(base);
-    const barrelM = kind === 'spit' ? new THREE.MeshBasicMaterial({ color: 0xa8f060 }) : lam(0x55585e);
+    const barrelM = kind === 'spit' ? new THREE.MeshBasicMaterial({ color: 0xff5a40 }) : lam(0x55585e);
     for (const z of [0]) { const br = mesh(new THREE.BoxGeometry(16, 2.6, 2.6), barrelM); br.position.set(9, 3.5, z); br.name = 'barrel'; turret.add(br) }
     tilt.add(turret);
   }
