@@ -1,0 +1,50 @@
+{
+ "top": [
+  {
+   "car": "hatch",
+   "statTop": 210,
+   "statKmh": 126,
+   "cruise": 286,
+   "cruiseKmh": 171,
+   "ratio": 1.36,
+   "reachStatTopAt_s": 0.73,
+   "nitro": 421,
+   "rustSpd_lap1": 181,
+   "thiefSpd_lap5": 193,
+   "rustShareOfReal": 0.64,
+   "thiefShareOfReal": 0.68
+  },
+  {
+   "car": "muscle",
+   "statTop": 190,
+   "statKmh": 114,
+   "cruise": 256,
+   "cruiseKmh": 154,
+   "ratio": 1.35,
+   "reachStatTopAt_s": 0.77,
+   "nitro": 377,
+   "rustSpd_lap1": 164,
+   "thiefSpd_lap5": 175,
+   "rustShareOfReal": 0.64,
+   "thiefShareOfReal": 0.68
+  },
+  {
+   "car": "hearse",
+   "statTop": 160,
+   "statKmh": 96,
+   "cruise": 213,
+   "cruiseKmh": 128,
+   "ratio": 1.33,
+   "reachStatTopAt_s": 0.8,
+   "nitro": 313,
+   "rustSpd_lap1": 138,
+   "thiefSpd_lap5": 147,
+   "rustShareOfReal": 0.65,
+   "thiefShareOfReal": 0.69
+  }
+ ],
+ "pit": {
+  "hitAfterFrames": 16,
+  "sp": 146
+ }
+}

@@ -1,0 +1,90 @@
+{
+ "escCountdown": {
+  "before": {
+   "st": "play",
+   "startT": 2.2500000000000027,
+   "count": "3"
+  },
+  "during": {
+   "st": "pause",
+   "startT": 2.0000000000000036,
+   "count": "VOLLE GAS!",
+   "cls": "tick go on",
+   "pauseShown": true
+  },
+  "after": {
+   "st": "play",
+   "startT": 1.5000000000000022,
+   "count": "2"
+  }
+ },
+ "blur": {
+  "st": "pause",
+  "keyW": false,
+  "pauseShown": true
+ },
+ "optsStored": "{\"zoom\":0.82,\"shake\":false,\"fx\":0.5}",
+ "escFromSettings": {
+  "st": "play",
+  "settingsHidden": true,
+  "hudHidden": false
+ },
+ "quitLap": {
+  "stateAfter": "shop",
+  "hp0": 30,
+  "hpAfter": 50,
+  "wave": 1,
+  "scrapDelta": 0,
+  "after5": {
+   "wave": 6,
+   "hp": 100,
+   "maxhp": 100,
+   "state": "shop",
+   "rerollCost": 10
+  },
+  "eliteDue": "harvester",
+  "eliteSkipped": true,
+  "waveNow": 5
+ },
+ "leaks": {
+  "menuState": "menu",
+  "wave": 1,
+  "scrap": 0,
+  "offer": 0,
+  "cans": 0,
+  "crane": "idle",
+  "filling": true,
+  "drift": 0,
+  "build": [
+   "turret"
+  ],
+  "tank": 30,
+  "fuel": 30,
+  "chaseRamp": true,
+  "pumpNext": null,
+  "siphon": false,
+  "gateV": 1
+ },
+ "dieAndEnd": {
+  "stateSameFrame": "clear",
+  "hpSameFrame": 15,
+  "finalState": "shop",
+  "finalHp": 15
+ },
+ "dieInAir": {
+  "states": [
+   "play"
+  ],
+  "z": 0,
+  "air": false,
+  "finalState": "play"
+ },
+ "errs": [
+  "[.WebGL-0x1c4c001c2800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ],
+ "optsAfterReload": {
+  "zoom": 0.82,
+  "shake": false,
+  "fx": 0.5
+ }
+}

@@ -1,0 +1,89 @@
+{
+ "runs": [
+  {
+   "n": 300,
+   "keys": [],
+   "pair": false,
+   "wall": false,
+   "hitsHist": {
+    "1": 8,
+    "2": 112,
+    "3": 89,
+    "4": 91
+   },
+   "dmgMean": 40.1,
+   "maxDmg": 56.66228451998904,
+   "maxHits": 4,
+   "inObsAfter": 5,
+   "outsideAfter": 0,
+   "firstHit": 12.8,
+   "ramDmg": 0,
+   "rustDmg": 1
+  },
+  {
+   "n": 300,
+   "keys": [
+    "KeyW"
+   ],
+   "pair": false,
+   "wall": false,
+   "hitsHist": {
+    "1": 170,
+    "2": 113,
+    "3": 13,
+    "4": 4
+   },
+   "dmgMean": 20.2,
+   "maxDmg": 51.200000000186265,
+   "maxHits": 4,
+   "inObsAfter": 6,
+   "outsideAfter": 0,
+   "firstHit": 12.7,
+   "ramDmg": 0,
+   "rustDmg": 0
+  },
+  {
+   "n": 300,
+   "keys": [],
+   "pair": true,
+   "wall": false,
+   "hitsHist": {
+    "1": 41,
+    "2": 82,
+    "3": 111,
+    "4": 66
+   },
+   "dmgMean": 38.7,
+   "maxDmg": 66.34075981623027,
+   "maxHits": 4,
+   "inObsAfter": 2,
+   "outsideAfter": 0,
+   "firstHit": 15.5,
+   "ramDmg": 0,
+   "rustDmg": 2
+  },
+  {
+   "n": 300,
+   "keys": [],
+   "pair": false,
+   "wall": true,
+   "hitsHist": {
+    "1": 18,
+    "2": 127,
+    "3": 79,
+    "4": 76
+   },
+   "dmgMean": 37.1,
+   "maxDmg": 56.751604568911716,
+   "maxHits": 4,
+   "inObsAfter": 0,
+   "outsideAfter": 0,
+   "firstHit": 12.8,
+   "ramDmg": 0,
+   "rustDmg": 1
+  }
+ ],
+ "errs": [
+  "[.WebGL-0xbdc0016fa00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

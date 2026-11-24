@@ -1,0 +1,8 @@
+ESC {'before': {'st': 'play', 'startT': 2.2500000000000027, 'count': '3'}, 'during': {'st': 'pause', 'startT': 2.0000000000000036, 'count': 'VOLLE GAS!', 'cls': 'tick go on', 'pauseShown': True}, 'after': {'st': 'play', 'startT': 1.5000000000000022, 'count': '2'}}
+BLUR {'st': 'pause', 'keyW': False, 'pauseShown': True}
+OPTS {"zoom":0.82,"shake":false,"fx":0.5} {'st': 'play', 'settingsHidden': True, 'hudHidden': False}
+QUIT {'stateAfter': 'shop', 'hp0': 30, 'hpAfter': 50, 'wave': 1, 'scrapDelta': 0, 'after5': {'wave': 6, 'hp': 100, 'maxhp': 100, 'state': 'shop', 'rerollCost': 10}, 'eliteDue': 'harvester', 'eliteSkipped': True, 'waveNow': 5}
+LEAKS {'menuState': 'menu', 'wave': 1, 'scrap': 0, 'offer': 0, 'cans': 0, 'crane': 'idle', 'filling': True, 'drift': 0, 'build': ['turret'], 'tank': 30, 'fuel': 30, 'chaseRamp': True, 'pumpNext': None, 'siphon': False, 'gateV': 1}
+DIE+END {'stateSameFrame': 'clear', 'hpSameFrame': 15, 'finalState': 'shop', 'finalHp': 15}
+AIR DEATH {'states': ['play'], 'z': 0, 'air': False, 'finalState': 'play'}
+RELOAD {'zoom': 0.82, 'shake': False, 'fx': 0.5}

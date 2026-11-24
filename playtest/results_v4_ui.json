@@ -1,0 +1,2993 @@
+{
+ "1366x800": {
+  "lapstart": {
+   "W": 1366,
+   "H": 800,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1165,
+     "y": 16,
+     "w": 185,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 549,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1276,
+     "y": 243,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 360,
+     "y": 144,
+     "w": 646,
+     "h": 227,
+     "off": false
+    },
+    "#count": {
+     "x": 614,
+     "y": 449,
+     "w": 137,
+     "h": 137,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "banner_thief": {
+   "W": 1366,
+   "H": 800,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1165,
+     "y": 16,
+     "w": 185,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 549,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1276,
+     "y": 243,
+     "w": 76,
+     "h": 315,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "banner_spit": {
+   "W": 1366,
+   "H": 800,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1165,
+     "y": 16,
+     "w": 185,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 549,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1276,
+     "y": 243,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 115,
+     "y": 144,
+     "w": 1135,
+     "h": 223,
+     "off": false
+    },
+    "#banner b": {
+     "x": 392,
+     "y": 176,
+     "w": 582,
+     "h": 98,
+     "off": false
+    },
+    "#banner span": {
+     "x": 143,
+     "y": 304,
+     "w": 1079,
+     "h": 29,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#banner",
+     "#banner b",
+     582,
+     98
+    ],
+    [
+     "#banner",
+     "#banner span",
+     1079,
+     29
+    ]
+   ],
+   "clipped": []
+  },
+  "banner_elite": {
+   "W": 1366,
+   "H": 800,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1165,
+     "y": 16,
+     "w": 185,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 549,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1276,
+     "y": 243,
+     "w": 76,
+     "h": 315,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "hud_busy": {
+   "W": 1366,
+   "H": 800,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1106,
+     "y": 16,
+     "w": 244,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 549,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1276,
+     "y": 243,
+     "w": 76,
+     "h": 315,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "pause": {
+   "W": 1366,
+   "H": 800,
+   "rects": {
+    "#pause": {
+     "x": 0,
+     "y": 0,
+     "w": 1366,
+     "h": 800,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "settings": {
+   "W": 1366,
+   "H": 800,
+   "rects": {
+    "#settings": {
+     "x": 0,
+     "y": 0,
+     "w": 1366,
+     "h": 800,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "garage": {
+   "W": 1366,
+   "H": 800,
+   "rects": {
+    "#cards": {
+     "x": 44,
+     "y": 119,
+     "w": 384,
+     "h": 715,
+     "off": true
+    },
+    "#blueprint": {
+     "x": 461,
+     "y": 132,
+     "w": 589,
+     "h": 538,
+     "off": false
+    },
+    "#build": {
+     "x": 1084,
+     "y": 98,
+     "w": 238,
+     "h": 343,
+     "off": false
+    },
+    ".gfoot": {
+     "x": 44,
+     "y": 693,
+     "w": 1278,
+     "h": 107,
+     "off": false
+    },
+    "#reroll": {
+     "x": 201,
+     "y": 708,
+     "w": 157,
+     "h": 48,
+     "off": false
+    },
+    "#repair": {
+     "x": 368,
+     "y": 708,
+     "w": 192,
+     "h": 48,
+     "off": false
+    },
+    "#go": {
+     "x": 44,
+     "y": 708,
+     "w": 147,
+     "h": 48,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#cards",
+     ".gfoot",
+     384,
+     107
+    ],
+    [
+     "#cards",
+     "#reroll",
+     157,
+     48
+    ],
+    [
+     "#cards",
+     "#repair",
+     60,
+     48
+    ],
+    [
+     "#cards",
+     "#go",
+     147,
+     48
+    ],
+    [
+     ".gfoot",
+     "#reroll",
+     157,
+     48
+    ],
+    [
+     ".gfoot",
+     "#repair",
+     192,
+     48
+    ],
+    [
+     ".gfoot",
+     "#go",
+     147,
+     48
+    ]
+   ],
+   "clipped": [
+    "chip c on: \"AchterbarsjokVuurspuwende uitlatenLv 3Vu\" 143>126",
+    "sl: \"AchterbarsjokVuurspuwende uitlaten\" 101>57",
+    "sn: \"Achterbarsjok\" 101>57",
+    "pn: \"Vuurspuwende uitlaten\" 148>57",
+    "lv: \"Lv 3\" 22>8"
+   ]
+  },
+  "chips": {
+   "chips": [
+    {
+     "slot": "turret",
+     "x": 479,
+     "y": 150,
+     "w": 178,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "roof",
+     "x": 854,
+     "y": 150,
+     "w": 152,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "hood",
+     "x": 502,
+     "y": 352,
+     "w": 172,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "sides",
+     "x": 737,
+     "y": 352,
+     "w": 175,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "front",
+     "x": 502,
+     "y": 434,
+     "w": 174,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "rear",
+     "x": 859,
+     "y": 434,
+     "w": 127,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": true
+    },
+    {
+     "slot": "trunk",
+     "x": 652,
+     "y": 627,
+     "w": 206,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    }
+   ],
+   "overlaps": []
+  },
+  "tips": [
+   {
+    "slot": "turret",
+    "vis": true,
+    "x": 428,
+    "y": 48,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "roof",
+    "vis": true,
+    "x": 790,
+    "y": 48,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "hood",
+    "vis": true,
+    "x": 449,
+    "y": 401,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "sides",
+    "vis": true,
+    "x": 684,
+    "y": 401,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "front",
+    "vis": true,
+    "x": 449,
+    "y": 483,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "rear",
+    "vis": true,
+    "x": 782,
+    "y": 483,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "trunk",
+    "vis": true,
+    "x": 616,
+    "y": 676,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   }
+  ],
+  "over": {
+   "W": 1366,
+   "H": 800,
+   "rects": {
+    "#over": {
+     "x": 0,
+     "y": 0,
+     "w": 1366,
+     "h": 800,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "errs": [
+   "[.WebGL-0x24f40016a600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "1920x1080": {
+  "lapstart": {
+   "W": 1920,
+   "H": 1080,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1719,
+     "y": 16,
+     "w": 185,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 829,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1830,
+     "y": 383,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 637,
+     "y": 194,
+     "w": 646,
+     "h": 227,
+     "off": false
+    },
+    "#count": {
+     "x": 896,
+     "y": 610,
+     "w": 129,
+     "h": 129,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "banner_thief": {
+   "W": 1920,
+   "H": 1080,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1719,
+     "y": 16,
+     "w": 185,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 829,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1830,
+     "y": 383,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 544,
+     "y": 194,
+     "w": 832,
+     "h": 223,
+     "off": false
+    },
+    "#banner b": {
+     "x": 669,
+     "y": 226,
+     "w": 582,
+     "h": 98,
+     "off": false
+    },
+    "#banner span": {
+     "x": 572,
+     "y": 354,
+     "w": 776,
+     "h": 29,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#banner",
+     "#banner b",
+     582,
+     98
+    ],
+    [
+     "#banner",
+     "#banner span",
+     776,
+     29
+    ]
+   ],
+   "clipped": []
+  },
+  "banner_spit": {
+   "W": 1920,
+   "H": 1080,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1719,
+     "y": 16,
+     "w": 185,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 829,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1830,
+     "y": 383,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 392,
+     "y": 194,
+     "w": 1135,
+     "h": 223,
+     "off": false
+    },
+    "#banner b": {
+     "x": 669,
+     "y": 226,
+     "w": 582,
+     "h": 98,
+     "off": false
+    },
+    "#banner span": {
+     "x": 420,
+     "y": 354,
+     "w": 1079,
+     "h": 29,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#banner",
+     "#banner b",
+     582,
+     98
+    ],
+    [
+     "#banner",
+     "#banner span",
+     1079,
+     29
+    ]
+   ],
+   "clipped": []
+  },
+  "banner_elite": {
+   "W": 1920,
+   "H": 1080,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1719,
+     "y": 16,
+     "w": 185,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 829,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1830,
+     "y": 383,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 595,
+     "y": 194,
+     "w": 731,
+     "h": 223,
+     "off": false
+    },
+    "#banner b": {
+     "x": 669,
+     "y": 226,
+     "w": 582,
+     "h": 98,
+     "off": false
+    },
+    "#banner span": {
+     "x": 623,
+     "y": 354,
+     "w": 675,
+     "h": 29,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#banner",
+     "#banner b",
+     582,
+     98
+    ],
+    [
+     "#banner",
+     "#banner span",
+     675,
+     29
+    ]
+   ],
+   "clipped": []
+  },
+  "hud_busy": {
+   "W": 1920,
+   "H": 1080,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 300,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 1660,
+     "y": 16,
+     "w": 244,
+     "h": 97,
+     "off": false
+    },
+    "#cluster": {
+     "x": 10,
+     "y": 829,
+     "w": 350,
+     "h": 243,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 1830,
+     "y": 383,
+     "w": 76,
+     "h": 315,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "pause": {
+   "W": 1920,
+   "H": 1080,
+   "rects": {
+    "#pause": {
+     "x": 0,
+     "y": 0,
+     "w": 1920,
+     "h": 1080,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "settings": {
+   "W": 1920,
+   "H": 1080,
+   "rects": {
+    "#settings": {
+     "x": 0,
+     "y": 0,
+     "w": 1920,
+     "h": 1080,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "garage": {
+   "W": 1920,
+   "H": 1080,
+   "rects": {
+    "#cards": {
+     "x": 140,
+     "y": 119,
+     "w": 497,
+     "h": 605,
+     "off": false
+    },
+    "#blueprint": {
+     "x": 670,
+     "y": 132,
+     "w": 769,
+     "h": 685,
+     "off": false
+    },
+    "#build": {
+     "x": 1472,
+     "y": 98,
+     "w": 308,
+     "h": 343,
+     "off": false
+    },
+    ".gfoot": {
+     "x": 140,
+     "y": 973,
+     "w": 1640,
+     "h": 107,
+     "off": false
+    },
+    "#reroll": {
+     "x": 297,
+     "y": 988,
+     "w": 157,
+     "h": 48,
+     "off": false
+    },
+    "#repair": {
+     "x": 464,
+     "y": 988,
+     "w": 192,
+     "h": 48,
+     "off": false
+    },
+    "#go": {
+     "x": 140,
+     "y": 988,
+     "w": 147,
+     "h": 48,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     ".gfoot",
+     "#reroll",
+     157,
+     48
+    ],
+    [
+     ".gfoot",
+     "#repair",
+     192,
+     48
+    ],
+    [
+     ".gfoot",
+     "#go",
+     147,
+     48
+    ]
+   ],
+   "clipped": [
+    "sl: \"AchterbarsjokVuurspuwende uitlaten\" 101>91",
+    "sn: \"Achterbarsjok\" 101>91",
+    "pn: \"Vuurspuwende uitlaten\" 148>91",
+    "lv: \"Lv 3\" 22>14"
+   ]
+  },
+  "chips": {
+   "chips": [
+    {
+     "slot": "turret",
+     "x": 747,
+     "y": 156,
+     "w": 178,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "roof",
+     "x": 1182,
+     "y": 156,
+     "w": 152,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "hood",
+     "x": 750,
+     "y": 421,
+     "w": 172,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "sides",
+     "x": 1056,
+     "y": 421,
+     "w": 175,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "front",
+     "x": 749,
+     "y": 516,
+     "w": 174,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "rear",
+     "x": 1188,
+     "y": 516,
+     "w": 166,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": true
+    },
+    {
+     "slot": "trunk",
+     "x": 950,
+     "y": 767,
+     "w": 206,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    }
+   ],
+   "overlaps": []
+  },
+  "tips": [
+   {
+    "slot": "turret",
+    "vis": true,
+    "x": 696,
+    "y": 54,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "roof",
+    "vis": true,
+    "x": 1118,
+    "y": 54,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "hood",
+    "vis": true,
+    "x": 696,
+    "y": 470,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "sides",
+    "vis": true,
+    "x": 1004,
+    "y": 470,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "front",
+    "vis": true,
+    "x": 696,
+    "y": 565,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "rear",
+    "vis": true,
+    "x": 1132,
+    "y": 565,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "trunk",
+    "vis": true,
+    "x": 914,
+    "y": 816,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   }
+  ],
+  "over": {
+   "W": 1920,
+   "H": 1080,
+   "rects": {
+    "#over": {
+     "x": 0,
+     "y": 0,
+     "w": 1920,
+     "h": 1080,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "errs": [
+   "[.WebGL-0x39a400b8cc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "768x1024": {
+  "lapstart": {
+   "W": 768,
+   "H": 1024,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 230,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 567,
+     "y": 16,
+     "w": 185,
+     "h": 85,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 659,
+     "w": 260,
+     "h": 181,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 678,
+     "y": 273,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 74,
+     "y": 184,
+     "w": 620,
+     "h": 195,
+     "off": false
+    },
+    "#count": {
+     "x": 335,
+     "y": 578,
+     "w": 99,
+     "h": 99,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 768,
+     "h": 1024,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 860,
+     "w": 48,
+     "h": 48,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     230,
+     104
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     185,
+     85
+    ],
+    [
+     "#cluster",
+     "#touch",
+     260,
+     181
+    ],
+    [
+     "#driftMtr",
+     "#banner",
+     16,
+     106
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     76,
+     315
+    ],
+    [
+     "#banner",
+     "#touch",
+     620,
+     195
+    ],
+    [
+     "#count",
+     "#touch",
+     99,
+     99
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ]
+   ],
+   "clipped": []
+  },
+  "banner_thief": {
+   "W": 768,
+   "H": 1024,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 230,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 567,
+     "y": 16,
+     "w": 185,
+     "h": 85,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 659,
+     "w": 260,
+     "h": 181,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 678,
+     "y": 273,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 56,
+     "y": 184,
+     "w": 655,
+     "h": 197,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 768,
+     "h": 1024,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 860,
+     "w": 48,
+     "h": 48,
+     "off": false
+    },
+    "#banner b": {
+     "x": 181,
+     "y": 216,
+     "w": 406,
+     "h": 79,
+     "off": false
+    },
+    "#banner span": {
+     "x": 84,
+     "y": 325,
+     "w": 599,
+     "h": 22,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     230,
+     104
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     185,
+     85
+    ],
+    [
+     "#cluster",
+     "#touch",
+     260,
+     181
+    ],
+    [
+     "#driftMtr",
+     "#banner",
+     33,
+     108
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     76,
+     315
+    ],
+    [
+     "#driftMtr",
+     "#banner span",
+     5,
+     22
+    ],
+    [
+     "#banner",
+     "#touch",
+     655,
+     197
+    ],
+    [
+     "#banner",
+     "#banner b",
+     406,
+     79
+    ],
+    [
+     "#banner",
+     "#banner span",
+     599,
+     22
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ],
+    [
+     "#touch",
+     "#banner b",
+     406,
+     79
+    ],
+    [
+     "#touch",
+     "#banner span",
+     599,
+     22
+    ]
+   ],
+   "clipped": [
+    "#heatTxt: \"+42% rapper skietn\" 137>118"
+   ]
+  },
+  "banner_spit": {
+   "W": 768,
+   "H": 1024,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 230,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 567,
+     "y": 16,
+     "w": 185,
+     "h": 85,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 659,
+     "w": 260,
+     "h": 181,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 678,
+     "y": 273,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 15,
+     "y": 184,
+     "w": 737,
+     "h": 219,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 768,
+     "h": 1024,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 860,
+     "w": 48,
+     "h": 48,
+     "off": false
+    },
+    "#banner b": {
+     "x": 181,
+     "y": 216,
+     "w": 406,
+     "h": 79,
+     "off": false
+    },
+    "#banner span": {
+     "x": 43,
+     "y": 325,
+     "w": 681,
+     "h": 44,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     230,
+     104
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     185,
+     85
+    ],
+    [
+     "#cluster",
+     "#touch",
+     260,
+     181
+    ],
+    [
+     "#driftMtr",
+     "#banner",
+     74,
+     130
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     76,
+     315
+    ],
+    [
+     "#driftMtr",
+     "#banner span",
+     46,
+     44
+    ],
+    [
+     "#banner",
+     "#touch",
+     737,
+     219
+    ],
+    [
+     "#banner",
+     "#banner b",
+     406,
+     79
+    ],
+    [
+     "#banner",
+     "#banner span",
+     681,
+     44
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ],
+    [
+     "#touch",
+     "#banner b",
+     406,
+     79
+    ],
+    [
+     "#touch",
+     "#banner span",
+     681,
+     44
+    ]
+   ],
+   "clipped": [
+    "#heatTxt: \"+42% rapper skietn\" 137>118"
+   ]
+  },
+  "banner_elite": {
+   "W": 768,
+   "H": 1024,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 230,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 567,
+     "y": 16,
+     "w": 185,
+     "h": 85,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 659,
+     "w": 260,
+     "h": 181,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 678,
+     "y": 273,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#banner": {
+     "x": 74,
+     "y": 184,
+     "w": 620,
+     "h": 197,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 768,
+     "h": 1024,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 860,
+     "w": 48,
+     "h": 48,
+     "off": false
+    },
+    "#banner b": {
+     "x": 181,
+     "y": 216,
+     "w": 406,
+     "h": 79,
+     "off": false
+    },
+    "#banner span": {
+     "x": 102,
+     "y": 325,
+     "w": 564,
+     "h": 22,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     230,
+     104
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     185,
+     85
+    ],
+    [
+     "#cluster",
+     "#touch",
+     260,
+     181
+    ],
+    [
+     "#driftMtr",
+     "#banner",
+     16,
+     108
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     76,
+     315
+    ],
+    [
+     "#banner",
+     "#touch",
+     620,
+     197
+    ],
+    [
+     "#banner",
+     "#banner b",
+     406,
+     79
+    ],
+    [
+     "#banner",
+     "#banner span",
+     564,
+     22
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ],
+    [
+     "#touch",
+     "#banner b",
+     406,
+     79
+    ],
+    [
+     "#touch",
+     "#banner span",
+     564,
+     22
+    ]
+   ],
+   "clipped": [
+    "#heatTxt: \"+42% rapper skietn\" 137>118"
+   ]
+  },
+  "hud_busy": {
+   "W": 768,
+   "H": 1024,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 230,
+     "h": 104,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 544,
+     "y": 16,
+     "w": 208,
+     "h": 85,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 659,
+     "w": 260,
+     "h": 181,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 678,
+     "y": 273,
+     "w": 76,
+     "h": 315,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 768,
+     "h": 1024,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 860,
+     "w": 48,
+     "h": 48,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     230,
+     104
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     208,
+     85
+    ],
+    [
+     "#cluster",
+     "#touch",
+     260,
+     181
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     76,
+     315
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ]
+   ],
+   "clipped": [
+    "#heatTxt: \"+71% rapper skietn\" 133>118"
+   ]
+  },
+  "pause": {
+   "W": 768,
+   "H": 1024,
+   "rects": {
+    "#pause": {
+     "x": 0,
+     "y": 0,
+     "w": 768,
+     "h": 1024,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": [
+    "#heatTxt: \"+71% rapper skietn\" 133>118"
+   ]
+  },
+  "settings": {
+   "W": 768,
+   "H": 1024,
+   "rects": {
+    "#settings": {
+     "x": 0,
+     "y": 0,
+     "w": 768,
+     "h": 1024,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": [
+    "#heatTxt: \"+71% rapper skietn\" 133>118"
+   ]
+  },
+  "garage": {
+   "W": 768,
+   "H": 1024,
+   "rects": {
+    "#cards": {
+     "x": 31,
+     "y": 96,
+     "w": 707,
+     "h": 548,
+     "off": false
+    },
+    "#blueprint": {
+     "x": 44,
+     "y": 727,
+     "w": 681,
+     "h": 613,
+     "off": true
+    },
+    "#build": {
+     "x": 31,
+     "y": 1372,
+     "w": 707,
+     "h": 343,
+     "off": true
+    },
+    ".gfoot": {
+     "x": 31,
+     "y": 930,
+     "w": 707,
+     "h": 94,
+     "off": false
+    },
+    "#reroll": {
+     "x": 188,
+     "y": 945,
+     "w": 157,
+     "h": 48,
+     "off": false
+    },
+    "#repair": {
+     "x": 355,
+     "y": 945,
+     "w": 192,
+     "h": 48,
+     "off": false
+    },
+    "#go": {
+     "x": 31,
+     "y": 945,
+     "w": 147,
+     "h": 48,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#blueprint",
+     ".gfoot",
+     681,
+     94
+    ],
+    [
+     "#blueprint",
+     "#reroll",
+     157,
+     48
+    ],
+    [
+     "#blueprint",
+     "#repair",
+     192,
+     48
+    ],
+    [
+     "#blueprint",
+     "#go",
+     134,
+     48
+    ],
+    [
+     ".gfoot",
+     "#reroll",
+     157,
+     48
+    ],
+    [
+     ".gfoot",
+     "#repair",
+     192,
+     48
+    ],
+    [
+     ".gfoot",
+     "#go",
+     147,
+     48
+    ]
+   ],
+   "clipped": [
+    "sl: \"AchterbarsjokVuurspuwende uitlaten\" 101>74",
+    "sn: \"Achterbarsjok\" 101>74",
+    "pn: \"Vuurspuwende uitlaten\" 148>74",
+    "lv: \"Lv 3\" 22>11"
+   ]
+  },
+  "chips": {
+   "chips": [
+    {
+     "slot": "turret",
+     "x": 91,
+     "y": 748,
+     "w": 178,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "roof",
+     "x": 497,
+     "y": 748,
+     "w": 152,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "hood",
+     "x": 104,
+     "y": 982,
+     "w": 172,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "sides",
+     "x": 375,
+     "y": 982,
+     "w": 175,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "front",
+     "x": 104,
+     "y": 1071,
+     "w": 174,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "rear",
+     "x": 503,
+     "y": 1071,
+     "w": 147,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": true
+    },
+    {
+     "slot": "trunk",
+     "x": 280,
+     "y": 1293,
+     "w": 206,
+     "h": 42,
+     "outStage": false,
+     "outVP": false,
+     "pnClip": false
+    }
+   ],
+   "overlaps": []
+  },
+  "tips": [
+   {
+    "slot": "turret",
+    "vis": true,
+    "x": 41,
+    "y": 646,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "roof",
+    "vis": true,
+    "x": 433,
+    "y": 646,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "hood",
+    "vis": true,
+    "x": 51,
+    "y": 1031,
+    "w": 280,
+    "h": 95,
+    "outVP": true,
+    "clipBy": "shop"
+   },
+   {
+    "slot": "sides",
+    "vis": true,
+    "x": 323,
+    "y": 1031,
+    "w": 280,
+    "h": 95,
+    "outVP": true,
+    "clipBy": "shop"
+   },
+   {
+    "slot": "front",
+    "vis": true,
+    "x": 51,
+    "y": 540,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "rear",
+    "vis": true,
+    "x": 436,
+    "y": 540,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "trunk",
+    "vis": true,
+    "x": 243,
+    "y": 762,
+    "w": 280,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   }
+  ],
+  "over": {
+   "W": 768,
+   "H": 1024,
+   "rects": {
+    "#over": {
+     "x": 0,
+     "y": 0,
+     "w": 768,
+     "h": 1024,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "errs": [
+   "[.WebGL-0x2594001c2200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ },
+ "390x844": {
+  "lapstart": {
+   "W": 390,
+   "H": 844,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 172,
+     "h": 83,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 225,
+     "y": 16,
+     "w": 149,
+     "h": 77,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 518,
+     "w": 205,
+     "h": 142,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 316,
+     "y": 237,
+     "w": 60,
+     "h": 235,
+     "off": false
+    },
+    "#banner": {
+     "x": 16,
+     "y": 219,
+     "w": 359,
+     "h": 153,
+     "off": false
+    },
+    "#count": {
+     "x": 148,
+     "y": 508,
+     "w": 93,
+     "h": 93,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 844,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 680,
+     "w": 48,
+     "h": 48,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     172,
+     83
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     149,
+     77
+    ],
+    [
+     "#cluster",
+     "#count",
+     65,
+     83
+    ],
+    [
+     "#cluster",
+     "#touch",
+     205,
+     142
+    ],
+    [
+     "#driftMtr",
+     "#banner",
+     59,
+     135
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     60,
+     235
+    ],
+    [
+     "#banner",
+     "#touch",
+     359,
+     153
+    ],
+    [
+     "#count",
+     "#touch",
+     93,
+     93
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ]
+   ],
+   "clipped": []
+  },
+  "banner_thief": {
+   "W": 390,
+   "H": 844,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 172,
+     "h": 83,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 225,
+     "y": 16,
+     "w": 149,
+     "h": 77,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 518,
+     "w": 205,
+     "h": 142,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 316,
+     "y": 237,
+     "w": 60,
+     "h": 235,
+     "off": false
+    },
+    "#banner": {
+     "x": 8,
+     "y": 219,
+     "w": 374,
+     "h": 185,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 844,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 680,
+     "w": 48,
+     "h": 48,
+     "off": false
+    },
+    "#banner b": {
+     "x": 58,
+     "y": 251,
+     "w": 275,
+     "h": 55,
+     "off": false
+    },
+    "#banner span": {
+     "x": 36,
+     "y": 328,
+     "w": 318,
+     "h": 42,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     172,
+     83
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     149,
+     77
+    ],
+    [
+     "#cluster",
+     "#touch",
+     205,
+     142
+    ],
+    [
+     "#driftMtr",
+     "#banner",
+     60,
+     167
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     60,
+     235
+    ],
+    [
+     "#driftMtr",
+     "#banner b",
+     17,
+     55
+    ],
+    [
+     "#driftMtr",
+     "#banner span",
+     38,
+     42
+    ],
+    [
+     "#banner",
+     "#touch",
+     374,
+     185
+    ],
+    [
+     "#banner",
+     "#banner b",
+     275,
+     55
+    ],
+    [
+     "#banner",
+     "#banner span",
+     318,
+     42
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ],
+    [
+     "#touch",
+     "#banner b",
+     275,
+     55
+    ],
+    [
+     "#touch",
+     "#banner span",
+     318,
+     42
+    ]
+   ],
+   "clipped": []
+  },
+  "banner_spit": {
+   "W": 390,
+   "H": 844,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 172,
+     "h": 83,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 225,
+     "y": 16,
+     "w": 149,
+     "h": 77,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 518,
+     "w": 205,
+     "h": 142,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 316,
+     "y": 237,
+     "w": 60,
+     "h": 235,
+     "off": false
+    },
+    "#banner": {
+     "x": 8,
+     "y": 219,
+     "w": 374,
+     "h": 205,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 844,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 680,
+     "w": 48,
+     "h": 48,
+     "off": false
+    },
+    "#banner b": {
+     "x": 58,
+     "y": 251,
+     "w": 275,
+     "h": 55,
+     "off": false
+    },
+    "#banner span": {
+     "x": 36,
+     "y": 328,
+     "w": 318,
+     "h": 62,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     172,
+     83
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     149,
+     77
+    ],
+    [
+     "#cluster",
+     "#touch",
+     205,
+     142
+    ],
+    [
+     "#driftMtr",
+     "#banner",
+     60,
+     187
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     60,
+     235
+    ],
+    [
+     "#driftMtr",
+     "#banner b",
+     17,
+     55
+    ],
+    [
+     "#driftMtr",
+     "#banner span",
+     38,
+     62
+    ],
+    [
+     "#banner",
+     "#touch",
+     374,
+     205
+    ],
+    [
+     "#banner",
+     "#banner b",
+     275,
+     55
+    ],
+    [
+     "#banner",
+     "#banner span",
+     318,
+     62
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ],
+    [
+     "#touch",
+     "#banner b",
+     275,
+     55
+    ],
+    [
+     "#touch",
+     "#banner span",
+     318,
+     62
+    ]
+   ],
+   "clipped": []
+  },
+  "banner_elite": {
+   "W": 390,
+   "H": 844,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 172,
+     "h": 83,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 225,
+     "y": 16,
+     "w": 149,
+     "h": 77,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 518,
+     "w": 205,
+     "h": 142,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 316,
+     "y": 237,
+     "w": 60,
+     "h": 235,
+     "off": false
+    },
+    "#banner": {
+     "x": 8,
+     "y": 219,
+     "w": 374,
+     "h": 185,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 844,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 680,
+     "w": 48,
+     "h": 48,
+     "off": false
+    },
+    "#banner b": {
+     "x": 58,
+     "y": 251,
+     "w": 275,
+     "h": 55,
+     "off": false
+    },
+    "#banner span": {
+     "x": 36,
+     "y": 328,
+     "w": 318,
+     "h": 42,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     172,
+     83
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     149,
+     77
+    ],
+    [
+     "#cluster",
+     "#touch",
+     205,
+     142
+    ],
+    [
+     "#driftMtr",
+     "#banner",
+     60,
+     167
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     60,
+     235
+    ],
+    [
+     "#driftMtr",
+     "#banner b",
+     17,
+     55
+    ],
+    [
+     "#driftMtr",
+     "#banner span",
+     38,
+     42
+    ],
+    [
+     "#banner",
+     "#touch",
+     374,
+     185
+    ],
+    [
+     "#banner",
+     "#banner b",
+     275,
+     55
+    ],
+    [
+     "#banner",
+     "#banner span",
+     318,
+     42
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ],
+    [
+     "#touch",
+     "#banner b",
+     275,
+     55
+    ],
+    [
+     "#touch",
+     "#banner span",
+     318,
+     42
+    ]
+   ],
+   "clipped": []
+  },
+  "hud_busy": {
+   "W": 390,
+   "H": 844,
+   "rects": {
+    "#hullPlate": {
+     "x": 16,
+     "y": 16,
+     "w": 172,
+     "h": 83,
+     "off": false
+    },
+    "#scrapPlate": {
+     "x": 214,
+     "y": 16,
+     "w": 160,
+     "h": 77,
+     "off": false
+    },
+    "#cluster": {
+     "x": 8,
+     "y": 518,
+     "w": 205,
+     "h": 142,
+     "off": false
+    },
+    "#driftMtr": {
+     "x": 316,
+     "y": 237,
+     "w": 60,
+     "h": 235,
+     "off": false
+    },
+    "#touch": {
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 844,
+     "off": false
+    },
+    "#tPause": {
+     "x": 16,
+     "y": 680,
+     "w": 48,
+     "h": 48,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#hullPlate",
+     "#touch",
+     172,
+     83
+    ],
+    [
+     "#scrapPlate",
+     "#touch",
+     160,
+     77
+    ],
+    [
+     "#cluster",
+     "#touch",
+     205,
+     142
+    ],
+    [
+     "#driftMtr",
+     "#touch",
+     60,
+     235
+    ],
+    [
+     "#touch",
+     "#tPause",
+     48,
+     48
+    ]
+   ],
+   "clipped": []
+  },
+  "pause": {
+   "W": 390,
+   "H": 844,
+   "rects": {
+    "#pause": {
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 844,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "settings": {
+   "W": 390,
+   "H": 844,
+   "rects": {
+    "#settings": {
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 844,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "garage": {
+   "W": 390,
+   "H": 844,
+   "rects": {
+    "#cards": {
+     "x": 18,
+     "y": 116,
+     "w": 354,
+     "h": 717,
+     "off": false
+    },
+    "#blueprint": {
+     "x": 31,
+     "y": 916,
+     "w": 328,
+     "h": 325,
+     "off": true
+    },
+    "#build": {
+     "x": 18,
+     "y": 1273,
+     "w": 354,
+     "h": 343,
+     "off": true
+    },
+    ".gfoot": {
+     "x": 18,
+     "y": 715,
+     "w": 354,
+     "h": 129,
+     "off": false
+    },
+    "#reroll": {
+     "x": 144,
+     "y": 730,
+     "w": 127,
+     "h": 44,
+     "off": false
+    },
+    "#repair": {
+     "x": 18,
+     "y": 782,
+     "w": 157,
+     "h": 44,
+     "off": false
+    },
+    "#go": {
+     "x": 18,
+     "y": 730,
+     "w": 118,
+     "h": 44,
+     "off": false
+    }
+   },
+   "overlaps": [
+    [
+     "#cards",
+     ".gfoot",
+     354,
+     118
+    ],
+    [
+     "#cards",
+     "#reroll",
+     127,
+     44
+    ],
+    [
+     "#cards",
+     "#repair",
+     157,
+     44
+    ],
+    [
+     "#cards",
+     "#go",
+     118,
+     44
+    ],
+    [
+     ".gfoot",
+     "#reroll",
+     127,
+     44
+    ],
+    [
+     ".gfoot",
+     "#repair",
+     157,
+     44
+    ],
+    [
+     ".gfoot",
+     "#go",
+     118,
+     44
+    ]
+   ],
+   "clipped": [
+    "chip c on: \"AchterbarsjokVuurspuwende uitlatenLv 3Vu\" 114>69",
+    "sl: \"AchterbarsjokVuurspuwende uitlaten\" 85>34",
+    "sn: \"Achterbarsjok\" 85>34",
+    "pn: \"Vuurspuwende uitlaten\" 126>34"
+   ]
+  },
+  "chips": {
+   "chips": [
+    {
+     "slot": "turret",
+     "x": 23,
+     "y": 928,
+     "w": 116,
+     "h": 34,
+     "outStage": true,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "roof",
+     "x": 249,
+     "y": 928,
+     "w": 94,
+     "h": 34,
+     "outStage": true,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "hood",
+     "x": 46,
+     "y": 1041,
+     "w": 112,
+     "h": 34,
+     "outStage": true,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "sides",
+     "x": 176,
+     "y": 1041,
+     "w": 114,
+     "h": 34,
+     "outStage": true,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "front",
+     "x": 45,
+     "y": 1104,
+     "w": 113,
+     "h": 34,
+     "outStage": true,
+     "outVP": false,
+     "pnClip": false
+    },
+    {
+     "slot": "rear",
+     "x": 252,
+     "y": 1104,
+     "w": 71,
+     "h": 34,
+     "outStage": true,
+     "outVP": false,
+     "pnClip": true
+    },
+    {
+     "slot": "trunk",
+     "x": 124,
+     "y": 1211,
+     "w": 141,
+     "h": 34,
+     "outStage": true,
+     "outVP": false,
+     "pnClip": false
+    }
+   ],
+   "overlaps": []
+  },
+  "tips": [
+   {
+    "slot": "turret",
+    "vis": true,
+    "x": -54,
+    "y": 302,
+    "w": 273,
+    "h": 95,
+    "outVP": true,
+    "clipBy": "shop"
+   },
+   {
+    "slot": "roof",
+    "vis": true,
+    "x": 160,
+    "y": 302,
+    "w": 273,
+    "h": 95,
+    "outVP": true,
+    "clipBy": "shop"
+   },
+   {
+    "slot": "hood",
+    "vis": true,
+    "x": -34,
+    "y": 558,
+    "w": 273,
+    "h": 95,
+    "outVP": true,
+    "clipBy": "shop"
+   },
+   {
+    "slot": "sides",
+    "vis": true,
+    "x": 96,
+    "y": 558,
+    "w": 273,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   },
+   {
+    "slot": "front",
+    "vis": true,
+    "x": -34,
+    "y": 446,
+    "w": 273,
+    "h": 95,
+    "outVP": true,
+    "clipBy": "shop"
+   },
+   {
+    "slot": "rear",
+    "vis": true,
+    "x": 151,
+    "y": 446,
+    "w": 273,
+    "h": 95,
+    "outVP": true,
+    "clipBy": "shop"
+   },
+   {
+    "slot": "trunk",
+    "vis": true,
+    "x": 58,
+    "y": 446,
+    "w": 273,
+    "h": 95,
+    "outVP": false,
+    "clipBy": null
+   }
+  ],
+  "over": {
+   "W": 390,
+   "H": 844,
+   "rects": {
+    "#over": {
+     "x": 0,
+     "y": 0,
+     "w": 390,
+     "h": 844,
+     "off": false
+    }
+   },
+   "overlaps": [],
+   "clipped": []
+  },
+  "errs": [
+   "[.WebGL-0x307400cb5400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  ]
+ }
+}

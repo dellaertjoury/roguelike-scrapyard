@@ -1,0 +1,109 @@
+{
+ "heavy": {
+  "update_ms": {
+   "mean": 2.286,
+   "max": 3.113,
+   "enemies": 48
+  },
+  "caps": {
+   "maxParts": 624,
+   "maxTexts": 41,
+   "maxEbul": 10,
+   "maxFires": 53,
+   "maxBul": 1
+  },
+  "render": {
+   "calls": 505,
+   "triangles": 113546,
+   "geometries": 568,
+   "textures": 16,
+   "programs": 26
+  },
+  "render_ms": 14.74,
+  "crane": "swing",
+  "ground_ms": 32.62
+ },
+ "laps": [
+  {
+   "lap": 1,
+   "geometries": 545,
+   "textures": 18,
+   "programs": 27,
+   "maxCalls": 119,
+   "heap": 22,
+   "parts": 0
+  },
+  {
+   "lap": 2,
+   "geometries": 550,
+   "textures": 19,
+   "programs": 28,
+   "maxCalls": 132,
+   "heap": 23,
+   "parts": 0
+  },
+  {
+   "lap": 3,
+   "geometries": 553,
+   "textures": 19,
+   "programs": 28,
+   "maxCalls": 138,
+   "heap": 22,
+   "parts": 0
+  },
+  {
+   "lap": 4,
+   "geometries": 559,
+   "textures": 19,
+   "programs": 28,
+   "maxCalls": 207,
+   "heap": 23,
+   "parts": 0
+  },
+  {
+   "lap": 5,
+   "geometries": 570,
+   "textures": 19,
+   "programs": 28,
+   "maxCalls": 151,
+   "heap": 25,
+   "parts": 0
+  },
+  {
+   "lap": 6,
+   "geometries": 574,
+   "textures": 19,
+   "programs": 28,
+   "maxCalls": 236,
+   "heap": 24,
+   "parts": 0
+  },
+  {
+   "lap": 7,
+   "geometries": 571,
+   "textures": 19,
+   "programs": 28,
+   "maxCalls": 286,
+   "heap": 24,
+   "parts": 0
+  },
+  {
+   "lap": 8,
+   "geometries": 556,
+   "textures": 19,
+   "programs": 28,
+   "maxCalls": 268,
+   "heap": 24,
+   "parts": 0
+  },
+  {
+   "lap": "newRun",
+   "geometries": 568,
+   "textures": 19,
+   "programs": 28
+  }
+ ],
+ "errs": [
+  "[.WebGL-0x173c00b9fc00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

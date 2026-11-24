@@ -1,0 +1,87 @@
+{
+ "still": {
+  "n": 300,
+  "mode": "still",
+  "hit": 112,
+  "multi": 0,
+  "inBand": 116,
+  "hitInBand": 112,
+  "fails": [],
+  "hitAir": 0,
+  "maxDmgPerSwing": 0,
+  "airTests": 0
+ },
+ "escape": {
+  "n": 300,
+  "mode": "escape",
+  "hit": 3,
+  "multi": 0,
+  "inBand": 130,
+  "hitInBand": 3,
+  "fails": [
+   {
+    "start": [
+     876,
+     969
+    ],
+    "R": 1517,
+    "end": [
+     797,
+     998
+    ]
+   },
+   {
+    "start": [
+     443,
+     1250
+    ],
+    "R": 1547,
+    "end": [
+     950,
+     1294
+    ]
+   },
+   {
+    "start": [
+     832,
+     1011
+    ],
+    "R": 1538,
+    "end": [
+     679,
+     974
+    ]
+   }
+  ],
+  "hitAir": 0,
+  "maxDmgPerSwing": 0,
+  "airTests": 0
+ },
+ "cruise": {
+  "n": 300,
+  "mode": "cruise",
+  "hit": 107,
+  "multi": 0,
+  "inBand": 134,
+  "hitInBand": 82,
+  "fails": [],
+  "hitAir": 0,
+  "maxDmgPerSwing": 0,
+  "airTests": 0
+ },
+ "air": {
+  "maxJumpZ": 67.9,
+  "hitAtZ40": 1,
+  "craneWrecks": 5,
+  "scrapDropped": 5
+ },
+ "sign": {
+  "signOnFrames": 61,
+  "signOnSec": 2.03,
+  "warnFrames": 91,
+  "swingFrames": 72
+ },
+ "errs": [
+  "[.WebGL-0x352c001b7400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

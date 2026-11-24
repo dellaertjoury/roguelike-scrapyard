@@ -1,0 +1,519 @@
+{
+ "gen": {
+  "N": 1500,
+  "rampCount": {
+   "2": 1500
+  },
+  "rampNearGateLane": 56,
+  "rampLaneHitsPit": 229,
+  "rampLandOutside": 0,
+  "rampOverlap": 0,
+  "obsInPit": 303,
+  "obsOverlapRamp": 0,
+  "rtOutside": 0,
+  "coneOnObs": 18,
+  "coneInPit": 28,
+  "obsCount": {
+   "12": 1500
+  },
+  "minRampGateDist": 0.4624922445603173,
+  "minObsGateDist": -39.23313872743629,
+  "rtGapMin": 92.65859751474164,
+  "worstRampSideGap": 1000000000,
+  "examples": [
+   {
+    "kind": "rampPit",
+    "r": {
+     "x": 746,
+     "y": 990,
+     "d": 4.9
+    }
+   },
+   {
+    "kind": "rampPit",
+    "r": {
+     "x": 713,
+     "y": 941,
+     "d": 5.35
+    }
+   },
+   {
+    "kind": "rampPit",
+    "r": {
+     "x": 748,
+     "y": 863,
+     "d": 0.91
+    }
+   },
+   {
+    "kind": "rampPit",
+    "r": {
+     "x": 763,
+     "y": 958,
+     "d": 6.15
+    }
+   },
+   {
+    "kind": "rampPit",
+    "r": {
+     "x": 866,
+     "y": 1056,
+     "d": 4.12
+    }
+   }
+  ]
+ },
+ "pit": {
+  "n": 300,
+  "hitObsDuringIntro": 0,
+  "hitWallDuringIntro": 0,
+  "onRampAfterGO": 0,
+  "obsHitWithin1_5s": 46,
+  "coneHit": 6,
+  "enemyBeforeGO": 0,
+  "pendBeforeGO": 0,
+  "goSpeed": [],
+  "goSlip": [],
+  "pumpNextBeforeGO": 0,
+  "examples": [
+   {
+    "afterGO": 1.17,
+    "startT": 0,
+    "x": 774,
+    "y": 947,
+    "sp": 253,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.27,
+    "startT": 0,
+    "x": 835,
+    "y": 953,
+    "sp": 281,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.27,
+    "startT": 0,
+    "x": 805,
+    "y": 935,
+    "sp": 253,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.8,
+    "startT": 0,
+    "x": 715,
+    "y": 1013,
+    "sp": 277,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.73,
+    "startT": 0,
+    "x": 672,
+    "y": 1008,
+    "sp": 232,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.93,
+    "startT": 0,
+    "x": 744,
+    "y": 991,
+    "sp": 281,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.8,
+    "startT": 0,
+    "x": 701,
+    "y": 997,
+    "sp": 261,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.9,
+    "startT": 0,
+    "x": 720,
+    "y": 983,
+    "sp": 263,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.13,
+    "startT": 0,
+    "x": 741,
+    "y": 949,
+    "sp": 216,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.9,
+    "startT": 0,
+    "x": 719,
+    "y": 985,
+    "sp": 263,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.07,
+    "startT": 0,
+    "x": 781,
+    "y": 971,
+    "sp": 280,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.83,
+    "startT": 0,
+    "x": 686,
+    "y": 990,
+    "sp": 232,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.2,
+    "startT": 0,
+    "x": 789,
+    "y": 942,
+    "sp": 253,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.43,
+    "startT": 0,
+    "x": 877,
+    "y": 937,
+    "sp": 282,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.93,
+    "startT": 0,
+    "x": 729,
+    "y": 976,
+    "sp": 263,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.97,
+    "startT": 0,
+    "x": 734,
+    "y": 975,
+    "sp": 263,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.83,
+    "startT": 0,
+    "x": 705,
+    "y": 994,
+    "sp": 262,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.9,
+    "startT": 0,
+    "x": 739,
+    "y": 996,
+    "sp": 280,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.93,
+    "startT": 0,
+    "x": 704,
+    "y": 976,
+    "sp": 231,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.73,
+    "startT": 0,
+    "x": 696,
+    "y": 1022,
+    "sp": 274,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.77,
+    "startT": 0,
+    "x": 677,
+    "y": 1002,
+    "sp": 232,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.93,
+    "startT": 0,
+    "x": 730,
+    "y": 977,
+    "sp": 263,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.47,
+    "startT": 0,
+    "x": 852,
+    "y": 918,
+    "sp": 254,
+    "kind": "rt",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.87,
+    "startT": 0,
+    "x": 731,
+    "y": 1000,
+    "sp": 279,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.83,
+    "startT": 0,
+    "x": 707,
+    "y": 993,
+    "sp": 262,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.83,
+    "startT": 0,
+    "x": 705,
+    "y": 992,
+    "sp": 262,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.93,
+    "startT": 0,
+    "x": 743,
+    "y": 992,
+    "sp": 281,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.2,
+    "startT": 0,
+    "x": 753,
+    "y": 941,
+    "sp": 213,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.93,
+    "startT": 0,
+    "x": 729,
+    "y": 977,
+    "sp": 263,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.3,
+    "startT": 0,
+    "x": 772,
+    "y": 937,
+    "sp": 212,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.23,
+    "startT": 0,
+    "x": 758,
+    "y": 939,
+    "sp": 212,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.1,
+    "startT": 0,
+    "x": 732,
+    "y": 953,
+    "sp": 218,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.13,
+    "startT": 0,
+    "x": 800,
+    "y": 967,
+    "sp": 279,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.93,
+    "startT": 0,
+    "x": 723,
+    "y": 977,
+    "sp": 263,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 1,
+    "startT": 0,
+    "x": 713,
+    "y": 964,
+    "sp": 230,
+    "kind": "rt",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.33,
+    "startT": 0,
+    "x": 853,
+    "y": 947,
+    "sp": 281,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.17,
+    "startT": 0,
+    "x": 805,
+    "y": 966,
+    "sp": 280,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.9,
+    "startT": 0,
+    "x": 735,
+    "y": 999,
+    "sp": 280,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.9,
+    "startT": 0,
+    "x": 720,
+    "y": 988,
+    "sp": 263,
+    "kind": "rt",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.77,
+    "startT": 0,
+    "x": 707,
+    "y": 1017,
+    "sp": 276,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.7,
+    "startT": 0,
+    "x": 693,
+    "y": 1027,
+    "sp": 272,
+    "kind": "tire",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.33,
+    "startT": 0,
+    "x": 853,
+    "y": 947,
+    "sp": 281,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.9,
+    "startT": 0,
+    "x": 722,
+    "y": 981,
+    "sp": 263,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.03,
+    "startT": 0,
+    "x": 771,
+    "y": 976,
+    "sp": 281,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 1.1,
+    "startT": 0,
+    "x": 733,
+    "y": 952,
+    "sp": 218,
+    "kind": "hay",
+    "thr": 1
+   },
+   {
+    "afterGO": 0.97,
+    "startT": 0,
+    "x": 755,
+    "y": 984,
+    "sp": 282,
+    "kind": "tire",
+    "thr": 1
+   }
+  ]
+ },
+ "spawn": {
+  "n": 34336,
+  "inObs": 0,
+  "onRamp": 0,
+  "onRampBarrierLane": 0,
+  "nearPump": 59,
+  "tooClose": 0,
+  "nearWall": 0,
+  "nullSpots": 0,
+  "attempts": 32000,
+  "minDist": 280.00866763599225,
+  "distHist": {
+   "200": 929,
+   "300": 8966,
+   "400": 12177,
+   "500": 9505,
+   "600": 2759
+  },
+  "cornerNull": 0,
+  "cornerAttempts": 8000
+ },
+ "errs": [
+  "[.WebGL-0x14bc00f71c00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

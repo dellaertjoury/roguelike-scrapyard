@@ -1,0 +1,11 @@
+HEAVY {"update_ms": {"mean": 5.034, "max": 27.023, "enemies": 48}, "caps": {"maxParts": 625, "maxTexts": 41, "maxEbul": 11, "maxFires": 47, "maxBul": 1}, "render": {"calls": 465, "triangles": 118340, "geometries": 550, "textures": 14, "programs": 26}, "render_ms": 25.06, "crane": "swing", "ground_ms": 34.49}
+LAP {"lap": 1, "geometries": 547, "textures": 18, "programs": 26, "maxCalls": 112, "heap": 22, "parts": 0}
+LAP {"lap": 2, "geometries": 553, "textures": 19, "programs": 27, "maxCalls": 110, "heap": 22, "parts": 0}
+LAP {"lap": 3, "geometries": 559, "textures": 19, "programs": 27, "maxCalls": 146, "heap": 24, "parts": 0}
+LAP {"lap": 4, "geometries": 540, "textures": 19, "programs": 28, "maxCalls": 193, "heap": 22, "parts": 0}
+LAP {"lap": 5, "geometries": 547, "textures": 19, "programs": 28, "maxCalls": 196, "heap": 25, "parts": 0}
+LAP {"lap": 6, "geometries": 571, "textures": 19, "programs": 28, "maxCalls": 268, "heap": 24, "parts": 0}
+LAP {"lap": 7, "geometries": 574, "textures": 19, "programs": 28, "maxCalls": 269, "heap": 24, "parts": 0}
+LAP {"lap": 8, "geometries": 548, "textures": 19, "programs": 28, "maxCalls": 287, "heap": 23, "parts": 0}
+LAP {"lap": "newRun", "geometries": 560, "textures": 19, "programs": 28}
+ERRS ['[.WebGL-0x3b3c00f13600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)']

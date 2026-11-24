@@ -1,0 +1,248 @@
+{
+ "chance": {
+  "radar0": {
+   "pumpChance": 0.45,
+   "observed": 0.468
+  },
+  "radar1": {
+   "pumpChance": 0.65,
+   "observed": 0.648
+  },
+  "radar2": {
+   "pumpChance": 0.8500000000000001,
+   "observed": 0.845
+  },
+  "radar3": {
+   "pumpChance": 1,
+   "observed": 1
+  },
+  "tank0": {
+   "tank": 30,
+   "fuelAtStart": 30
+  },
+  "tank1": {
+   "tank": 40,
+   "fuelAtStart": 40
+  },
+  "tank2": {
+   "tank": 50,
+   "fuelAtStart": 50
+  },
+  "tank3": {
+   "tank": 60,
+   "fuelAtStart": 60
+  }
+ },
+ "flow": {
+  "events": [
+   {
+    "t": 2.5,
+    "fuel": 29.97,
+    "res": null,
+    "filling": false,
+    "empty": null
+   },
+   {
+    "t": 7.5,
+    "fuel": 24.97,
+    "res": null,
+    "filling": false,
+    "empty": null
+   },
+   {
+    "t": 12.5,
+    "fuel": 19.97,
+    "res": 30,
+    "filling": false,
+    "empty": false
+   },
+   {
+    "t": 17.5,
+    "fuel": 28.5,
+    "res": 16.5,
+    "filling": false,
+    "empty": false
+   },
+   {
+    "t": 22.5,
+    "fuel": 28.23,
+    "res": 11.7,
+    "filling": false,
+    "empty": false
+   },
+   {
+    "t": 27.5,
+    "fuel": 28.17,
+    "res": 6.8,
+    "filling": true,
+    "empty": false
+   },
+   {
+    "t": 32.5,
+    "fuel": 29.5,
+    "res": 0.5,
+    "filling": true,
+    "empty": false
+   },
+   {
+    "t": 37.5,
+    "fuel": 24.97,
+    "res": 0,
+    "filling": false,
+    "empty": true
+   },
+   {
+    "t": 42.5,
+    "fuel": 19.97,
+    "res": 0,
+    "filling": false,
+    "empty": true
+   },
+   {
+    "t": 47.5,
+    "fuel": 14.97,
+    "res": 0,
+    "filling": false,
+    "empty": true
+   },
+   {
+    "t": 52.5,
+    "fuel": 9.97,
+    "res": 0,
+    "filling": false,
+    "empty": true
+   },
+   {
+    "t": 57.5,
+    "fuel": 4.97,
+    "res": 0,
+    "filling": false,
+    "empty": true
+   }
+  ],
+  "pumpT0": 8,
+  "pumpTAtMarker": 3.97,
+  "sameSpot": true,
+  "distAtOpen": 676,
+  "emptyAt": 32.57,
+  "gotTotal": 30,
+  "endedAt": 62.4,
+  "endState": "clear",
+  "markerLead": 4,
+  "opens": 1,
+  "fillingFlips": 16,
+  "netFillPerSec": 4.92,
+  "pumpStillThere": true,
+  "pumpEmpty": true
+ },
+ "spots": {
+  "n": 3000,
+  "nulls": 282,
+  "inLane": 0,
+  "nearObs": 0,
+  "inPit": 0,
+  "nearPlayer": 1,
+  "onRampBody": 0,
+  "minGate": 292.7468111675974
+ },
+ "thief": {
+  "endedAt": 168.68,
+  "maxHoses": 2,
+  "log": [
+   {
+    "t": 0,
+    "fuel": 29.97,
+    "hoses": 2,
+    "fleeing": 0,
+    "stolen": 0
+   },
+   {
+    "t": 0.5,
+    "fuel": 26.47,
+    "hoses": 2,
+    "fleeing": 0,
+    "stolen": 3
+   },
+   {
+    "t": 1,
+    "fuel": 22.97,
+    "hoses": 2,
+    "fleeing": 0,
+    "stolen": 6
+   },
+   {
+    "t": 1.5,
+    "fuel": 19.47,
+    "hoses": 2,
+    "fleeing": 0,
+    "stolen": 9
+   },
+   {
+    "t": 2,
+    "fuel": 15.97,
+    "hoses": 2,
+    "fleeing": 2,
+    "stolen": 12
+   },
+   {
+    "t": 2.5,
+    "fuel": 12.47,
+    "hoses": 2,
+    "fleeing": 2,
+    "stolen": 15
+   },
+   {
+    "t": 3,
+    "fuel": 8.97,
+    "hoses": 2,
+    "fleeing": 2,
+    "stolen": 18
+   },
+   {
+    "t": 3.5,
+    "fuel": 5.47,
+    "hoses": 2,
+    "fleeing": 2,
+    "stolen": 21
+   },
+   {
+    "t": 4,
+    "fuel": 1.97,
+    "hoses": 0,
+    "fleeing": 4,
+    "stolen": 24
+   },
+   {
+    "t": 4.5,
+    "fuel": 1.47,
+    "hoses": 0,
+    "fleeing": 4,
+    "stolen": 24
+   },
+   {
+    "t": 5,
+    "fuel": 0.97,
+    "hoses": 0,
+    "fleeing": 3,
+    "stolen": 18
+   },
+   {
+    "t": 5.5,
+    "fuel": 0.47,
+    "hoses": 0,
+    "fleeing": 0,
+    "stolen": 12
+   }
+  ],
+  "fuelLeft": 0,
+  "state": "clear",
+  "cansDropped": 0,
+  "canLitres": [
+   6,
+   6
+  ]
+ },
+ "errs": [
+  "[.WebGL-0x1d4c001b1800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

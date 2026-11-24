@@ -1,0 +1,746 @@
+{
+ "runs": [
+  {
+   "car": 0,
+   "mode": "chase",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 7,
+     "hp0": 70,
+     "craneHits": 0,
+     "enemiesPeak": 2,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 14,
+     "income": 5,
+     "wrecks": 7,
+     "hpEnd": 0,
+     "maxhp": 70,
+     "died": true,
+     "offerPrices": [],
+     "bought": [],
+     "scrapLeft": 5
+    }
+   ],
+   "build": "turret:mg1",
+   "score": 397
+  },
+  {
+   "car": 0,
+   "mode": "chase",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": true,
+     "pumpGot": 13,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 7,
+     "hp0": 70,
+     "craneHits": 0,
+     "enemiesPeak": 2,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 14.4,
+     "income": 5,
+     "wrecks": 7,
+     "hpEnd": 0,
+     "maxhp": 70,
+     "died": true,
+     "offerPrices": [],
+     "bought": [],
+     "scrapLeft": 5
+    }
+   ],
+   "build": "turret:mg1",
+   "score": 429
+  },
+  {
+   "car": 1,
+   "mode": "chase",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 12,
+     "hp0": 100,
+     "craneHits": 0,
+     "enemiesPeak": 2,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 30,
+     "income": 12,
+     "wrecks": 12,
+     "hpEnd": 75,
+     "maxhp": 100,
+     "died": false,
+     "offerPrices": [
+      "ballast:10",
+      "tesla:26",
+      "rounds:18",
+      "magnet:10",
+      "tank:14"
+     ],
+     "bought": [
+      "magnet:10"
+     ],
+     "scrapLeft": 2
+    },
+    {
+     "lap": 2,
+     "stunt": 0,
+     "pump": true,
+     "pumpGot": 21.2,
+     "stolen": 0.6,
+     "recovered": 0.7,
+     "thieves": 1,
+     "spawned": 12,
+     "hp0": 75,
+     "craneHits": 0,
+     "enemiesPeak": 4,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 19.9,
+     "income": 10,
+     "wrecks": 11,
+     "hpEnd": 0,
+     "maxhp": 100,
+     "died": true,
+     "offerPrices": [
+      "ballast:12",
+      "tesla:30",
+      "rounds:21",
+      "magnet:17",
+      "tank:16"
+     ],
+     "bought": [],
+     "scrapLeft": 12
+    }
+   ],
+   "build": "turret:mg1 rear:magnet1",
+   "score": 1430
+  },
+  {
+   "car": 1,
+   "mode": "chase",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": true,
+     "pumpGot": 30,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 19,
+     "hp0": 100,
+     "craneHits": 0,
+     "enemiesPeak": 2,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 41.8,
+     "income": 16,
+     "wrecks": 18,
+     "hpEnd": 0,
+     "maxhp": 100,
+     "died": true,
+     "offerPrices": [],
+     "bought": [],
+     "scrapLeft": 16
+    }
+   ],
+   "build": "turret:mg1",
+   "score": 1032
+  },
+  {
+   "car": 2,
+   "mode": "chase",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 2,
+     "pump": true,
+     "pumpGot": 30,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 25,
+     "hp0": 150,
+     "craneHits": 0,
+     "enemiesPeak": 4,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 60,
+     "income": 27,
+     "wrecks": 25,
+     "hpEnd": 97,
+     "maxhp": 150,
+     "died": false,
+     "offerPrices": [
+      "plate:16",
+      "scrapbin:12",
+      "tesla:26",
+      "spikes:16",
+      "v8:16"
+     ],
+     "bought": [
+      "v8:16"
+     ],
+     "scrapLeft": 11
+    },
+    {
+     "lap": 2,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0.7,
+     "recovered": 0.8,
+     "thieves": 2,
+     "spawned": 12,
+     "hp0": 97,
+     "craneHits": 0,
+     "enemiesPeak": 3,
+     "fuelFromPump": 0,
+     "nitroSec": 3.8,
+     "lapSec": 29,
+     "income": 15,
+     "wrecks": 14,
+     "hpEnd": 64,
+     "maxhp": 150,
+     "died": false,
+     "offerPrices": [
+      "v8:28",
+      "cooler:21",
+      "saw:28",
+      "mg:31",
+      "nitro:16"
+     ],
+     "bought": [
+      "cooler:21"
+     ],
+     "scrapLeft": 5
+    },
+    {
+     "lap": 3,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 17,
+     "hp0": 64,
+     "craneHits": 0,
+     "enemiesPeak": 8,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 11.1,
+     "income": 9,
+     "wrecks": 13,
+     "hpEnd": 0,
+     "maxhp": 150,
+     "died": true,
+     "offerPrices": [
+      "v8:21",
+      "cooler:36",
+      "saw:32",
+      "mg:36",
+      "nitro:19"
+     ],
+     "bought": [],
+     "scrapLeft": 14
+    }
+   ],
+   "build": "turret:mg1 rear:mines1 front:bullbar1 hood:cooler1",
+   "score": 2799
+  },
+  {
+   "car": 2,
+   "mode": "chase",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": true,
+     "pumpGot": 30,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 25,
+     "hp0": 150,
+     "craneHits": 0,
+     "enemiesPeak": 4,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 60,
+     "income": 24,
+     "wrecks": 24,
+     "hpEnd": 137,
+     "maxhp": 150,
+     "died": false,
+     "offerPrices": [
+      "slicks:12",
+      "radar:12",
+      "nitro:14",
+      "flame:24",
+      "spikes:16"
+     ],
+     "bought": [
+      "radar:12",
+      "slicks:12"
+     ],
+     "scrapLeft": 0
+    },
+    {
+     "lap": 2,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 1.5,
+     "recovered": 1.7,
+     "thieves": 2,
+     "spawned": 16,
+     "hp0": 137,
+     "craneHits": 0,
+     "enemiesPeak": 3,
+     "fuelFromPump": 0,
+     "nitroSec": 0.4,
+     "lapSec": 29.5,
+     "income": 16,
+     "wrecks": 14,
+     "hpEnd": 57,
+     "maxhp": 150,
+     "died": false,
+     "offerPrices": [
+      "plow:16",
+      "spoiler:14",
+      "flame:28",
+      "tesla:30",
+      "saw:28"
+     ],
+     "bought": [
+      "plow:16"
+     ],
+     "scrapLeft": 0
+    },
+    {
+     "lap": 3,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 1,
+     "spawned": 17,
+     "hp0": 57,
+     "craneHits": 0,
+     "enemiesPeak": 7,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 10.9,
+     "income": 17,
+     "wrecks": 15,
+     "hpEnd": 0,
+     "maxhp": 150,
+     "died": true,
+     "offerPrices": [
+      "plow:28",
+      "spoiler:16",
+      "flame:32",
+      "tesla:34",
+      "saw:32"
+     ],
+     "bought": [],
+     "scrapLeft": 17
+    }
+   ],
+   "build": "turret:mg1 rear:mines1 front:plow1 roof:radar1 sides:slicks1",
+   "score": 2798
+  },
+  {
+   "car": 0,
+   "mode": "nopump",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 5,
+     "hp0": 70,
+     "craneHits": 0,
+     "enemiesPeak": 2,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 8.4,
+     "income": 3,
+     "wrecks": 4,
+     "hpEnd": 0,
+     "maxhp": 70,
+     "died": true,
+     "offerPrices": [],
+     "bought": [],
+     "scrapLeft": 3
+    }
+   ],
+   "build": "turret:mg1",
+   "score": 160
+  },
+  {
+   "car": 1,
+   "mode": "nopump",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 12,
+     "hp0": 100,
+     "craneHits": 0,
+     "enemiesPeak": 2,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 30,
+     "income": 12,
+     "wrecks": 12,
+     "hpEnd": 59,
+     "maxhp": 100,
+     "died": false,
+     "offerPrices": [
+      "saw:24",
+      "rounds:18",
+      "mines:22",
+      "cooler:18",
+      "radar:12"
+     ],
+     "bought": [
+      "radar:12"
+     ],
+     "scrapLeft": 0
+    },
+    {
+     "lap": 2,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 1.1,
+     "recovered": 1.3,
+     "thieves": 3,
+     "spawned": 8,
+     "hp0": 59,
+     "craneHits": 0,
+     "enemiesPeak": 2,
+     "fuelFromPump": 0,
+     "nitroSec": 1,
+     "lapSec": 11.7,
+     "income": 8,
+     "wrecks": 7,
+     "hpEnd": 0,
+     "maxhp": 100,
+     "died": true,
+     "offerPrices": [
+      "saw:28",
+      "rounds:21",
+      "mines:25",
+      "cooler:21",
+      "radar:21"
+     ],
+     "bought": [],
+     "scrapLeft": 8
+    }
+   ],
+   "build": "turret:mg1 roof:radar1",
+   "score": 1034
+  },
+  {
+   "car": 2,
+   "mode": "nopump",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 13,
+     "hp0": 150,
+     "craneHits": 0,
+     "enemiesPeak": 2,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 30,
+     "income": 13,
+     "wrecks": 13,
+     "hpEnd": 117,
+     "maxhp": 150,
+     "died": false,
+     "offerPrices": [
+      "plow:14",
+      "flame:24",
+      "saw:24",
+      "rounds:18",
+      "spoiler:12"
+     ],
+     "bought": [
+      "spoiler:12"
+     ],
+     "scrapLeft": 1
+    },
+    {
+     "lap": 2,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0.8,
+     "recovered": 0.9,
+     "thieves": 2,
+     "spawned": 15,
+     "hp0": 117,
+     "craneHits": 0,
+     "enemiesPeak": 3,
+     "fuelFromPump": 0,
+     "nitroSec": 3.1,
+     "lapSec": 29.6,
+     "income": 15,
+     "wrecks": 14,
+     "hpEnd": 70,
+     "maxhp": 150,
+     "died": false,
+     "offerPrices": [
+      "spikes:18",
+      "magnet:12",
+      "mines:25",
+      "skirts:16",
+      "cage:16"
+     ],
+     "bought": [
+      "cage:16"
+     ],
+     "scrapLeft": 0
+    },
+    {
+     "lap": 3,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 7.7,
+     "recovered": 7.9,
+     "thieves": 3,
+     "spawned": 25,
+     "hp0": 95,
+     "craneHits": 0,
+     "enemiesPeak": 8,
+     "fuelFromPump": 0,
+     "nitroSec": 0.9,
+     "lapSec": 20,
+     "income": 31,
+     "wrecks": 22,
+     "hpEnd": 0,
+     "maxhp": 175,
+     "died": true,
+     "offerPrices": [
+      "spikes:21",
+      "magnet:13",
+      "mines:29",
+      "skirts:19",
+      "cage:28"
+     ],
+     "bought": [],
+     "scrapLeft": 31
+    }
+   ],
+   "build": "turret:mg1 rear:spoiler1 front:bullbar1 roof:cage1",
+   "score": 2490
+  },
+  {
+   "car": 0,
+   "mode": "passive",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": true,
+     "pumpGot": 24.9,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 14,
+     "hp0": 70,
+     "craneHits": 0,
+     "enemiesPeak": 3,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 29.3,
+     "income": 12,
+     "wrecks": 13,
+     "hpEnd": 0,
+     "maxhp": 70,
+     "died": true,
+     "offerPrices": [],
+     "bought": [],
+     "scrapLeft": 12
+    }
+   ],
+   "build": "turret:mg1",
+   "score": 830
+  },
+  {
+   "car": 1,
+   "mode": "passive",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": true,
+     "pumpGot": 30,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 21,
+     "hp0": 100,
+     "craneHits": 0,
+     "enemiesPeak": 4,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 47.3,
+     "income": 14,
+     "wrecks": 21,
+     "hpEnd": 0,
+     "maxhp": 100,
+     "died": true,
+     "offerPrices": [],
+     "bought": [],
+     "scrapLeft": 14
+    }
+   ],
+   "build": "turret:mg1",
+   "score": 1018
+  },
+  {
+   "car": 2,
+   "mode": "passive",
+   "laps": [
+    {
+     "lap": 1,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 0,
+     "recovered": 0,
+     "thieves": 0,
+     "spawned": 14,
+     "hp0": 150,
+     "craneHits": 0,
+     "enemiesPeak": 4,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 30,
+     "income": 11,
+     "wrecks": 11,
+     "hpEnd": 150,
+     "maxhp": 150,
+     "died": false,
+     "offerPrices": [
+      "spikes:16",
+      "saw:24",
+      "cooler:18",
+      "rounds:18",
+      "spoiler:12"
+     ],
+     "bought": [],
+     "scrapLeft": 11
+    },
+    {
+     "lap": 2,
+     "stunt": 0,
+     "pump": false,
+     "pumpGot": 0,
+     "stolen": 5.2,
+     "recovered": 5.5,
+     "thieves": 3,
+     "spawned": 15,
+     "hp0": 150,
+     "craneHits": 0,
+     "enemiesPeak": 4,
+     "fuelFromPump": 0,
+     "nitroSec": 0.3,
+     "lapSec": 29.6,
+     "income": 18,
+     "wrecks": 15,
+     "hpEnd": 150,
+     "maxhp": 150,
+     "died": false,
+     "offerPrices": [
+      "tank:16",
+      "nitro:16",
+      "spoiler:14",
+      "cooler:21",
+      "slicks:14"
+     ],
+     "bought": [
+      "tank:16"
+     ],
+     "scrapLeft": 13
+    },
+    {
+     "lap": 3,
+     "stunt": 0,
+     "pump": true,
+     "pumpGot": 30,
+     "stolen": 9.6,
+     "recovered": 7.8,
+     "thieves": 7,
+     "spawned": 54,
+     "hp0": 150,
+     "craneHits": 0,
+     "enemiesPeak": 12,
+     "fuelFromPump": 0,
+     "nitroSec": 0,
+     "lapSec": 39.7,
+     "income": 52,
+     "wrecks": 45,
+     "hpEnd": 0,
+     "maxhp": 150,
+     "died": true,
+     "offerPrices": [
+      "tank:28",
+      "nitro:19",
+      "spoiler:16",
+      "cooler:24",
+      "slicks:16"
+     ],
+     "bought": [],
+     "scrapLeft": 65
+    }
+   ],
+   "build": "turret:mg1 rear:mines1 front:bullbar1 trunk:tank1",
+   "score": 4383
+  }
+ ],
+ "errs": [
+  "[.WebGL-0x3a5c0016e000]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}
