@@ -1,7 +1,7 @@
 // Low-poly three.js renderer. Reads the simulation state (G) and draws it.
 // Sim (x, y) maps to world (x, z); y is up.
 import * as THREE from 'three';
-import { G, AW, AH, EDGE, TAU, ground, rnd, clamp, sawLayout, harvesterBlades } from './game.js';
+import { G, AW, AH, EDGE, TAU, ground, rnd, clamp, sawLayout, harvesterBlades, PUMP_R, PUMP_TICK, PUMP_RESERVE } from './game.js';
 import { A } from './assets.js';
 import { SLOTS } from './data.js';
 import { ECOL } from './data.js';
@@ -284,6 +284,10 @@ export function buildCar({ len: L, wid: W, color, kind, shape }) {
     const lb = mesh(new THREE.BoxGeometry(4, 3, W * .9), lam(0x2a2a2a)); lb.position.set(L * .05, by + bh / 2 + cabH + 2, 0); tilt.add(lb);
     for (let i = 0; i < 4; i++) { const l = new THREE.Mesh(new THREE.BoxGeometry(1, 2.4, 3), headM); l.position.set(L * .05 + 2.2, by + bh / 2 + cabH + 2, -W * .33 + i * W * .22); tilt.add(l) }
   }
+  if (kind === 'thief') { // siphon tank on the roof and a hose trailing out the back
+    const tk = mesh(new THREE.CylinderGeometry(4, 4, W * .7, 8), lam(0x9fe070)); tk.rotation.x = Math.PI / 2; tk.position.set(-L * .2, by + bh / 2 + cabH + 4, 0); tilt.add(tk);
+    const hose = mesh(new THREE.BoxGeometry(L * .45, 1.6, 1.6), lam(0x1d1b1a)); hose.position.set(-L * .5, by, W * .25); hose.rotation.y = .3; tilt.add(hose);
+  }
   if (kind === 'tow') { // crane boom out the back with a hook
     const boom = mesh(new THREE.BoxGeometry(L * .55, 4, 4), lam(0xf2c230)); boom.position.set(-L * .3, by + bh / 2 + 12, 0); boom.rotation.z = -.35; tilt.add(boom);
     const post = mesh(new THREE.BoxGeometry(6, 14, 8), lam(0x3a3a3a)); post.position.set(-L * .12, by + bh / 2 + 7, 0); tilt.add(post);
@@ -489,11 +493,26 @@ const soft = pool(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), addMat(gl
 const rings = pool(new THREE.RingGeometry(.88, 1, 48).rotateX(-Math.PI / 2), addMat(null), 120);
 let fireDecal = null; // optional painted flame sprite (assets/fx/fire-trail.png)
 export function initFx() {
+  if (A.fx.pad && !padDecal) { const tx = new THREE.Texture(A.fx.pad); tx.needsUpdate = true; tx.colorSpace = THREE.SRGBColorSpace;
+    padDecal = new THREE.Mesh(new THREE.PlaneGeometry(PUMP_R * 2.3, PUMP_R * 2.3).rotateX(-Math.PI / 2), new THREE.MeshLambertMaterial({ map: tx, transparent: true, depthWrite: false })); padDecal.position.y = .9; padDecal.receiveShadow = true; pumpG.add(padDecal); pumpG.getObjectByName('pad').visible = false }
   if (A.fx.fire && !fireDecal) { const tx = new THREE.Texture(A.fx.fire); tx.needsUpdate = true; tx.colorSpace = THREE.SRGBColorSpace;
     fireDecal = pool(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), addMat(tx), 300) } // additive: paint the flame on pure black
 }
 const eliteSaws = pool(sawG, sawM, 8); eliteSaws.castShadow = true;
 let eliteSawN = 0;
+// gas pump: a concrete pad (or a painted pad decal) with a red low-poly pump in the middle
+const pumpG = new THREE.Group(); pumpG.visible = false; scene.add(pumpG);
+{
+  const pad = mesh(new THREE.CylinderGeometry(PUMP_R, PUMP_R, 1.2, 20), lam(0x8a857c), false); pad.position.y = .6; pad.name = 'pad'; pumpG.add(pad);
+  const body = mesh(new THREE.BoxGeometry(14, 26, 11), lam(0xd23a2a)); body.position.y = 14; pumpG.add(body);
+  const top = mesh(new THREE.BoxGeometry(15, 6, 12), lam(0xa82a20)); top.position.y = 29; pumpG.add(top);
+  const screen = new THREE.Mesh(new THREE.BoxGeometry(.6, 4, 7), new THREE.MeshBasicMaterial({ color: 0x7fdcaa })); screen.position.set(7.4, 20, 0); screen.name = 'screen'; pumpG.add(screen);
+  const hose = mesh(new THREE.BoxGeometry(2, 18, 2), lam(0x1d1b1a)); hose.position.set(0, 12, 7); hose.rotation.x = .25; pumpG.add(hose);
+  const noz = mesh(new THREE.BoxGeometry(3, 3, 6), lam(0x55585e)); noz.position.set(0, 20, 8.5); pumpG.add(noz);
+  const base = mesh(new THREE.BoxGeometry(20, 2, 16), lam(0x8d9096)); base.position.y = 1.8; pumpG.add(base);
+}
+let padDecal = null;
+const canPool = pool(new THREE.BoxGeometry(9, 12, 6), lam(0xd23a2a), 30); canPool.castShadow = true;
 function put(m, i, x, y, z, sx, sy, sz, ry = 0, rx = 0, hexc) {
   dummy.position.set(x, y, z); dummy.rotation.set(rx, ry, 0); dummy.scale.set(sx, sy, sz); dummy.updateMatrix();
   m.setMatrixAt(i, dummy.matrix); if (hexc !== undefined) m.setColorAt(i, tmpC.setHex(hexc));
@@ -627,6 +646,26 @@ export function render(dt) {
       streak(ns++, px, py, 18, nx, ny, 18, 2.6, 0xbfe8ff); px = nx; py = ny;
     }
   }
+  // gas pump: zone ring, fill progress ring, and the reserve shown by the screen colour
+  const pu = G.pump; pumpG.visible = !!pu;
+  if (pu) {
+    pumpG.position.set(pu.x, 0, pu.y);
+    const pulse = 1 + Math.sin(G.time * 4) * .03;
+    if (nring < 118) {
+      put(rings, nring++, pu.x, 1.4, pu.y, PUMP_R * pulse, 1, PUMP_R * pulse, 0, 0, G.filling ? 0x7fdcaa : 0xffc23d);
+      if (pu.acc > .05) { const k = Math.min(1, pu.acc / PUMP_TICK); put(rings, nring++, pu.x, 1.5, pu.y, PUMP_R * k, 1, PUMP_R * k, 0, 0, 0x7fdcaa) }
+    }
+    if (nsoft < 500) put(soft, nsoft++, pu.x, 1.2, pu.y, PUMP_R * 2.4, 1, PUMP_R * 2.4, 0, 0, G.filling ? 0x0e2e1c : 0x241a04);
+    pumpG.getObjectByName('screen').material.color.setHex(pu.res > PUMP_RESERVE * .5 ? 0x7fdcaa : pu.res > PUMP_RESERVE * .2 ? 0xffc23d : 0xff4a30);
+  }
+  // jerrycans dropped by fuel thieves
+  let ncan = 0;
+  for (const c of G.cans) {
+    if (ncan >= 30) break;
+    put(canPool, ncan++, c.x, 8 + Math.sin(G.time * 4 + c.x) * 2, c.y, 1, 1, 1, G.time * 2 + c.x);
+    if (nring < 120) put(rings, nring++, c.x, 1.2, c.y, 22 + Math.sin(G.time * 6) * 3, 1, 22 + Math.sin(G.time * 6) * 3, 0, 0, 0x7fdcaa);
+  }
+  finish(canPool, ncan);
   // spawn markers: red X, a ring that tightens as the car is about to appear, and a red glow
   for (const s of G.pend) {
     const pulse = .75 + .25 * Math.abs(Math.sin(G.time * 10)), base = s.elite ? 38 : 16, r = base * pulse, k = s.t / s.max;
@@ -670,7 +709,7 @@ export function attract(dt) {
   const ca = demoT * .05;
   placeCamera(AW / 2 + Math.cos(ca) * 120, AH / 2 + Math.sin(ca) * 80, 0);
   let nb = 0; for (const p of G.parts) { const s = p.size * Math.min(1, p.life / p.max * 2.5); put(blobs, nb++, p.x, p.z, p.y, s, s, s, p.rot, p.rot, p.c) }
-  finish(blobs, nb); finish(glows, 0); finish(streaks, 0); finish(scrapPool, 0); finish(minePool, 0); finish(soft, 0); finish(rings, 0); finish(eliteSaws, 0); if (fireDecal) finish(fireDecal, 0);
+  finish(blobs, nb); finish(glows, 0); finish(streaks, 0); finish(scrapPool, 0); finish(minePool, 0); finish(canPool, 0); pumpG.visible = false; finish(soft, 0); finish(rings, 0); finish(eliteSaws, 0); if (fireDecal) finish(fireDecal, 0);
   renderer.render(scene, camera);
 }
 export function hideDemo() { for (const o of demo) o.root.visible = false; G.parts = [] }

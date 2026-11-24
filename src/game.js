@@ -2,7 +2,7 @@
 // (Internally a lap is still called a 'wave'.)
 // Runs on a flat 2D plane (x, y). The 3D scene maps sim y to world z.
 import { CARS, BASE, PARTS, PART, SLOTS, WSTAT, ENEMY, ECOL, ELITES } from './data.js';
-import { t, L, num } from './i18n.js';
+import { t, L, num, lang } from './i18n.js';
 
 export const AW = 2000, AH = 1360, EDGE = 34, GS = .6;
 export const TAU = Math.PI * 2;
@@ -15,7 +15,7 @@ const hex = s => parseInt(s.slice(1), 16);
 export const G = {
   state: 'menu', S: null, P: null, W: null, CD: null,
   enemies: [], bullets: [], ebul: [], mines: [], fires: [], scraps: [], parts: [], texts: [], pend: [], zaps: [], obs: [], ramps: [],
-  wave: 0, waveT: 0, waveLen: 1, spawnT: 0, scrap: 0, score: 0, wrecks: 0, bestDrift: 0, shake: 0, time: 0,
+  wave: 0, fuel: 60, tank: 60, pump: null, pumpT: 0, cans: [], spawnT: 0, scrap: 0, score: 0, wrecks: 0, bestDrift: 0, shake: 0, time: 0,
   banner: null, build: {}, car: null, offer: [], rerollCost: 0, clearT: 0,
   cam: { x: AW / 2, y: AH / 2 }, drift: { on: false, pts: 0, mult: 1, off: 0, heat: 0 },
   keys: {}, groundDirty: true, obsVersion: 0, cheer: 0, on: {}
@@ -125,9 +125,9 @@ export function start(i) {
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.waveLen = 60; G.driftScrap = 0; G.waveT = G.waveLen; G.spawnT = 1.2; G.state = 'play';
+  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play';
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
-  G.banner = { s: ['lap', { n: G.wave }], elite, sub: elite ? ['eliteSub', { name: L().elites[elite][0], hint: L().elites[elite][1] }] : ['holdOut', { s: G.waveLen }], id: Math.random() };
+  G.banner = { s: ['lap', { n: G.wave }], elite, sub: elite ? ['eliteSub', { name: L().elites[elite][0], hint: L().elites[elite][1] }] : ['tankFull', { l: G.tank }], id: Math.random() };
   if (elite) queue(elite);
   // gentle start: 1 car on lap 1, slowly more after that
   for (let i = 0; i < Math.min(5, 1 + Math.floor(G.wave / 2)); i++) queue('rust');
@@ -174,6 +174,7 @@ function kill(e, scored) {
   for (let i = 0; i < 5; i++) { g.fillStyle = Math.random() < .5 ? e.col : '#3b3530'; g.save(); g.translate(e.x + rnd(-e.r, e.r), e.y + rnd(-e.r, e.r)); g.rotate(rnd(0, TAU)); g.fillRect(-4, -2, rnd(5, 10), rnd(3, 6)); g.restore() }
   G.groundDirty = true;
   let n = e.sc; for (let i = 0; i < e.sc; i++) if (Math.random() < G.S.luck) n++;
+  if (scored && e.stolen > 0) G.cans.push({ x: e.x, y: e.y, l: Math.max(5, e.stolen), t: 0 });
   if (scored) {
     G.wrecks++; G.score += e.sc * 40;
     for (let i = 0; i < Math.min(n, 14); i++) { const a = rnd(0, TAU), s = rnd(40, 200); G.scraps.push({ x: e.x, y: e.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, v: n > 14 && i === 0 ? n - 13 : 1, t: 0 }) }
@@ -185,7 +186,7 @@ function endWave() {
   for (const s of G.scraps) G.scrap += s.v; G.scraps = [];
   G.P.hp = Math.min(G.S.maxhp, G.P.hp + G.S.maxhp * .2);
   bankDrift(); G.state = 'clear'; G.clearT = 1.1;
-  G.banner = { s: ['lapClear'], sub: ['garageOpen'], id: Math.random() };
+  G.banner = { s: ['outOfFuel'], sub: ['garageOpen'], id: Math.random() };
 }
 function die() {
   G.state = 'dead'; G.clearT = 1.6; const P = G.P;
@@ -200,6 +201,45 @@ function bankDrift() {
     txt(G.P.x, G.P.y - 30, t('fDrift', { p: fmt(p) }) + (s ? ' · ' + t('fScrap', { s }) : ''), '#ffc23d', 18, 1.2);
   }
   d.pts = 0; d.mult = 1; d.on = false; d.time = 0;
+}
+
+/* ---------- fuel: the tank is the lap clock ---------- */
+// 60 L tank, burns 1 L/s (2 L/s on nitro), so a lap with no refuelling lasts 60 s.
+// A pump opens somewhere on the map; standing in its zone adds 5 L every 3 s until its 20 L reserve
+// is used up, then it closes and another opens 15 s later. Fuel keeps burning while you fill, so a pump
+// is worth exactly its reserve (+20 s of lap) and there is no way to freeze the lap clock.
+export const BURN = 1, PUMP_R = 64, PUMP_TICK = 3, PUMP_GIVE = 5, PUMP_RESERVE = 20, PUMP_RESPAWN = 15, PUMP_FIRST = 8, THIEF_STEAL = 6;
+export const fmtL = l => (Math.round(l * 10) / 10).toLocaleString(lang() === 'en' ? 'en-US' : lang() === 'vls' ? 'nl-BE' : lang());
+function openPump() {
+  const P = G.P;
+  for (let i = 0; i < 80; i++) {
+    const x = rnd(220, AW - 220), y = rnd(220, AH - 220);
+    if (Math.hypot(x - P.x, y - P.y) < 350) continue;
+    if (G.obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + PUMP_R + 30)) continue;
+    if (G.ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < r.L / 2 + PUMP_R + 60 || Math.hypot(r.lx - x, r.ly - y) < PUMP_R + 120)) continue;
+    G.pump = { x, y, res: PUMP_RESERVE, acc: 0, id: Math.random() }; return;
+  }
+  G.pumpT = 2; // no room right now, try again shortly
+}
+function fuelStep(dt) {
+  const P = G.P, pu = G.pump;
+  if (!pu) { G.pumpT -= dt; if (G.pumpT <= 0) openPump() }
+  const filling = pu && G.fuel < G.tank - .5 && P.z < 6 && Math.hypot(P.x - pu.x, P.y - pu.y) < PUMP_R;
+  G.filling = !!filling;
+  if (filling) {
+    pu.acc += dt;
+    if (pu.acc >= PUMP_TICK) {
+      pu.acc -= PUMP_TICK; const l = Math.min(PUMP_GIVE, pu.res, G.tank - G.fuel); G.fuel += l; pu.res -= l;
+      txt(pu.x, pu.y - 30, t('fFuel', { l: fmtL(l) }), '#7fdcaa', 20, 1.1);
+      if (pu.res <= .01) { G.pump = null; G.pumpT = PUMP_RESPAWN }
+    }
+  } else if (pu) pu.acc = Math.max(0, pu.acc - dt * 2);
+  G.fuel -= dt * (BURN + (P.boost ? 1 : 0));
+  for (const c of G.cans) {
+    c.t += dt;
+    if (P.z < 10 && Math.hypot(c.x - P.x, c.y - P.y) < P.r + 14 && G.fuel < G.tank) { const l = Math.min(c.l, G.tank - G.fuel); G.fuel += l; c.got = true; txt(c.x, c.y - 30, t('fFuel', { l: fmtL(l) }), '#7fdcaa', 20, 1.1) }
+  }
+  G.cans = G.cans.filter(c => !c.got);
 }
 
 /* ---------- garage: slot-based build ---------- */
@@ -282,6 +322,8 @@ function collideStatic(o, r, bounce) {
       bounceOff(o, nx, ny, bounce, b.k === 'tire', o.x - nx * r, o.y - ny * r);
     }
   }
+  const pu = G.pump; // the pump itself is a small solid post
+  if (pu && o.z < 26) { const dx = o.x - pu.x, dy = o.y - pu.y, d = Math.hypot(dx, dy), m = r + 13; if (d < m) { const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = pu.x + nx * m; o.y = pu.y + ny * m; const vn = o.vx * nx + o.vy * ny; if (vn < 0) { o.vx -= 1.3 * vn * nx; o.vy -= 1.3 * vn * ny } } }
   const lo = EDGE + r;
   if (o.x < lo) { o.x = lo; bounceOff(o, 1, 0, bounce, true, EDGE, o.y) }
   if (o.x > AW - lo) { o.x = AW - lo; bounceOff(o, -1, 0, bounce, true, AW - EDGE, o.y) }
@@ -350,8 +392,9 @@ function land(o, h) {
   G.shake = Math.max(G.shake, 4 + impact / 40); G.cheer = 1;
   if (P.airT > .35 && !P.crushJump) {
     const pts = Math.round(P.airT * 300), sc = Math.floor(P.airT * 4);
-    G.score += pts; G.scrap += sc;
-    txt(P.x, P.y - 34, t('fAir', { t: P.airT.toFixed(1) }) + (sc ? ' · ' + t('fScrap', { s: sc }) : ''), '#8fd0ea', 18, 1.2);
+    const cap = Math.max(0, 6 + 2 * G.wave - G.driftScrap), got = Math.min(sc, cap); // drift + air share one per-lap stunt cap
+    G.score += pts; G.scrap += got; G.driftScrap += got;
+    txt(P.x, P.y - 34, t('fAir', { t: P.airT.toFixed(1) }) + (got ? ' · ' + t('fScrap', { s: got }) : ''), '#8fd0ea', 18, 1.2);
   }
   // landing on a car crushes it, and you bounce off its roof
   let crushed = false;
@@ -441,7 +484,7 @@ function hitPlayer(d) {
   d *= 1 - Math.min(.7, G.S.armor); P.hp -= d; P.inv = .55; G.shake = Math.max(G.shake, 8);
   txt(P.x, P.y - 20, '-' + fmt(d), '#ff6b5a', 18, .7);
   if (G.drift.pts > 200) txt(P.x, P.y - 46, t('fCombo'), '#ff6b5a', 16, 1);
-  G.drift.pts = 0; G.drift.mult = 1;
+  G.drift.pts = 0; G.drift.mult = 1; G.drift.time = 0;
   if (P.hp <= 0) { P.hp = 0; die() }
 }
 
@@ -530,14 +573,15 @@ export function update(dt) {
   const rateMul = S.rate * (1 + drift.heat * .8);
 
   /* waves */
-  G.waveT -= dt; G.spawnT -= dt;
-  if (G.spawnT <= 0 && G.waveT > 2) {
+  fuelStep(dt);
+  G.spawnT -= dt;
+  if (G.spawnT <= 0 && G.fuel > 2) {
     // early laps are calm: one car every ~3 s and a low cap, ramping up from lap 4
     G.spawnT = Math.max(.5, 3.2 - G.wave * .3) * rnd(.8, 1.2);
     const n = 1 + Math.floor((G.wave - 1) / 3) + (G.wave >= 4 && Math.random() < .3 ? 1 : 0), cap = Math.min(60, 4 + G.wave * 3);
     for (let i = 0; i < n && G.enemies.length + G.pend.length < cap; i++) {
       const r = Math.random();
-      queue(G.wave >= 4 && r < .08 + G.wave * .012 ? 'brute' : G.wave >= 3 && r < .33 ? 'spit' : 'rust');
+      queue(G.wave >= 2 && r > .86 ? 'thief' : G.wave >= 4 && r < .08 + G.wave * .012 ? 'brute' : G.wave >= 3 && r < .33 ? 'spit' : 'rust');
     }
   }
   for (const s of G.pend) {
@@ -547,12 +591,20 @@ export function update(dt) {
     spawn(s.type, s.x, s.y); s.done = true;
   }
   G.pend = G.pend.filter(s => !s.done);
-  if (G.waveT <= 0) { endWave(); return }
+  if (G.fuel <= 0) { G.fuel = 0; endWave(); return }
 
   /* enemies */
   for (const e of G.enemies) {
     const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1; let spd = e.spd;
     let want = e.type === 'rust' ? Math.atan2(P.y + P.vy * .35 - e.y, P.x + P.vx * .35 - e.x) : Math.atan2(dy, dx);
+    if (e.type === 'thief') { // siphon: grab fuel on contact, run off, come back for more
+      if (e.flee > 0) { e.flee -= dt; want = Math.atan2(-dy, -dx); spd *= 1.15 }
+      else if (d < e.r + P.r + 10 && P.z < 10 && G.fuel > 0) {
+        const l = Math.min(THIEF_STEAL, G.fuel); G.fuel -= l; e.stolen = (e.stolen || 0) + l; e.flee = 3;
+        txt(P.x, P.y - 40, t('fStolen', { l: fmtL(l) }), '#ff6b5a', 18, 1);
+        puff(P.x, P.y, 8, { c: 0x9fe070, glow: true, s0: 40, s1: 140, l0: .3, l1: .6, z0: 2, z1: 4, z: 10, vz0: 20, vz1: 60 });
+      }
+    }
     if (e.type === 'spit') {
       if (d < 300) want += Math.PI * .55;
       e.cd -= dt;
@@ -586,8 +638,10 @@ export function update(dt) {
 
   /* ramming: both cars get hurt. Damage to you grows with impact speed and with
      how heavy the other car is compared to yours; whoever drove into whom also counts. */
-  for (const e of E) for (const [ox, oy, er] of bodyCircles(e)) {
+  for (const e of E) {
     if (e.dead || Math.abs(P.z - e.z) > 14) continue;
+    let ox = 0, oy = 0, er = e.r, best = Infinity; // only the circle you overlap most, so a hit never counts twice
+    for (const [cx, cy, cr] of bodyCircles(e)) { const pen = Math.hypot(e.x + cx - P.x, e.y + cy - P.y) - cr; if (pen < best) { best = pen; ox = cx; oy = cy; er = cr } }
     const dx = e.x + ox - P.x, dy = e.y + oy - P.y, d = Math.hypot(dx, dy), m = P.r + er;
     if (d < m + 4 && S.spikes && e.hitcd <= 0) { e.hitcd = .3; hurt(e, 12 * S.spikes * S.dmg) }
     if (d < m && d > 0) {
