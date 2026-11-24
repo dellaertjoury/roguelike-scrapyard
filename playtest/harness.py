@@ -6,7 +6,7 @@ from playwright.async_api import async_playwright
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHOTS = os.path.join(HERE, 'shots')
 THREE = '/home/claude/vend/node_modules/three/build/three.module.js'
-URL = 'http://localhost:8765/index.html'
+URL = os.environ.get('GAME_URL', 'http://localhost:8765/index.html')
 ARGS = ['--use-gl=angle', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist']
 ERRLOG = os.path.join(HERE, 'console_errors.jsonl')
 os.makedirs(SHOTS, exist_ok=True)
@@ -55,9 +55,9 @@ class Game:
         await self.ev("M.G.state='pause'")
 
 
-async def open_game(pw, tag, lang='en', vw=1366, vh=800, slow3=0):
+async def open_game(pw, tag, lang='en', vw=1366, vh=800, slow3=0, touch=False):
     b = await pw.chromium.launch(executable_path='/usr/bin/google-chrome', args=ARGS)
-    pg = await b.new_page(viewport={'width': vw, 'height': vh})
+    pg = await b.new_page(viewport={'width': vw, 'height': vh}, has_touch=touch, is_mobile=touch)
     errs = []
 
     def log(kind, text):
@@ -72,6 +72,16 @@ async def open_game(pw, tag, lang='en', vw=1366, vh=800, slow3=0):
     await pg.route('**/three.module.js', lambda r: r.fulfill(path=THREE, content_type='application/javascript'))
     await pg.route('**/fonts.googleapis.com/**', lambda r: r.abort())
     await pg.add_init_script(f"localStorage.setItem('scrapyard-lang','{lang}')")
+    # attach a short stack to THREE colour warnings so their source shows up in the log
+    await pg.add_init_script("{const w=console.warn;console.warn=(...a)=>{if(String(a[0]).includes('color'))a.push(new Error().stack.split('\\n').slice(2,6).join(' | '));w(...a)}}")
+    pre = os.environ.get('SHOT_PREFIX', '')
+    if pre:
+        orig = pg.screenshot
+        async def shot(*a, **k):
+            if 'path' in k:
+                d, b = os.path.split(k['path']); k['path'] = os.path.join(d, pre + b)
+            return await orig(*a, **k)
+        pg.screenshot = shot
     await pg.goto(URL)
     await pg.wait_for_selector('#loading', state='detached', timeout=60000)
     await pg.evaluate(INSTALL)

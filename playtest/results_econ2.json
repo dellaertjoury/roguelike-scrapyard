@@ -3,23 +3,23 @@
   {
    "car": "hatch",
    "state": "shop",
-   "scrapFromOneCombo": 128,
-   "score": 20621,
-   "bestDrift": 20621
+   "scrapFromOneCombo": 7,
+   "score": 3607,
+   "bestDrift": 496
   },
   {
    "car": "muscle",
    "state": "shop",
-   "scrapFromOneCombo": 138,
-   "score": 22238,
-   "bestDrift": 22238
+   "scrapFromOneCombo": 8,
+   "score": 4547,
+   "bestDrift": 627
   },
   {
    "car": "hearse",
    "state": "shop",
-   "scrapFromOneCombo": 122,
-   "score": 19653,
-   "bestDrift": 19653
+   "scrapFromOneCombo": 7,
+   "score": 3441,
+   "bestDrift": 474
   }
  ],
  "driftUnderAttack": [
@@ -29,28 +29,28 @@
     {
      "lap": 1,
      "end": "shop",
-     "scrap": 148,
-     "score": 21421,
-     "bestDrift": 20621,
+     "scrap": 30,
+     "score": 4538,
+     "bestDrift": 540,
      "hitsTaken": 0,
      "hp": 70
     },
     {
      "lap": 2,
      "end": "shop",
-     "scrap": 155,
-     "score": 21769,
-     "bestDrift": 20809,
+     "scrap": 33,
+     "score": 5144,
+     "bestDrift": 951,
      "hitsTaken": 0,
      "hp": 70
     },
     {
      "lap": 3,
      "end": "over",
-     "scrap": 9,
-     "score": 440,
-     "bestDrift": 20809,
-     "hitsTaken": 8,
+     "scrap": 11,
+     "score": 2205,
+     "bestDrift": 951,
+     "hitsTaken": 10,
      "hp": 0
     }
    ]
@@ -61,29 +61,29 @@
     {
      "lap": 1,
      "end": "shop",
-     "scrap": 159,
-     "score": 23078,
-     "bestDrift": 22238,
+     "scrap": 27,
+     "score": 5296,
+     "bestDrift": 635,
      "hitsTaken": 0,
      "hp": 100
     },
     {
      "lap": 2,
      "end": "shop",
-     "scrap": 164,
-     "score": 23369,
-     "bestDrift": 22449,
+     "scrap": 33,
+     "score": 5863,
+     "bestDrift": 788,
      "hitsTaken": 0,
      "hp": 100
     },
     {
      "lap": 3,
      "end": "shop",
-     "scrap": 36,
-     "score": 1787,
-     "bestDrift": 22449,
-     "hitsTaken": 7,
-     "hp": 66
+     "scrap": 31,
+     "score": 3804,
+     "bestDrift": 1034,
+     "hitsTaken": 12,
+     "hp": 26
     }
    ]
   },
@@ -93,29 +93,29 @@
     {
      "lap": 1,
      "end": "shop",
-     "scrap": 20,
-     "score": 858,
-     "bestDrift": 98,
-     "hitsTaken": 6,
-     "hp": 148
+     "scrap": 28,
+     "score": 4414,
+     "bestDrift": 1314,
+     "hitsTaken": 8,
+     "hp": 138
     },
     {
      "lap": 2,
      "end": "shop",
-     "scrap": 75,
-     "score": 9086,
-     "bestDrift": 8126,
-     "hitsTaken": 4,
+     "scrap": 33,
+     "score": 7273,
+     "bestDrift": 1414,
+     "hitsTaken": 3,
      "hp": 150
     },
     {
      "lap": 3,
      "end": "shop",
-     "scrap": 38,
-     "score": 756,
-     "bestDrift": 8126,
-     "hitsTaken": 22,
-     "hp": 34
+     "scrap": 26,
+     "score": 2742,
+     "bestDrift": 1414,
+     "hitsTaken": 13,
+     "hp": 91
     }
    ]
   }
@@ -123,15 +123,15 @@
  "rampLoop": [
   {
    "car": "hatch",
-   "jumps": 1,
-   "scrapFromJumps": 4,
-   "score": 591
+   "jumps": 0,
+   "scrapFromJumps": 0,
+   "score": 0
   },
   {
    "car": "muscle",
    "jumps": 0,
    "scrapFromJumps": 0,
-   "score": 133
+   "score": 47
   }
  ],
  "untouchedPayout": {
@@ -143,7 +143,7 @@
     "rust:1",
     "rust:1"
    ],
-   "scrapPaidWithoutKilling": 44,
+   "scrapPaidWithoutKilling": 0,
    "wrecksCounted": 0
   }
  }

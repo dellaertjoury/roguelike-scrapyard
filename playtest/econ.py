@@ -54,13 +54,13 @@ PROBES = r"""
     out.perLap = res;
   }
 
-  /* 3. part prices per lap (Lv1 buy / Lv2 / Lv3 upgrade) */
+  /* 3. part prices per lap, from the game's own price() (Lv1 buy / Lv2 / Lv3 upgrade) */
   {
-    reset(0); const rows = [];
+    reset(0); const rows = []; G.build = {};
     for (let w = 1; w <= 15; w++) {
-      G.wave = w; const cost = D.PARTS.map(p => p.cost); const avg = cost.reduce((a, b) => a + b) / cost.length;
-      const f = (1 + (w - 1) * .14);
-      rows.push({ lap: w, avgLv1: Math.round(avg * f), cheapest: Math.round(Math.min(...cost) * f), priciest: Math.round(Math.max(...cost) * f), avgLv2: Math.round(avg * f * 1.5), avgLv3: Math.round(avg * f * 2), reroll: 2 + w, repair: m.repairCost() });
+      G.wave = w; const p1 = D.PARTS.map(p => m.price({ id: p.id }));
+      const avg = p1.reduce((a, b) => a + b) / p1.length;
+      rows.push({ lap: w, avgLv1: Math.round(avg), cheapest: Math.min(...p1), priciest: Math.max(...p1), avgLv2: Math.round(avg * 1.5), avgLv3: Math.round(avg * 2), reroll: (m.priceScale ? Math.round(2 * m.priceScale()) + w : 2 + w), repair: m.repairCost() });
     }
     out.prices = rows;
   }

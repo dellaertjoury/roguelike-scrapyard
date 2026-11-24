@@ -97,23 +97,10 @@
  ],
  "dieInAir": {
   "state": "dead",
-  "P.z": 14.39016
+  "P.z": 14.377777777777778
  },
  "overTextsAlive": 12,
- "menuFloatingTextsVisible": [
-  "TEXT0",
-  "TEXT1",
-  "TEXT2",
-  "TEXT3",
-  "TEXT4",
-  "TEXT5",
-  "TEXT6",
-  "TEXT7",
-  "TEXT8",
-  "TEXT9",
-  "TEXT10",
-  "TEXT11"
- ],
+ "menuFloatingTextsVisible": [],
  "menuState": {
   "state": "menu",
   "offer": [
@@ -121,7 +108,7 @@
    "plate*",
    "v8"
   ],
-  "scrap": 4972,
+  "scrap": 4846,
   "best": "{\"wave\":2,\"score\":0}",
   "bestLine": "Your best: lap 2, 0 points."
  },
@@ -134,7 +121,7 @@
   "maxhp": 100,
   "texts": 0,
   "mines": 0,
-  "drift": "{\"on\":false,\"pts\":0,\"mult\":1,\"off\":0.165,\"heat\":0}"
+  "drift": "{\"on\":false,\"pts\":0,\"mult\":1,\"off\":0.49999999999999994,\"heat\":0,\"time\":0}"
  },
  "dieAtLapEnd": {
   "afterFrame": "clear",
@@ -142,14 +129,13 @@
   "hp": 20.1
  },
  "geometryDelta": {
-  "oneSawPurchase": 9,
-  "sawLevelUp": 9,
-  "backToMenu": 17,
-  "newRunSameCar": 27,
-  "menuThenOtherCar": 64
+  "oneSawPurchase": 6,
+  "sawLevelUp": 0,
+  "backToMenu": 0,
+  "newRunSameCar": -6,
+  "menuThenOtherCar": 6
  },
  "errors": [
-  "THREE.Material: parameter 'color' has value of undefined.",
-  "[.WebGL-0x22a400161400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  "[.WebGL-0x2fd4012c7600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
  ]
 }

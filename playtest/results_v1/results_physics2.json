@@ -1,0 +1,157 @@
+{
+ "corner": {
+  "runs": 36,
+  "escaped": 32,
+  "worst": 92.12980380960485,
+  "bouncesPerSec": [
+   0.75,
+   1,
+   0.75,
+   0.75,
+   0.5,
+   0.75,
+   0.75,
+   0.5,
+   0.75,
+   0.75,
+   0.5,
+   0.75,
+   0.75,
+   0.5,
+   0.75,
+   1,
+   0.5,
+   0.75,
+   0.75,
+   0.5,
+   1,
+   1,
+   0.5,
+   1,
+   0.5,
+   0.5,
+   1,
+   0.5,
+   0.5,
+   0.5,
+   1,
+   0.5,
+   0.75,
+   0.5,
+   0.5,
+   1
+  ],
+  "shakeMax": 12
+ },
+ "crush": [
+  {
+   "type": "brute",
+   "wave": 6,
+   "car": 1,
+   "bounces": 2,
+   "gameSeconds": 1.1,
+   "killed": true,
+   "hpStart": 200,
+   "hpEnd": 0,
+   "scrapFromAirtime": 3,
+   "score": 480
+  },
+  {
+   "type": "harvester",
+   "wave": 5,
+   "car": 1,
+   "bounces": 8,
+   "gameSeconds": 4.7,
+   "killed": true,
+   "hpStart": 950,
+   "hpEnd": 0,
+   "scrapFromAirtime": 15,
+   "score": 3000
+  },
+  {
+   "type": "harvester",
+   "wave": 5,
+   "car": 2,
+   "bounces": 4,
+   "gameSeconds": 2.3,
+   "killed": true,
+   "hpStart": 950,
+   "hpEnd": 0,
+   "scrapFromAirtime": 7,
+   "score": 2280
+  },
+  {
+   "type": "monster",
+   "wave": 10,
+   "car": 2,
+   "bounces": 7,
+   "gameSeconds": 4.1,
+   "killed": true,
+   "hpStart": 1670,
+   "hpEnd": 0,
+   "scrapFromAirtime": 13,
+   "score": 2820
+  },
+  {
+   "type": "brute",
+   "wave": 6,
+   "chasing": true,
+   "bounces": 0,
+   "killed": false,
+   "scrapFromAirtime": 1
+  },
+  {
+   "type": "rust",
+   "wave": 3,
+   "chasing": true,
+   "bounces": 0,
+   "killed": false,
+   "scrapFromAirtime": 1
+  },
+  {
+   "type": "harvester",
+   "wave": 5,
+   "chasing": true,
+   "bounces": 0,
+   "killed": false,
+   "scrapFromAirtime": 1
+  },
+  {
+   "type": "monster",
+   "wave": 10,
+   "chasing": true,
+   "bounces": 0,
+   "killed": false,
+   "scrapFromAirtime": 1
+  },
+  {
+   "type": "tow",
+   "wave": 15,
+   "chasing": true,
+   "bounces": 0,
+   "killed": false,
+   "scrapFromAirtime": 1
+  }
+ ],
+ "natural": {
+  "gameSeconds": 360.00000000007077,
+  "enemyFramesBelowRamp": 13403,
+  "enemiesEverBelowRamp": 25,
+  "longestBelowRamp": 1117,
+  "playerFramesBelowRamp": 68,
+  "overlapPairsFrames": 0,
+  "deepOverlap": 2625,
+  "inObstacle": 349,
+  "nan": 0,
+  "maxEnemies": 37,
+  "outside": 226,
+  "laps": 6,
+  "example": {
+   "type": "brute",
+   "x": 1443,
+   "y": 412,
+   "z": 0,
+   "frames": 91
+  }
+ }
+}

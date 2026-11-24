@@ -1,0 +1,55 @@
+{
+ "ram": {
+  "main circle only (side hit)": {
+   "harvesterHpLost": 57.9,
+   "damageTexts": 2,
+   "playerSpeedAfter": 59
+  },
+  "nose zone (both circles overlap)": {
+   "harvesterHpLost": 57.9,
+   "damageTexts": 2,
+   "playerSpeedAfter": 59
+  },
+  "nose tip": {
+   "harvesterHpLost": 0,
+   "damageTexts": 0,
+   "playerSpeedAfter": 193
+  },
+  "harvesterNoseIntoWall": {
+   "nosePastWallLine": 13,
+   "playerX": 55,
+   "playerHits": 53
+  }
+ },
+ "pinned": {
+  "gameSeconds": 360,
+  "enemyFramesPinnedOnRampFace": 46384,
+  "enemiesPinnedOver2s": 18,
+  "longestFrames": 6804
+ },
+ "bladeStop": {
+  "st": "out",
+  "d": 213
+ },
+ "wheels": true,
+ "edgeArrows": {
+  "shown": 0,
+  "elite": 0
+ },
+ "blueprintMarkers": {
+  "slotsOrder": [
+   "roof",
+   "hood",
+   "front",
+   "rear",
+   "trunk",
+   "sides"
+  ],
+  "markers": [],
+  "rows": []
+ },
+ "errors": [
+  "THREE.Material: parameter 'color' has value of undefined.",
+  "[.WebGL-0x128c001a6a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

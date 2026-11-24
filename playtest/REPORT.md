@@ -195,3 +195,47 @@ Suggested fixes: steeper price scaling after lap 5, more ways to spend scrap, an
 | `warnstack.py` | Source of the colour warning |
 
 The full set of 100 screenshots isn't committed (94 MB). Rerun `readability.py` and `visuals.py` to regenerate them; the 8 key screenshots are kept in `shots/`.
+
+---
+
+# Re-test (v2): fixes from this report
+
+Re-run on commit `6e419db` with the same scripts plus `corner_ab.py`, `perf_ab.py`, `ramploop.py`, `v2_checks.py`, `cars_ab.py`, `arrows_hud.py`, `touch.py` and `gamespeed.py`. The previous version was served side by side for before/after numbers; old results are in `results_v1/`.
+
+| Finding | Status | Before → after |
+|---|---|---|
+| H1 cars stuck in ramps | Fixed | 25 stuck enemies in 360 game s (longest 1117 frames) → 0; hand-placed stuck 150/150 and 300/300 frames → 0 |
+| H2 W+D drift farming | Fixed | 148–164 scrap per lap → 27–33 (drift plus kills); about 20,000 points per lap → 3,300–4,500 |
+| M1 geometry leak | Fixed | 910 → 2314 geometries over 6 runs → flat at 393–403; draw calls 114–120 → 41–52 (normal), 957 → 225 (heavy lap 15) |
+| M2 pay for unkilled enemies | Fixed | 44 scrap at lap 5 → 0 |
+| M3 crush chains | Fixed | 8 bounces and a kill on a parked Harvester → 1 bounce, no kill |
+| M4 narrow-screen HUD | Partly → fixed in `daaab01` | overlaps gone at 768 px; at 390 px the boss panel covered the timer (N1) |
+| M5 garage layout | Fixed | cut-off names 3–6 per language → 0; "Next lap" bottom 829–848 px → 756 px |
+| L1 blades and hook through obstacles | Fixed | 2 hits behind a tyre stack → 0 |
+| L2 Harvester comb | Fixed | caused double ram hits (N5), fixed in `daaab01` |
+| L3 off-screen spawns | Fixed | arrows shown; some sat under HUD panels (N6), fixed in `daaab01` |
+| L4 spawn on top of player | Fixed | closest spawn 36 → 211 units |
+| L5 corner camping | Not changed | design choice |
+| L6 colour warning | Fixed | gone |
+| L7 slow motion | Partly → improved in `daaab01` | game speed at 6 fps 0.20 → 0.58 of real time; step cap raised to 0.25 s |
+
+New issues found in the re-test, all fixed in `daaab01`:
+- N1: boss panel over the timer on phones.
+- N2: lap banner over the boss bar.
+- N3: blueprint marker "5" used twice.
+- N4: pause button overlapping the ▶ steer button.
+- N5: Harvester rams counted twice.
+- N6: edge arrows under HUD panels.
+- N7: ramp jumps uncapped, so air-time scrap now shares the per-lap stunt cap with drifting.
+- Polish: a hit didn't reset the combo timer, and the garage buttons wrapped on phones.
+
+Economy after v2:
+
+| Lap | Avg level-1 price | Passive scrap | Aggressive scrap |
+|---|---|---|---|
+| 1 | 16 | 18 | 20 |
+| 5 | 28 | 98 | 177 |
+| 10 | 57 | 211 | 879 |
+| 15 | 115 | 203 | 1155 |
+
+A passive player never maxes a build; an aggressive one fills it around lap 10. Still open: whether late laps need more ways to spend scrap.

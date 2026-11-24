@@ -1,0 +1,155 @@
+{
+ "colorWarnStacks": [],
+ "pause": {
+  "state": "pause",
+  "overlayVisible": true,
+  "timeAdvancedWhilePaused": 0.0,
+  "afterResume": "play"
+ },
+ "blur": {
+  "state": "pause",
+  "keysCleared": true
+ },
+ "garage": [
+  {
+   "label": "start",
+   "build": "roof:mg1",
+   "maxhp": 70,
+   "hp": 70,
+   "armor": 0,
+   "mass": 0.8,
+   "top": 210,
+   "W": "{\"mg\":1,\"mines\":0,\"tesla\":0,\"flame\":0,\"saw\":0}"
+  },
+  {
+   "label": "cage x3",
+   "build": "roof:cage3",
+   "maxhp": 145,
+   "hp": 145,
+   "armor": 0.12,
+   "mass": 0.8,
+   "top": 210,
+   "W": "{\"mg\":0,\"mines\":0,\"tesla\":0,\"flame\":0,\"saw\":0}"
+  },
+  {
+   "label": "cage 4th buy allowed?",
+   "ok": false
+  },
+  {
+   "label": "magnet replaces cage (maxhp should drop by 75)",
+   "build": "roof:magnet1",
+   "maxhp": 70,
+   "hp": 70,
+   "armor": 0,
+   "mass": 0.8,
+   "top": 210,
+   "W": "{\"mg\":0,\"mines\":0,\"tesla\":0,\"flame\":0,\"saw\":0}"
+  },
+  {
+   "label": "ballast x2",
+   "build": "roof:magnet1 trunk:ballast2",
+   "maxhp": 90,
+   "hp": 90,
+   "armor": 0,
+   "mass": 1.28,
+   "top": 210,
+   "W": "{\"mg\":0,\"mines\":0,\"tesla\":0,\"flame\":0,\"saw\":0}"
+  },
+  {
+   "label": "bullbar replaces hatch front?",
+   "build": "roof:magnet1 trunk:ballast2 front:bullbar1",
+   "maxhp": 90,
+   "hp": 90,
+   "armor": 0.06,
+   "mass": 1.43,
+   "top": 210,
+   "W": "{\"mg\":0,\"mines\":0,\"tesla\":0,\"flame\":0,\"saw\":0}"
+  },
+  {
+   "label": "tesla replaces magnet",
+   "build": "roof:tesla1 trunk:ballast2 front:bullbar1",
+   "maxhp": 90,
+   "hp": 90,
+   "armor": 0.06,
+   "mass": 1.43,
+   "top": 210,
+   "W": "{\"mg\":0,\"mines\":0,\"tesla\":1,\"flame\":0,\"saw\":0}"
+  },
+  {
+   "label": "mg back (Lv1)",
+   "build": "roof:mg1 trunk:ballast2 front:bullbar1",
+   "maxhp": 90,
+   "hp": 90,
+   "armor": 0.06,
+   "mass": 1.43,
+   "top": 210,
+   "W": "{\"mg\":1,\"mines\":0,\"tesla\":0,\"flame\":0,\"saw\":0}"
+  },
+  {
+   "label": "independent recompute diff",
+   "diff": []
+  }
+ ],
+ "focusAfterGo": "BODY",
+ "waveAfterEnterSpace": [
+  2,
+  2
+ ],
+ "dieInAir": {
+  "state": "dead",
+  "P.z": 14.39016
+ },
+ "overTextsAlive": 12,
+ "menuFloatingTextsVisible": [
+  "TEXT0",
+  "TEXT1",
+  "TEXT2",
+  "TEXT3",
+  "TEXT4",
+  "TEXT5",
+  "TEXT6",
+  "TEXT7",
+  "TEXT8",
+  "TEXT9",
+  "TEXT10",
+  "TEXT11"
+ ],
+ "menuState": {
+  "state": "menu",
+  "offer": [
+   "saw",
+   "plate*",
+   "v8"
+  ],
+  "scrap": 4972,
+  "best": "{\"wave\":2,\"score\":0}",
+  "bestLine": "Your best: lap 2, 0 points."
+ },
+ "newRun": {
+  "wave": 1,
+  "scrap": 0,
+  "offer": 0,
+  "build": "roof:mg1",
+  "hp": 100,
+  "maxhp": 100,
+  "texts": 0,
+  "mines": 0,
+  "drift": "{\"on\":false,\"pts\":0,\"mult\":1,\"off\":0.165,\"heat\":0}"
+ },
+ "dieAtLapEnd": {
+  "afterFrame": "clear",
+  "later": "shop",
+  "hp": 20.1
+ },
+ "geometryDelta": {
+  "oneSawPurchase": 9,
+  "sawLevelUp": 9,
+  "backToMenu": 17,
+  "newRunSameCar": 27,
+  "menuThenOtherCar": 64
+ },
+ "errors": [
+  "THREE.Material: parameter 'color' has value of undefined.",
+  "[.WebGL-0x22a400161400]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+ ]
+}

@@ -1,0 +1,130 @@
+{
+ "harvesterThroughTyres": {
+  "framesBladeInsideTyreStack": 130,
+  "playerHitsThroughStack": 2,
+  "bladeReach": 300
+ },
+ "harvesterHitsAirborneAtZ19": true,
+ "harvesterHitsAirborneAtZ21": false,
+ "harvesterKilledMidMove": {
+  "alive": false,
+  "scrapsDropped": 11
+ },
+ "monster": [
+  {
+   "label": "corner",
+   "launched": {
+    "tx": 94,
+    "ty": 94
+   },
+   "landed": {
+    "x": 99,
+    "y": 97
+   },
+   "monsterPenetrationIntoWall": 0,
+   "playerDamage": 131,
+   "playerMaxSpeed": 320,
+   "playerEnd": [
+    71,
+    65
+   ],
+   "nan": false
+  },
+  {
+   "label": "wall",
+   "launched": {
+    "tx": 1000,
+    "ty": 1266
+   },
+   "landed": {
+    "x": 993,
+    "y": 1253
+   },
+   "monsterPenetrationIntoWall": 0,
+   "playerDamage": 242,
+   "playerMaxSpeed": 228,
+   "playerEnd": [
+    1205,
+    1299
+   ],
+   "nan": false
+  },
+  {
+   "label": "far corner",
+   "launched": {
+    "tx": 1906,
+    "ty": 1266
+   },
+   "landed": {
+    "x": 1901,
+    "y": 1263
+   },
+   "monsterPenetrationIntoWall": 0,
+   "playerDamage": 131,
+   "playerMaxSpeed": 320,
+   "playerEnd": [
+    1930,
+    1297
+   ],
+   "nan": false
+  },
+  {
+   "label": "slam onto hay bale",
+   "monsterDistFromBaleCentreAfter": 78,
+   "needed": 78
+  },
+  {
+   "label": "killed mid-air",
+   "wasAir": true,
+   "removed": true
+  }
+ ],
+ "tow": {
+  "hookThroughTyreStack": true,
+  "noNitro": {
+   "hookedAt": null,
+   "freedAfter": null,
+   "damage": 237
+  },
+  "pullWhileAirborne": {
+   "vxAfter10Frames": -187,
+   "stillHooked": true
+  },
+  "killedWhileHooked": {
+   "removed": true,
+   "playerSpeed": 14
+  }
+ },
+ "eliteByLap": [
+  {
+   "lap": 5,
+   "type": "harvester",
+   "hp": 950
+  },
+  {
+   "lap": 10,
+   "type": "monster",
+   "hp": 1670
+  },
+  {
+   "lap": 15,
+   "type": "tow",
+   "hp": 2310
+  },
+  {
+   "lap": 20,
+   "type": "harvester",
+   "hp": 3800
+  },
+  {
+   "lap": 25,
+   "type": "monster",
+   "hp": 4175
+  },
+  {
+   "lap": 30,
+   "type": "tow",
+   "hp": 4620
+  }
+ ]
+}

@@ -8,4 +8,12 @@ shots/*
 !shots/elite_harvester_blades_through_tyres.png
 !shots/flow_gameover_texts.png
 !shots/hitbox_hatch_nose_into_tyres.png
+!shots/v2_read_de_390x844_hud_banner.png
+!shots/v2_touch_390x844_hud.png
+!shots/v2_read_de_1366x800_garage.png
+!shots/v2_harvester_blade_stops_at_tyres.png
+!shots/v2_edge_arrows.png
+!shots/v1_cars_closeup.png
+!shots/v2_cars_closeup.png
 __pycache__/
+results_v1/*.png

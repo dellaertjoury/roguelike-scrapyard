@@ -1,12 +1,12 @@
 # Readability matrix: 5 languages x 4 viewports x (menu, HUD with elite banner, garage, game over).
 # Saves screenshots and runs automatic layout checks (text clipped / overflowing / off-screen, HUD panel overlaps).
 # usage: python3 readability.py [lang ...]
-import asyncio, json, sys
+import asyncio, json, sys, os
 from playwright.async_api import async_playwright
 from harness import open_game
 
 LANGS = sys.argv[1:] or ['en', 'fr', 'de', 'es', 'vls']
-SIZES = [(1366, 800), (1920, 1080), (768, 1024), (390, 844)]
+SIZES = [tuple(map(int, x.split('x'))) for x in os.environ.get('SIZES', '1366x800,1920x1080,768x1024,390x844').split(',')]
 
 CHECK = r"""
 (scope) => {
@@ -30,7 +30,7 @@ CHECK = r"""
     }
   }
   if (scope === '#hud') {
-    const ps = [...document.querySelectorAll('#hud > .pnl, #banner')].filter(p => vis(p) && (p.id !== 'banner' || +getComputedStyle(p).opacity > .05));
+    const ps = [...document.querySelectorAll('#hud > .pnl, #banner, #touch button')].filter(p => vis(p) && (p.id !== 'banner' || +getComputedStyle(p).opacity > .05));
     for (let i = 0; i < ps.length; i++) for (let j = i + 1; j < ps.length; j++) {
       const a = ps[i].getBoundingClientRect(), b = ps[j].getBoundingClientRect();
       const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left), oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
@@ -104,9 +104,9 @@ async def main():
             print(lang, json.dumps({k: {kk: vv for kk, vv in v.items() if vv} for k, v in rep.items() if isinstance(v, dict)}, ensure_ascii=False)[:4000])
             await b.close()
     old = {}
-    try: old = json.load(open('results_readability.json'))
+    try: old = json.load(open(os.environ.get('READ_OUT', 'results_readability.json')))
     except Exception: pass
     old.update(report)
-    json.dump(old, open('results_readability.json', 'w'), indent=1, ensure_ascii=False)
+    json.dump(old, open(os.environ.get('READ_OUT', 'results_readability.json'), 'w'), indent=1, ensure_ascii=False)
 
 asyncio.run(main())

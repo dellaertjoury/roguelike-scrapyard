@@ -1,23 +1,22 @@
 {
  "driving": {
-  "sp": 151,
-  "slip": 54,
-  "drift": 32,
+  "sp": 138,
+  "slip": 85,
+  "drift": 76,
   "scrollY": 0,
   "state": "play"
  },
- "moved": 105,
+ "moved": 222,
  "afterP": "pause",
  "afterP2": "play",
  "spawnClose": {
-  "spawns": 126,
-  "within60": 5,
-  "overlapping": 1,
-  "minD": 36,
-  "offscreenAtSpawn": 35
+  "spawns": 124,
+  "within60": 0,
+  "overlapping": 0,
+  "minD": 211,
+  "offscreenAtSpawn": 38
  },
  "errors": [
-  "THREE.Material: parameter 'color' has value of undefined.",
-  "[.WebGL-0x32cc009c3800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
+  "[.WebGL-0x2a0c0016a600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)"
  ]
 }

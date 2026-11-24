@@ -1,14 +1,14 @@
 {
  "harvesterThroughTyres": {
-  "framesBladeInsideTyreStack": 130,
-  "playerHitsThroughStack": 2,
-  "bladeReach": 300
+  "framesBladeInsideTyreStack": 156,
+  "playerHitsThroughStack": 0,
+  "bladeReach": 64
  },
  "harvesterHitsAirborneAtZ19": true,
  "harvesterHitsAirborneAtZ21": false,
  "harvesterKilledMidMove": {
   "alive": false,
-  "scrapsDropped": 11
+  "scrapsDropped": 14
  },
  "monster": [
   {
@@ -26,7 +26,7 @@
    "playerMaxSpeed": 320,
    "playerEnd": [
     71,
-    65
+    66
    ],
    "nan": false
   },
@@ -41,11 +41,11 @@
     "y": 1253
    },
    "monsterPenetrationIntoWall": 0,
-   "playerDamage": 242,
+   "playerDamage": 246,
    "playerMaxSpeed": 228,
    "playerEnd": [
-    1205,
-    1299
+    1194,
+    1225
    ],
    "nan": false
   },
@@ -60,10 +60,10 @@
     "y": 1263
    },
    "monsterPenetrationIntoWall": 0,
-   "playerDamage": 131,
+   "playerDamage": 157,
    "playerMaxSpeed": 320,
    "playerEnd": [
-    1930,
+    1926,
     1297
    ],
    "nan": false
@@ -80,7 +80,7 @@
   }
  ],
  "tow": {
-  "hookThroughTyreStack": true,
+  "hookThroughTyreStack": false,
   "noNitro": {
    "hookedAt": null,
    "freedAfter": null,

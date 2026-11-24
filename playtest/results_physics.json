@@ -3,7 +3,7 @@
   "runs": 60,
   "nan": 0,
   "escaped": 0,
-  "stuck": 21,
+  "stuck": 17,
   "maxPen": 0,
   "samples": [
    {
@@ -11,10 +11,10 @@
     "cx": 0,
     "cy": 0,
     "off": -0.5,
-    "moved": 36,
+    "moved": 53,
     "end": [
-     91,
-     581
+     86,
+     629
     ]
    },
    {
@@ -22,10 +22,10 @@
     "cx": 0,
     "cy": 0,
     "off": -0.25,
-    "moved": 75,
+    "moved": 72,
     "end": [
-     127,
-     233
+     67,
+     269
     ]
    },
    {
@@ -33,10 +33,10 @@
     "cx": 0,
     "cy": 0,
     "off": 0,
-    "moved": 48,
+    "moved": 4,
     "end": [
-     88,
-     138
+     59,
+     59
     ]
    },
    {
@@ -44,10 +44,10 @@
     "cx": 0,
     "cy": 0,
     "off": 0.25,
-    "moved": 61,
+    "moved": 80,
     "end": [
-     220,
-     58
+     144,
+     56
     ]
    }
   ]
@@ -155,7 +155,7 @@
    "maxZ": 424,
    "scrap": 9,
    "score": 730,
-   "dist": 252
+   "dist": 865
   },
   {
    "label": "hearse base",
@@ -170,28 +170,28 @@
    {
     "u": 100,
     "v": 0,
-    "framesStuckBelowSurface": 150,
+    "framesStuckBelowSurface": 0,
     "of": 150,
     "endZ": 0
    },
    {
     "u": 130,
     "v": 0,
-    "framesStuckBelowSurface": 150,
+    "framesStuckBelowSurface": 0,
     "of": 150,
     "endZ": 0
    },
    {
     "u": 60,
     "v": 30,
-    "framesStuckBelowSurface": 150,
+    "framesStuckBelowSurface": 0,
     "of": 150,
     "endZ": 0
    },
    {
     "u": 140,
     "v": -35,
-    "framesStuckBelowSurface": 150,
+    "framesStuckBelowSurface": 0,
     "of": 150,
     "endZ": 0
    }
@@ -200,21 +200,21 @@
    {
     "u": 100,
     "v": 0,
-    "framesBelowSurface": 300,
+    "framesBelowSurface": 0,
     "of": 300,
     "end": [
-     0,
-     0
+     68,
+     152
     ]
    },
    {
     "u": 75,
     "v": 10,
-    "framesBelowSurface": 300,
+    "framesBelowSurface": 0,
     "of": 300,
     "end": [
-     0,
-     0
+     97,
+     152
     ]
    }
   ]
@@ -230,19 +230,19 @@
    "bounces": 0,
    "scrapFromAir": 1,
    "score": 270,
-   "playerHpLost": 264
+   "playerHpLost": 291
   },
   {
    "type": "harvester",
    "wave": 5,
-   "gameSeconds": 14.5,
+   "gameSeconds": 13.6,
    "killed": true,
    "hpStart": 950,
    "hpEnd": 0,
    "bounces": 0,
    "scrapFromAir": 1,
    "score": 1710,
-   "playerHpLost": 648
+   "playerHpLost": 624
   },
   {
    "type": "monster",
@@ -250,11 +250,11 @@
    "gameSeconds": 20,
    "killed": false,
    "hpStart": 1670,
-   "hpEnd": 656,
+   "hpEnd": 403,
    "bounces": 0,
    "scrapFromAir": 1,
    "score": 110,
-   "playerHpLost": 1058
+   "playerHpLost": 1078
   }
  ],
  "mine": {

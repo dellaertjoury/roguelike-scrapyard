@@ -1,85 +1,85 @@
 {
  "sim": {
-  "lap1_ms": 0.079,
+  "lap1_ms": 0.082,
   "heavy60_ms": {
-   "mean": 0.479,
-   "max": 0.777
+   "mean": 1.266,
+   "max": 2.473
   },
   "caps": {
-   "maxParts": 335,
+   "maxParts": 320,
    "maxTexts": 41,
    "maxFires": 53,
-   "maxBul": 7,
-   "maxEbul": 32,
+   "maxBul": 6,
+   "maxEbul": 33,
    "maxMines": 4,
    "enemies": 60
   },
-  "puff100_into_full_ms": 0.068,
-  "scrapsOnGroundAfterMassKill": 25,
+  "puff100_into_full_ms": 0.062,
+  "scrapsOnGroundAfterMassKill": 145,
   "scrapRenderCap": 400
  },
  "render": {
-  "callsPerFrame": 957,
-  "triangles": 94174,
-  "render_ms_clean": 10.43,
-  "render_ms_groundDirty": 10.38,
+  "callsPerFrame": 225,
+  "triangles": 98932,
+  "render_ms_clean": 7.65,
+  "render_ms_groundDirty": 9.56,
   "memory": {
-   "geometries": 910,
+   "geometries": 412,
    "textures": 3
   },
-  "programs": 12
+  "programs": 15
  },
  "mem": [
   {
-   "geometries": 1141,
+   "geometries": 398,
    "textures": 3,
-   "programs": 12,
-   "calls": 114,
+   "programs": 15,
+   "calls": 47,
    "sceneChildren": 0,
    "run": 0,
    "car": 0
   },
   {
-   "geometries": 1358,
+   "geometries": 394,
    "textures": 3,
-   "programs": 12,
-   "calls": 114,
+   "programs": 16,
+   "calls": 41,
    "sceneChildren": 0,
    "run": 1,
    "car": 1
   },
   {
-   "geometries": 1635,
+   "geometries": 403,
    "textures": 3,
-   "programs": 12,
-   "calls": 120,
+   "programs": 16,
+   "calls": 52,
    "sceneChildren": 0,
    "run": 2,
    "car": 2
   },
   {
-   "geometries": 1886,
+   "geometries": 393,
    "textures": 3,
-   "programs": 12,
-   "calls": 119,
+   "programs": 16,
+   "calls": 42,
    "sceneChildren": 0,
    "run": 3,
    "car": 0
   },
   {
-   "geometries": 2056,
+   "geometries": 394,
    "textures": 3,
-   "programs": 12,
-   "calls": 115,
+   "programs": 16,
+   "calls": 43,
    "sceneChildren": 0,
    "run": 4,
    "car": 1
   },
   {
-   "geometries": 2314,
+   "geometries": 397,
    "textures": 3,
-   "programs": 12,
-   "calls": 115,
+   "programs": 16,
+   "calls": 44,
    "sceneChildren": 0,
    "run": 5,
    "car": 2
