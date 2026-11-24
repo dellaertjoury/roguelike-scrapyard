@@ -165,7 +165,7 @@ function spawn(type, x, y) {
   G.enemies.push(Object.assign({
     type, x, y, a: Math.atan2(P.y - y, P.x - x), vx: 0, vy: 0, max: D.hp, flash: 0, cd: rnd(1, 2.5), charge: 0,
     hitcd: 0, sawcd: 0, burncd: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0, seed: Math.random() * 1e4 | 0,
-    col: ECOL[Math.random() * ECOL.length | 0], num: 1 + (Math.random() * 98 | 0)
+    col: TYPE_COL[type] ? TYPE_COL[type][Math.random() * TYPE_COL[type].length | 0] : ECOL[Math.random() * ECOL.length | 0], num: 1 + (Math.random() * 98 | 0)
   }, D));
   if (D.elite) G.enemies[G.enemies.length - 1].cd = 2;
   puff(x, y, 12, { c: 0xc8a878, s0: 40, s1: 160, l0: .5, l1: 1, z0: 8, z1: 14, grow: 14, z: 6, vz0: 10, vz1: 40 });
@@ -220,6 +220,8 @@ function bankDrift() {
 // A pump opens somewhere on the map; standing in its zone adds 5 L every 3 s until its 20 L reserve
 // is used up, then it closes and another opens 15 s later. Fuel keeps burning while you fill, so a pump
 // is worth exactly its reserve (+20 s of lap) and there is no way to freeze the lap clock.
+// paint per enemy type, after the portraits: olive wreckers, teal spitters, mustard brutes (a few shades each)
+const TYPE_COL = { rust: ['#7f8f3a', '#6f8034', '#8d9a4a'], spit: ['#3f8a8f', '#367a80', '#4b9499'], brute: ['#e0a92a', '#d49a22'] };
 export const START_T = 3; // 3-2-1 countdown: no fuel burn, spawns, throttle or guns until GO
 // a pump holds 30 L (= 30 s of lap) and pours it straight in while you stand on the pad: 6 L/s, so ~5 s to drain
 // fuel thieves: hook a hose within HOSE_R, drain HOSE_RATE L/s up to THIEF_STEAL, the hose snaps past HOSE_BREAK
@@ -597,7 +599,8 @@ export function update(dt) {
     drift.mult = Math.min(5, drift.mult + dt * (near ? .7 : .3) * S.driftGain);
     if (drift.time > 8) bankDrift(); // one combo lasts at most 8 s
     drift.heat = Math.min(1, drift.heat + dt * .6 * S.driftGain);
-    P.nitro = Math.min(1, P.nitro + dt * .18 * S.driftGain * S.nitroFill);
+    // nitro never refills on its own: only a real drift (past 25° of slip) trickles a little back in
+    if (P.slipDeg > 25) P.nitro = Math.min(1, P.nitro + dt * .07 * S.driftGain * S.nitroFill);
     const lf = G.fires[G.fires.length - 1];
     if (S.exhaust && (!lf || Math.hypot(lf.x - P.x, lf.y - P.y) > 16)) G.fires.push({ x: P.x - fx * P.len * .55, y: P.y - fy * P.len * .55, life: 1 + S.exhaust * .25, max: 1 + S.exhaust * .25, r: 11 + S.exhaust * 3, rot: rnd(0, TAU) });
   } else {

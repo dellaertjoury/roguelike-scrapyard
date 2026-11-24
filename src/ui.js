@@ -275,7 +275,6 @@ export function hud() {
   if (G.banner && G.banner.id !== bannerId) {
     bannerId = G.banner.id; const b = $('banner');
     b.querySelector('b').textContent = tr(G.banner.s); b.querySelector('span').textContent = tr(G.banner.sub);
-    const art = G.banner.elite && A.elites[G.banner.elite]; $('bannerArt').hidden = !art; if (art) $('bannerArt').src = art;
     b.classList.remove('go'); void b.offsetWidth; b.classList.add('go');
   }
 }

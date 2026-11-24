@@ -1,6 +1,6 @@
 // Optional art. Every file here is optional: if it is missing the game
 // falls back to procedural art. See ART_PROMPTS.md for what to generate.
-import { CARS, PARTS, PACKS, ELITES } from './data.js';
+import { CARS, PARTS, PACKS } from './data.js';
 import { LANGS } from './i18n.js';
 
 export const A = { fx: {}, elites: {}, dirt: null, menuBg: null, garageBg: null, logos: {}, cars: {}, icons: {}, ui: {}, packs: {}, obs: {} };
@@ -21,7 +21,7 @@ export async function loadAssets(onProgress = () => { }) {
     img('assets/obstacles/hay-side.jpg').then(i => { if (i) A.obs.side = i }),
     img('assets/obstacles/hay-top.png').then(i => { if (i) A.obs.top = i }),
     img('assets/fx/pump-pad.png').then(i => { if (i) A.fx.pad = i }),
-    ...[...ELITES, 'thief', 'rust', 'spit', 'brute'].map(k => img(`assets/elites/${k}.png`).then(i => { if (i) A.elites[k] = i.src })),
+    // assets/elites/*.png are reference portraits for the 3D enemy models, not loaded in game
     ...PACKS.map(p => img(`assets/packs/${p.id}.jpg`).then(i => { if (i) A.packs[p.id] = i.src })),
     img('assets/logo.png').then(i => { if (i) A.logos.en = i.src }),
     ...LANGS.filter(l => l.id !== 'en').map(l => img(`assets/logo-${l.id}.png`).then(i => { if (i) A.logos[l.id] = i.src })),

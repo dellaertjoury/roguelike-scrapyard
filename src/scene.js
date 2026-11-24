@@ -285,6 +285,24 @@ export function buildCar({ len: L, wid: W, color, kind, shape }) {
     const hub = mesh(wheelG, rimM, false); hub.scale.set(r * .5, W * .23, r * .5); hub.rotation.x = Math.PI / 2; pivot.add(hub);
     root.add(pivot); wheels.push(w); if (sx > 0) front.push(pivot);
   }
+  // enemy looks follow the portraits in assets/elites: one beat-up 80s sedan, rusty roof rack,
+  // rust on the arches; the wrecker gets a primer door, the spitter primer patches, the brute chevrons and plates
+  const roofY = by + bh / 2 + cabH, roofX = L * shape.cabX - cabL * .12;
+  const rustM = lam(0x9a4a22), rackM = lam(0xa0522d);
+  if (kind === 'rust' || kind === 'spit' || kind === 'brute') {
+    for (const z of [-1, 1]) { const rl = mesh(new THREE.BoxGeometry(cabL * .78, 1.6, 1.6), rackM); rl.position.set(roofX, roofY + 3.2, z * W * .36); tilt.add(rl) }
+    for (const u of [-.32, 0, .32]) { const cb = mesh(new THREE.BoxGeometry(1.6, 1.6, W * .74), rackM); cb.position.set(roofX + u * cabL * .78, roofY + 3.2, 0); tilt.add(cb) }
+    for (const sx of [1, -1]) for (const z of [-1, 1]) { const ar = mesh(new THREE.BoxGeometry(L * .16, bh * .5, 1.2), rustM, false); ar.position.set(sx * L * .3, by - bh * .1, z * (W / 2 + .4)); tilt.add(ar) }
+    const hr = mesh(new THREE.BoxGeometry(L * .1, .8, W * .22), rustM, false); hr.position.set(L * .4, by + bh / 2 + .3, -W * .28); tilt.add(hr);
+  }
+  if (kind === 'rust') { const door = mesh(new THREE.BoxGeometry(L * .2, bh * .8, .8), lam(0xbfc2c4), false); door.position.set(L * .02, by, W / 2 + .3); tilt.add(door) }
+  if (kind === 'spit') for (const [u, z, w] of [[.32, .2, .2], [-.36, -.25, .18], [.18, -.3, .12]]) { const pt = mesh(new THREE.BoxGeometry(L * w, .8, W * .26), lam(0xe8e2d4), false); pt.position.set(L * u, by + bh / 2 + .3, z * W); tilt.add(pt) }
+  if (kind === 'brute') {
+    for (const u of [.36, .26]) { const ch = mesh(new THREE.BoxGeometry(L * .05, .8, W * .8), lam(0x2a2826), false); ch.position.set(L * u, by + bh / 2 + .35, 0); tilt.add(ch) }
+    for (const z of [-1, 1]) { const pl = mesh(new THREE.BoxGeometry(cabL * .7, cabH * .8, 1), lam(0x5d6064)); pl.position.set(L * shape.cabX, by + bh / 2 + cabH * .45, z * W * .43); tilt.add(pl) }
+    const spikeG = new THREE.ConeGeometry(2.4, 8, 4).rotateZ(-Math.PI / 2), spikeM = lam(0x8d9096);
+    for (let i = 0; i < 4; i++) { const sp = mesh(spikeG, spikeM); sp.position.set(L / 2 + 9, by, -W * .42 + i * W * .28); tilt.add(sp) }
+  }
   let turret = null;
   if (kind === 'spit') {
     turret = new THREE.Group(); turret.position.set(L * shape.cabX - cabL * .12, by + bh / 2 + cabH + 1.2, 0);

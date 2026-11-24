@@ -20,7 +20,7 @@ Drifting heats your weapons (up to +80% fire rate), ramming at speed wrecks cars
 |---|---|
 | W A S D / arrows | Drive |
 | Space | Handbrake. Hold it through a turn to drift |
-| Shift | Nitro. Drifting refills it |
+| Shift | Nitro. It never refills on its own: only real drifts trickle a little back |
 | P / Esc | Pause |
 
 ## Run it locally
