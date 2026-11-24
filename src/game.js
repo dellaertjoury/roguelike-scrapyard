@@ -112,6 +112,14 @@ export function makeObs() {
     for (let u = r.L * .25; u <= r.L + 1; u += RT_R * 2) for (const sd of [-1, 1]) at(u, sd * (r.W / 2 + RT_R + 2));
     for (let v = -r.W / 2 - RT_R + 2; v <= r.W / 2 + RT_R - 2; v += RT_R * 2) at(r.L + RT_R + 4, v);
   }
+  // traffic cones, just for fun: a few slalom rows; they get kicked around but never block anything
+  const cones = []; n = 0;
+  while (cones.length < 15 && n++ < 300) {
+    const x = rnd(260, AW - 260), y = rnd(260, AH - 260), a = rnd(0, TAU), k = 3 + (Math.random() * 3 | 0);
+    if (obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 120) || ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < 220) || Math.hypot(x - GATE.x, y - GATE.y1) < 200) continue;
+    for (let i = 0; i < k && cones.length < 15; i++) cones.push({ hx: x + Math.cos(a) * i * 46, hy: y + Math.sin(a) * i * 46 });
+  }
+  G.cones = cones; resetCones();
   G.obs = obs; G.ramps = ramps; G.obsVersion++;
 }
 
@@ -156,7 +164,7 @@ export function start(i) {
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = [];
+  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = []; resetCones();
   G.crane = { st: 'idle', t: rnd(16, 26), side: G.crane ? G.crane.side : 0, a: CRANE.rest[G.crane ? G.crane.side : 0], R: 900, hit: new Set() };
   Object.assign(G.P, { x: GATE.x, y: GATE.y0, a: -Math.PI / 2, vx: 0, vy: 0, z: 0, vz: 0, air: false, intro: true, iy: GATE.y0, stun: 0 }); G.cam.x = GATE.x; G.cam.y = GATE.y0 - 120;
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
@@ -191,7 +199,7 @@ function spawn(type, x, y) {
   const D = ENEMY(G.wave)[type], P = G.P;
   G.enemies.push(Object.assign({
     type, x, y, a: Math.atan2(P.y - y, P.x - x), vx: 0, vy: 0, max: D.hp, flash: 0, cd: rnd(1, 2.5), charge: 0,
-    hitcd: 0, sawcd: 0, burncd: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0, seed: Math.random() * 1e4 | 0,
+    hitcd: 0, sawcd: 0, burncd: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0, seed: Math.random() * 1e4 | 0, follows: Math.random() < .6, rev: 0,
     col: TYPE_COL[type] ? TYPE_COL[type][Math.random() * TYPE_COL[type].length | 0] : ECOL[Math.random() * ECOL.length | 0], num: 1 + (Math.random() * 98 | 0)
   }, D));
   if (D.elite) G.enemies[G.enemies.length - 1].cd = 2;
@@ -393,6 +401,80 @@ function collideStatic(o, r, bounce) {
   if (o.y < lo) { o.y = lo; bounceOff(o, 0, 1, bounce, true, o.x, EDGE) }
   if (o.y > AH - lo) { o.y = AH - lo; bounceOff(o, 0, -1, bounce, true, o.x, AH - EDGE) }
 }
+/* ---------- traffic cones ---------- */
+export function resetCones() { for (const c of G.cones || []) Object.assign(c, { x: c.hx, y: c.hy, z: 0, vx: 0, vy: 0, vz: 0, tip: 0, tipV: 0, h: rnd(0, TAU), spin: 0 }) }
+function coneStep(dt) {
+  const cars = G.P ? [G.P, ...G.enemies] : G.enemies;
+  for (const c of G.cones) {
+    for (const o of cars) { // a car swats the cone: it flies off along the car's path and topples
+      const dx = c.x - o.x, dy = c.y - o.y, d = Math.hypot(dx, dy) || 1, sp = Math.hypot(o.vx, o.vy);
+      if (d > o.r + 8 || c.z > 22 || Math.abs((o.z || 0) - c.z) > 24 || sp < 20) continue;
+      const k = 60 + sp * .45; c.vx = o.vx * 1.15 + dx / d * k; c.vy = o.vy * 1.15 + dy / d * k; c.vz = 90 + sp * .35;
+      c.spin = (Math.random() < .5 ? -1 : 1) * (6 + sp / 40); c.tipV = 6 + sp / 50; c.x = o.x + dx / d * (o.r + 9); c.y = o.y + dy / d * (o.r + 9);
+    }
+    if (c.vx || c.vy || c.vz || c.z > 0) {
+      c.x += c.vx * dt; c.y += c.vy * dt; c.z += c.vz * dt; c.vz -= 900 * dt; c.h += c.spin * dt;
+      c.tip = Math.min(Math.PI / 2, c.tip + c.tipV * dt);
+      if (c.z <= 0) { c.z = 0; c.vz = c.vz < -80 ? -c.vz * .35 : 0; const f = Math.max(0, 1 - 3.2 * dt); c.vx *= f; c.vy *= f; c.spin *= f; if (Math.hypot(c.vx, c.vy) < 4 && !c.vz) { c.vx = c.vy = 0; c.spin = 0 } }
+      for (const b of G.obs) { // bounce off tyre piles and bales
+        if (c.z > (b.h || 26)) continue;
+        const dx = c.x - b.x, dy = c.y - b.y, d = Math.hypot(dx, dy), m = b.r + 6;
+        if (d < m && d > 0) { const nx = dx / d, ny = dy / d, vn = c.vx * nx + c.vy * ny; c.x = b.x + nx * m; c.y = b.y + ny * m; if (vn < 0) { c.vx -= 1.7 * vn * nx; c.vy -= 1.7 * vn * ny } }
+      }
+      const lo = EDGE + 6; // and off the tyre wall
+      if (c.x < lo || c.x > AW - lo) { c.x = clamp(c.x, lo, AW - lo); c.vx *= -.7 }
+      if (c.y < lo || c.y > AH - lo) { c.y = clamp(c.y, lo, AH - lo); c.vy *= -.7 }
+    }
+  }
+}
+
+/* ---------- enemy driving ----------
+   Cars steer like cars: a forward/sideways velocity split with grip, so a hard turn at speed slides (they drift,
+   with smoke and rubber), turning needs speed, obstacles and walls bend their line, and a car that gets stuck
+   backs out (reverse with the wheel flipped) before trying again. */
+function drive(e, want, spd, dt, dPlayer) {
+  // bend the line around tyre piles, bales, the pump post and the walls
+  let ax = Math.cos(want), ay = Math.sin(want);
+  const look = 70 + Math.hypot(e.vx, e.vy) * .45;
+  for (const b of G.obs) {
+    const ox = e.x - b.x, oy = e.y - b.y, od = Math.hypot(ox, oy) - b.r - e.r; if (od > look) continue;
+    const ahead = -(ox * Math.cos(e.a) + oy * Math.sin(e.a)); if (ahead < -10) continue; // only what's in front
+    if (e.ramping && b.k === 'rt') continue; // lined up for a ramp: the barrier tyres are the lane, not a threat
+    // steer sideways only (the part of the push that's across our heading), so obstacles bend the line instead of stopping us
+    const w = (1 - Math.max(0, od) / look) * 1.6, n = Math.hypot(ox, oy) || 1, hx = Math.cos(e.a), hy = Math.sin(e.a);
+    let px = ox / n, py = oy / n; const along = px * hx + py * hy; px -= along * hx; py -= along * hy;
+    const pl = Math.hypot(px, py) || 1e-6; if (pl < .05) { px = -hy; py = hx } else { px /= pl; py /= pl } // dead ahead: pick a side
+    ax += px * w; ay += py * w;
+  }
+  const wall = 90;
+  if (e.x < EDGE + wall) ax += (1 - (e.x - EDGE) / wall) * 1.4; if (e.x > AW - EDGE - wall) ax -= (1 - (AW - EDGE - e.x) / wall) * 1.4;
+  if (e.y < EDGE + wall) ay += (1 - (e.y - EDGE) / wall) * 1.4; if (e.y > AH - EDGE - wall) ay -= (1 - (AH - EDGE - e.y) / wall) * 1.4;
+  if (dPlayer > 160 && !e.ramping) want = Math.atan2(ay, ax); // up close they go straight for you
+  // stuck? (pushing but barely moving) → back out for a moment
+  const sp0 = Math.hypot(e.vx, e.vy), fwd0 = e.vx * Math.cos(e.a) + e.vy * Math.sin(e.a);
+  if (e.rev > 0) e.rev -= dt;
+  else if (sp0 < 22 && spd > 30) { e.stuckT = (e.stuckT || 0) + dt; if (e.stuckT > .7) { e.rev = rnd(.7, 1.1); e.stuckT = 0 } }
+  else e.stuckT = 0;
+  const diff = angDiff(want, e.a), sharp = Math.abs(diff) > (e.type === 'rust' ? .3 : .5), speedK = Math.min(1, Math.abs(fwd0) / 70);
+  const drifting = !(e.rev > 0) && sharp && fwd0 > spd * .45;
+  const turn = e.turn * (drifting ? 1.5 : 1) * Math.max(.35, speedK);
+  e.a += clamp(diff, -turn * dt, turn * dt); // backing up while swinging the nose round: a three-point turn
+  // the body has turned; the momentum hasn't: split velocity along the NEW heading, so a fast turn leaves sideways slip
+  const c2 = Math.cos(e.a), s2 = Math.sin(e.a);
+  let fwd = e.vx * c2 + e.vy * s2, lat = -e.vx * s2 + e.vy * c2;
+  const tf = e.rev > 0 ? -spd * .55 : spd * (sharp ? .8 : 1);
+  fwd += (tf - fwd) * Math.min(1, dt * 2.2);
+  lat *= Math.max(0, 1 - (drifting ? 1.8 : 6.5) * dt);
+  e.vx = c2 * fwd - s2 * lat; e.vy = s2 * fwd + c2 * lat;
+  e.drift = drifting && Math.abs(lat) > 18;
+  if (e.drift) { // smoke and rubber
+    const bx = e.x - c2 * e.len * .35, by = e.y - s2 * e.len * .35;
+    if (Math.random() < .35 * OPTS.fx + .05) puff(bx, by, 1, { c: 0xe8e2d6, s0: 5, s1: 30, l0: .4, l1: .8, z0: 3, z1: 6, grow: 10, drag: 1.5, z: 4, vz0: 8, vz1: 24 });
+    if (e.lbx != null) { g.strokeStyle = 'rgba(40,28,18,.22)'; g.lineWidth = 5; g.beginPath(); g.moveTo(e.lbx, e.lby); g.lineTo(bx, by); g.stroke(); G.groundDirty = true }
+    e.lbx = bx; e.lby = by;
+  } else e.lbx = null;
+}
+
 /* ---------- wrecking-ball crane ---------- */
 // A tower crane stands outside the top-left corner. Now and then (from lap 2) its jib sweeps a wrecking ball in a
 // quarter circle across the arena: a 3 s warning (road sign + red arc on the ground), then a 2.4 s swing.
@@ -461,6 +543,7 @@ function rampStep(o, px, py, dt) {
   if (!ra && o.z > 6) {
     const r = o.rampRef; let along = r ? o.vx * r.c + o.vy * r.s : 0;
     if (r) { const cap = launchCap(r); if (along > cap) { const k = cap / along; o.vx *= k; o.vy *= k; along = cap } }
+    if (o === G.P && r) G.chaseRamp = { r, t: G.time };
     o.air = true; o.airT = 0; o.vz = Math.max(0, along) * LIFT + 30; o.rampRef = null; o.crushJump = false;
     return;
   }
@@ -624,7 +707,7 @@ export function update(dt) {
   }
   if (G.state !== 'play') return;
   const P = G.P, S = G.S, W = G.W, CD = G.CD, drift = G.drift;
-  fadeMarks(dt);
+  fadeMarks(dt); if (G.cones) coneStep(dt);
   if (G.startT > 0) { G.startT = Math.max(0, G.startT - dt); if (G.startT === 0) { for (let i = 0; i < (G.openers || 0); i++) queue('rust'); G.openers = 0; if (G.eliteDue) { queue(G.eliteDue); G.eliteDue = null } } }
   const live = G.startT <= 0; // nothing spawns, moves in or shoots until the countdown says GO
   G.siphon = false;
@@ -720,7 +803,16 @@ export function update(dt) {
   /* enemies */
   for (const e of G.enemies) {
     const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1; let spd = e.spd;
-    let want = e.type === 'rust' ? Math.atan2(P.y + P.vy * .35 - e.y, P.x + P.vx * .35 - e.x) : Math.atan2(dy, dx);
+    // aim where you will be, not where you are: lead grows with distance (wreckers lead more than the rest)
+    const lead = clamp(d / Math.max(60, e.spd), 0, 1.1) * (e.type === 'rust' ? .9 : e.type === 'brute' ? .6 : .35);
+    let want = Math.atan2(P.y + P.vy * lead - e.y, P.x + P.vx * lead - e.x);
+    e.ramping = false;
+    const cr = G.chaseRamp; // you just took a ramp: some cars line up on its run-up and jump after you
+    if (cr && G.time - cr.t < 3 && e.follows && !e.elite && (e.type === 'rust' || e.type === 'brute')) {
+      const r = cr.r, ux = e.x - r.x, uy = e.y - r.y, u = ux * r.c + uy * r.s, v = -ux * r.s + uy * r.c;
+      if (e.rampRef === r || (u > -280 && u < r.L && Math.abs(v) < 34)) { want = r.d - clamp(v / 120, -.5, .5); spd *= 1.3; e.ramping = true } // lined up: floor it up the ramp
+      else if (Math.hypot(u + 130, v) < 700) { const wx = r.x - r.c * 130, wy = r.y - r.s * 130; want = Math.atan2(wy - e.y, wx - e.x) } // get to the run-up first
+    }
     if (e.type === 'thief') { // siphon: hook a hose onto you when close, drain fuel, then run off with it
       if (e.flee > 0) { e.flee -= dt; want = Math.atan2(-dy, -dx); spd *= 1.15 }
       else if (e.hose) {
@@ -747,9 +839,11 @@ export function update(dt) {
       else { e.cd -= dt; if (e.cd <= 0 && d < 520 && Math.abs(angDiff(Math.atan2(dy, dx), e.a)) < .5) { e.charge = 1.1; e.cd = rnd(3, 5); txt(e.x, e.y - e.r, '!', '#ff6b5a', 26, .6) } }
     }
     if (!e.air) {
-      e.a += clamp(angDiff(want, e.a), -e.turn * dt, e.turn * dt);
-      const k = Math.min(1, dt * 2.2);
-      e.vx += (Math.cos(e.a) * spd - e.vx) * k; e.vy += (Math.sin(e.a) * spd - e.vy) * k;
+      if (e.elite) { // elites keep their scripted moves
+        e.a += clamp(angDiff(want, e.a), -e.turn * dt, e.turn * dt);
+        const k = Math.min(1, dt * 2.2);
+        e.vx += (Math.cos(e.a) * spd - e.vx) * k; e.vy += (Math.sin(e.a) * spd - e.vy) * k;
+      } else drive(e, want, spd, dt, d);
     }
     const ex0 = e.x, ey0 = e.y;
     e.x += e.vx * dt; e.y += e.vy * dt; rampStep(e, ex0, ey0, dt); collideStatic(e, e.r, .3);

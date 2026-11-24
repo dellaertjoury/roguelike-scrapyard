@@ -643,6 +643,13 @@ const addMat = map => new THREE.MeshBasicMaterial({ map, transparent: true, dept
 const soft = pool(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), addMat(glowTex), 500);
 const rings = pool(new THREE.RingGeometry(.88, 1, 48).rotateX(-Math.PI / 2), addMat(null), 120);
 let fireDecal = null; // optional painted flame sprite (assets/fx/fire-trail.png)
+// traffic cones: one instanced, vertex-coloured mesh (orange cone, white band, dark square foot)
+const coneMesh = (() => {
+  const parts = [], add = (geo, col, y) => { const m = new THREE.Mesh(geo, lam(col)); m.position.y = y; m.updateMatrix(); parts.push(bake(m, m.matrix)) };
+  add(new THREE.BoxGeometry(15, 2, 15), 0x2a2826, 1); add(new THREE.ConeGeometry(6, 18, 8), 0xff6a1a, 11); add(new THREE.CylinderGeometry(3.4, 4.6, 3.5, 8), 0xf4f0e8, 10.5);
+  const m = new THREE.InstancedMesh(joinBaked(parts), VC_LIT, 24); m.instanceMatrix.setUsage(THREE.DynamicDrawUsage); m.castShadow = true; m.frustumCulled = false; m.count = 0; scene.add(m); return m;
+})();
+const coneDummy = new THREE.Object3D(); coneDummy.rotation.order = 'YXZ';
 let scrapPts = null;
 export function initFx() {
   if (!pitG.children.length) buildPit();
@@ -890,6 +897,7 @@ export function render(dt) {
     }
     if (nsoft < 480) for (let i = 0; i <= 8; i++) { const u = ca.from + (ca.to - ca.from) * i / 8; put(soft, nsoft++, CRANE.x + Math.cos(u) * ca.R, 1, CRANE.y + Math.sin(u) * ca.R, CRANE.ball * 3.2, 1, CRANE.ball * 3.2, 0, 0, 0x5a0a04) }
   }
+  { let nc = 0; for (const c of G.cones || []) { if (nc >= 24) break; coneDummy.position.set(c.x, c.z + (c.tip > .3 ? 6 * Math.sin(c.tip) : 0), c.y); coneDummy.rotation.set(c.tip, -c.h, 0); coneDummy.updateMatrix(); coneMesh.setMatrixAt(nc++, coneDummy.matrix) } coneMesh.count = nc; coneMesh.instanceMatrix.needsUpdate = true }
   finish(blobs, nb); finish(glows, ng); finish(streaks, ns); finish(soft, nsoft); finish(rings, nring); finish(eliteSaws, eliteSawN); eliteSawN = 0;
   if (fireDecal) finish(fireDecal, nfire);
 

@@ -230,16 +230,21 @@ function buildCluster() {
   const fuelTxt = `<rect x="${FU.x - 34}" y="${FU.y + 14}" width="68" height="24" rx="6" fill="#15130f" stroke="#55514b" stroke-width="2"/>
     <text class="lcd fuelL" x="${FU.x}" y="${FU.y + 32}" text-anchor="middle" font-size="16" fill="#efe3c8" id="clFuel">60 L</text>
     <path class="fuelRing" d="M${FU.x - fw / 2 - 3} ${FU.y + 8}A${fw / 2 + 3} ${fw / 2 + 3} 0 0 1 ${FU.x + fw / 2 + 3} ${FU.y + 8}" fill="none" stroke-width="4"/>`;
-  // nitro pod: 8 LED bars, the bottom two red
-  let leds = '';
-  for (let i = 0; i < 8; i++) leds += `<rect class="led" x="${NO.x - 4}" y="${(NO.y + 20.1 - i * 6.4).toFixed(1)}" width="20" height="4.6" rx="1.5" fill="#353d42"/>`; // column centred in the pod
+  // nitro pod: a small dial like the speedo, 240° sweep E → F, red at the empty end, blue scale, white needle
+  const NA = v => -120 + v * 240, nr = NO.r - 6;
+  let nt = '';
+  for (let i = 0; i <= 8; i++) { const v = i / 8, a = NA(v), big = i % 2 === 0, [x0, y0] = pol(NO.x, NO.y, nr - 3, a), [x1, y1] = pol(NO.x, NO.y, nr - (big ? 10 : 7), a); nt += `<line x1="${x0.toFixed(1)}" y1="${y0.toFixed(1)}" x2="${x1.toFixed(1)}" y2="${y1.toFixed(1)}" stroke="${v < .2 ? '#e24a32' : '#efe3c8'}" stroke-width="${big ? 2.4 : 1.4}" stroke-linecap="round"/>` }
   const nitro = (nArt ? `<image href="${nArt}" x="${NO.x - NO.r - 4}" y="${NO.y - NO.r - 4}" width="${2 * NO.r + 8}" height="${2 * NO.r + 8}"/>` : `
     <circle cx="${NO.x}" cy="${NO.y}" r="${NO.r + 4}" fill="#3b3936" stroke="#1d1c1a" stroke-width="4"/>${rust(NO.x, NO.y, NO.r + 2, 6, 3)}
-    <circle cx="${NO.x}" cy="${NO.y}" r="${NO.r - 6}" fill="#111" stroke="#55514b" stroke-width="2"/>${bolts(NO.x, NO.y, NO.r, 4, 45)}`) + `
+    <circle cx="${NO.x}" cy="${NO.y}" r="${nr}" fill="#14171a" stroke="#55514b" stroke-width="2"/>${bolts(NO.x, NO.y, NO.r, 4, 45)}
+    <path d="${arc(NO.x, NO.y, nr - 6, NA(0), NA(.2))}" stroke="#e24a32" stroke-width="4" fill="none"/>
+    <path d="${arc(NO.x, NO.y, nr - 6, NA(.2), NA(1))}" stroke="#2f7fa8" stroke-width="4" fill="none"/>${nt}`) + `
     <circle class="nosGlow" cx="${NO.x}" cy="${NO.y}" r="${NO.r + 6}" fill="none" stroke="#5fc8f0" stroke-width="4" style="filter:drop-shadow(0 0 6px #5fc8f0)"/>
-    <text x="${NO.x - 8}" y="${NO.y}" text-anchor="middle" font-size="9" fill="#5fc8f0" transform="rotate(-90 ${NO.x - 8} ${NO.y})" letter-spacing="1">NOS</text>${leds}`;
+    <text x="${NO.x}" y="${NO.y + 15}" text-anchor="middle" font-size="8.5" fill="#5fc8f0" letter-spacing="1.2">NOS</text>
+    <g id="clNN" transform="rotate(-120 ${NO.x} ${NO.y})"><path d="M${NO.x - 2} ${NO.y + 5}L${NO.x - .6} ${NO.y - nr + 9}L${NO.x + .6} ${NO.y - nr + 9}L${NO.x + 2} ${NO.y + 5}Z" fill="#f4f0e8" class="nNeedle"/></g>
+    <circle cx="${NO.x}" cy="${NO.y}" r="5" fill="#2a2826" stroke="#8d8a84" stroke-width="2"/>`;
   el.innerHTML = `<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${speedo}${gear}${digits}${sNeedle}${fuel}${fNeedle}${fuelTxt}${nitro}</svg>`;
-  CL = { sn: $('clSN'), fn: $('clFN'), spd: $('clSpd'), lap: $('clLap'), ang: $('clAng'), fuel: $('clFuel'), leds: [...el.querySelectorAll('.led')], el, lastLap: 0, s: -135 };
+  CL = { sn: $('clSN'), fn: $('clFN'), spd: $('clSpd'), lap: $('clLap'), ang: $('clAng'), fuel: $('clFuel'), nn: $('clNN'), ns: -120, el, lastLap: 0, s: -135 };
   set($('clLapLbl'), t('lapShort'));
 }
 function clusterHud(P) {
@@ -257,8 +262,7 @@ function clusterHud(P) {
   CL.el.classList.toggle('low', G.fuel < 10 && !G.filling);
   CL.el.classList.toggle('filling', !!G.filling);
   CL.el.classList.toggle('boost', !!P.boost);
-  const lit = Math.round(P.nitro * 8);
-  CL.leds.forEach((l, i) => { const c = i < lit ? (i < 2 ? '#e24a32' : P.boost ? '#bdf0ff' : '#5fc8f0') : '#353d42'; if (l._c !== c) { l._c = c; l.setAttribute('fill', c) } });
+  CL.ns += (-120 + P.nitro * 240 - CL.ns) * .4; CL.nn.setAttribute('transform', `rotate(${CL.ns.toFixed(1)} ${NO.x} ${NO.y})`);
 }
 
 /* ---------- HUD ---------- */
