@@ -806,9 +806,15 @@ export function update(dt) {
   }
   if (live) for (const s of G.pend) {
     s.t -= dt; if (s.t > 0) continue;
-    // the player may have driven onto the marker meanwhile: move it rather than spawn on top of them
-    if (Math.hypot(s.x - P.x, s.y - P.y) < 170) { const p = spawnSpot(); if (p) { s.x = p.x; s.y = p.y; s.t = s.max * .6; continue } }
+    // the car always arrives on its marker. Parked on the red X? It lands on you: you take its ram damage
+    // and get shoved off the spot (once, so a spawn never chains hits).
     spawn(s.type, s.x, s.y); s.done = true;
+    const e = G.enemies[G.enemies.length - 1], dx = P.x - s.x, dy = P.y - s.y, d = Math.hypot(dx, dy);
+    if (e && d < P.r + e.r && Math.abs(P.z) < 20) {
+      const nx = d > 1 ? dx / d : Math.cos(P.a + Math.PI / 2), ny = d > 1 ? dy / d : Math.sin(P.a + Math.PI / 2);
+      P.inv = 0; hitPlayer(e.dmg); P.x = s.x + nx * (P.r + e.r + 2); P.y = s.y + ny * (P.r + e.r + 2); P.vx += nx * 260; P.vy += ny * 260;
+      boom(s.x, s.y, 14); G.shake = Math.max(G.shake, 10);
+    }
   }
   G.pend = G.pend.filter(s => !s.done);
   if (G.fuel <= 0) { G.fuel = 0; endWave(); return }
