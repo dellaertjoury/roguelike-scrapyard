@@ -285,3 +285,9 @@
 {"run": "c8", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-speedo.png", "t": 1795532537.6207993}
 {"run": "c8", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-nitro.png", "t": 1795532537.6214557}
 {"run": "c8", "kind": "warning", "text": "[.WebGL-0x275400163200]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795532538.897921}
+{"run": "c9", "kind": "http", "text": "404 http://localhost:8790/assets/garage-bg.jpg", "t": 1795532867.6384733}
+{"run": "c9", "kind": "http", "text": "404 http://localhost:8790/assets/obstacles/hay-side.jpg", "t": 1795532867.6412904}
+{"run": "c9", "kind": "http", "text": "404 http://localhost:8790/assets/obstacles/hay-top.png", "t": 1795532867.6458719}
+{"run": "c9", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-speedo.png", "t": 1795532868.1132278}
+{"run": "c9", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-nitro.png", "t": 1795532868.1199038}
+{"run": "c9", "kind": "warning", "text": "[.WebGL-0x1bbc00947800]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795532869.373179}
