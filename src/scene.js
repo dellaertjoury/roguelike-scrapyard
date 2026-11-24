@@ -338,9 +338,70 @@ function buildHay() {
   bales.forEach((o, i) => { q.setFromAxisAngle(up, (o.x * 7.3 + o.y) % 6.28); m.compose(new THREE.Vector3(o.x, 14, o.y), q, new THREE.Vector3(o.r, 1, o.r)); hayInst.setMatrixAt(i, m) });
   hayInst.castShadow = hayInst.receiveShadow = true; scene.add(hayInst);
 }
+// wooden pallets: 5 deck boards on 3 stringers on 3 bottom boards, ~40 × 32 × 6.5; piles are crooked stacks with
+// one or two leaning against them and a loose board on the ground
+const palletMs = [keep(lam(0xc07f3c)), keep(lam(0x9a7d55)), keep(lam(0x86582e)), keep(lam(0xb08a4c))];
+const palBoard = keep(new THREE.BoxGeometry(40, 1.6, 5.4)), palStr = keep(new THREE.BoxGeometry(5.4, 3.2, 32)), palBot = keep(new THREE.BoxGeometry(40, 1.4, 5));
+function pallet(m, broken) {
+  const g = new THREE.Group();
+  for (const z of [-13, 0, 13]) { const b = mesh(palBot, m); b.position.set(0, .7, z); g.add(b) }
+  for (const x of [-17, 0, 17]) { const b = mesh(palStr, m); b.position.set(x, 3, 0); g.add(b) }
+  for (let i = 0; i < 5; i++) { if (broken && i === 2) continue; const b = mesh(palBoard, m); b.position.set(0, 5.4, -13.3 + i * 6.65); g.add(b) }
+  return g;
+}
+function buildPallets(o) {
+  const sc = o.r / 27, sd = o.x * 3.1 + o.y * 1.7, rr = k => (Math.sin(sd * 1.71 + k * 47.3) + 1) / 2, mat = k => palletMs[Math.floor(rr(k) * 3.99)];
+  const stack = (x, z, n, yaw0) => {
+    for (let i = 0; i < n; i++) { const p = pallet(mat(i + 5), rr(i + 9) < .25); p.scale.setScalar(sc); p.position.set(x + (rr(i) - .5) * 6, i * 6.6 * sc, z + (rr(i + 2) - .5) * 6); p.rotation.set((rr(i + 3) - .5) * .06, yaw0 + (rr(i + 4) - .5) * .5, (rr(i + 6) - .5) * .06); obsGroup.add(p) }
+  };
+  const yaw = rr(1) * 3, two = o.r > 36;
+  stack(o.x - (two ? Math.cos(yaw) * 14 : 0), o.y + (two ? Math.sin(yaw) * 14 : 0), 3 + Math.floor(rr(2) * 4), yaw);
+  if (two) stack(o.x + Math.cos(yaw) * 22, o.y - Math.sin(yaw) * 22, 1 + Math.floor(rr(3) * 3), yaw + .4);
+  const nl = 1 + (o.v % 2); // pallets stood on edge, leaning on the pile
+  for (let k = 0; k < nl; k++) {
+    const a = yaw + (k ? Math.PI * .9 : Math.PI / 2) + (rr(20 + k) - .5) * .6, d = o.r * .78, p = pallet(mat(30 + k), false);
+    p.scale.setScalar(sc); p.rotation.set(0, -a, 0, 'YXZ'); p.rotateX(1.18); p.position.set(o.x + Math.cos(a) * d, 2, o.y + Math.sin(a) * d); obsGroup.add(p);
+  }
+  const b = mesh(palBoard, mat(40)); b.scale.setScalar(sc); b.position.set(o.x + Math.cos(yaw + 2) * (o.r + 8), .8, o.y + Math.sin(yaw + 2) * (o.r + 8)); b.rotation.y = rr(41) * 3; obsGroup.add(b);
+}
+// radio tower: a tall three-legged lattice mast in red/white bands on a concrete pad, dishes near the top and a
+// blinking red beacon (the beacon lives outside the merged obstacle mesh so it can blink)
+const towerRed = keep(lam(0xd62a1f)), towerWhite = keep(lam(0xf2ede2)), towerGrey = keep(lam(0x9a968e)), towerDark = keep(lam(0x55585e));
+const beaconM = new THREE.MeshBasicMaterial({ color: 0xff2a1a }), beacon = new THREE.Mesh(new THREE.IcosahedronGeometry(7, 0), beaconM); beacon.visible = false; scene.add(beacon);
+const _up = new THREE.Vector3(0, 1, 0);
+function beam(a, b, t, m) {
+  const d = new THREE.Vector3().subVectors(b, a), l = d.length(), bm = mesh(new THREE.BoxGeometry(t, l, t), m);
+  bm.position.copy(a).addScaledVector(d, .5); bm.quaternion.setFromUnitVectors(_up, d.normalize()); obsGroup.add(bm);
+}
+export const TOWER_H = 430;
+function buildTower(o) {
+  const pad = mesh(new THREE.CylinderGeometry(o.r + 4, o.r + 8, 6, 12), towerGrey); pad.position.set(o.x, 3, o.y); obsGroup.add(pad);
+  const N = 14, H = TOWER_H, R0 = 44, R1 = 8, legs = [0, 1, 2].map(i => i / 3 * TAU + .3);
+  const P = (j, i) => { const k = j / N, r = R0 + (R1 - R0) * k; return new THREE.Vector3(o.x + Math.cos(legs[i]) * r, 6 + H * k, o.y + Math.sin(legs[i]) * r) };
+  for (const i of [0, 1, 2]) { const f = mesh(new THREE.BoxGeometry(12, 8, 12), towerGrey); f.position.copy(P(0, i)).setY(8); obsGroup.add(f) }
+  for (let j = 0; j < N; j++) {
+    const m = (j >> 1) % 2 ? towerWhite : towerRed, t = 4.2 - j * .18;
+    for (let i = 0; i < 3; i++) {
+      const i2 = (i + 1) % 3;
+      beam(P(j, i), P(j + 1, i), t, m);                   // leg
+      beam(P(j + 1, i), P(j + 1, i2), t * .6, m);         // ring
+      beam(P(j, i), P(j + 1, i2), t * .45, towerDark);    // diagonal brace
+    }
+  }
+  const top = new THREE.Vector3(o.x, 6 + H, o.y);
+  const deck = mesh(new THREE.CylinderGeometry(16, 16, 3, 8), towerDark); deck.position.copy(top); obsGroup.add(deck);
+  beam(top, top.clone().setY(top.y + 70), 2.4, towerWhite);
+  for (const [a, h] of [[.6, .78], [2.8, .7], [4.4, .86]]) { // dishes on the side, facing out
+    const r = R0 + (R1 - R0) * h, dsh = mesh(new THREE.CylinderGeometry(12, 5, 4, 10), towerWhite);
+    dsh.position.set(o.x + Math.cos(a) * (r + 10), 6 + H * h, o.y + Math.sin(a) * (r + 10)); dsh.rotation.set(0, -a, Math.PI / 2, 'YXZ'); obsGroup.add(dsh);
+  }
+  beacon.position.set(o.x, top.y + 74, o.y); beacon.visible = true;
+}
 function buildObstacles() {
-  dispose(obsGroup); obsGroup.clear();
+  dispose(obsGroup); obsGroup.clear(); beacon.visible = false;
   for (const o of G.obs) {
+    if (o.k === 'pallet') { buildPallets(o); continue }
+    if (o.k === 'tower') { buildTower(o); continue }
     if (o.k === 'rt') { // ramp barrier: one stack of two tyres, the top one red or white
       const s = o.r / 14;
       for (let l = 0; l < 2; l++) { const t = mesh(tireGeo, l ? ((o.x + o.y) % 3 < 1 ? tireRed : tireM) : tireM); t.scale.setScalar(s); t.position.set(o.x, 5.5 * s + l * 11 * s, o.y); obsGroup.add(t) }
@@ -394,13 +455,16 @@ export function buildCar({ id, len: L, wid: W, color, kind, shape }) {
   const sk = skinFor(kind === 'player' ? id : kind);
   if (sk) color = '#ffffff'; // the paint comes from the skin; tinting (damage, hit flash) multiplies it
   const body = sk ? new THREE.MeshLambertMaterial({ map: sk.top }) : lam(color), roof = lam(new THREE.Color(color).multiplyScalar(.82));
-  const r = kind === 'monster' ? W * .42 : W * .22, bh = W * .4, by = (kind === 'monster' ? r * 1.5 : r * .9) + bh / 2;
-  const cabH = W * shape.cabH, cabL = L * shape.cabL, roofX = L * shape.cabX - cabL * .12;
+  const r = kind === 'monster' ? W * .42 : W * .22; let bh = W * .4, by = (kind === 'monster' ? r * 1.5 : r * .9) + bh / 2;
+  let cabH = W * shape.cabH; const cabL = L * shape.cabL, roofX = L * shape.cabX - cabL * .12;
   if (sk) {
     // one full-height block (body + cabin): the top image covers its roof, the side image both flanks (with windows,
     // cut-out arches show the wheels). Width follows the painting's proportions, within reason.
     W = clamp(L / (sk.top.image.width / sk.top.image.height), W * .98, W * 1.12); // keep cars chunky
-    const H = bh + cabH, sideM = new THREE.MeshLambertMaterial({ map: sk.side, alphaTest: .45 }); sideM.color = body.color; sideM.emissive = body.emissive;
+    // height follows the side painting's proportions (was ~30% taller and looked boxy); hood line and roof move with it
+    const bot = by - bh / 2, H = clamp(L * sk.side.image.height / sk.side.image.width, W * .45, W * .62);
+    bh = H * .55; cabH = H - bh; by = bot + bh / 2;
+    const sideM = new THREE.MeshLambertMaterial({ map: sk.side, alphaTest: .45 }); sideM.color = body.color; sideM.emissive = body.emissive;
     body.alphaTest = .45; body.needsUpdate = true;
     const endM = lam(0x3a3835);
     const b = new THREE.Mesh(new THREE.BoxGeometry(L, H, W), [endM, endM, body, endM, sideM, sideM]); b.position.y = by - bh / 2 + H / 2; b.castShadow = b.receiveShadow = true; b.userData.skin = true; tilt.add(b);
@@ -765,6 +829,7 @@ function syncGround(dt) {
   texT -= dt;
   if (G.groundDirty && texT <= 0) { composeGround(); groundTex.needsUpdate = true; G.groundDirty = false; texT = .25 } // ~4 uploads/s max
   if (obsBuilt !== G.obsVersion) buildObstacles();
+  if (beacon.visible) beaconM.color.setHex(Math.sin(G.time * 4) > .2 ? 0xff2a1a : 0x4a0a06);
 }
 let cheer = 0;
 function animateCrowd(dt) {

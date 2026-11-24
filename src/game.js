@@ -71,8 +71,6 @@ export function makeGround() {
     bg.fillStyle = 'rgba(120,92,64,.28)'; bg.beginPath(); bg.ellipse(x, y, rnd(50, 90), rnd(24, 40), a, 0, TAU); bg.fill();
     bg.fillStyle = 'rgba(150,175,190,.22)'; bg.beginPath(); bg.ellipse(x - 6, y - 4, rnd(20, 36), rnd(8, 14), a, 0, TAU); bg.fill();
   }
-  bg.strokeStyle = 'rgba(250,245,232,.32)'; bg.lineWidth = 8; bg.setLineDash([36, 28]);
-  bg.strokeRect(300, 300, AW - 600, AH - 600); bg.setLineDash([]);
   bg.fillStyle = 'rgba(250,245,232,.16)'; bg.font = '800 120px Rubik, Impact, sans-serif'; bg.textAlign = 'center';
   bg.fillText(t('title').toUpperCase(), AW / 2, 210);
   composeGround(); G.groundDirty = true;
@@ -85,26 +83,72 @@ export function makeGround() {
 const RT_R = 13;
 export const JUMP_MAX = 240, RUNWAY = JUMP_MAX + 140;
 const wallDist = (x, y, c, s) => Math.min(c > 1e-6 ? (AW - EDGE - x) / c : c < -1e-6 ? (x - EDGE) / -c : 1e9, s > 1e-6 ? (AH - EDGE - y) / s : s < -1e-6 ? (y - EDGE) / -s : 1e9);
+/* Field layout (AW × AH = 2000 × 1360). Rebuilt every lap; the radio tower stays put for the whole run.
+   What goes where, in order of priority:
+   - keep-outs: the pit driveway at the bottom (GATE), the band the wrecking ball sweeps (|d − R| from the crane),
+     and an open bowl in the middle for the actual fighting
+   - landmark: one big radio tower in the far corner from both the pit and the crane
+   - pump pads: 3 open spots spread over the field, nothing is ever placed on them; a pump only opens on one of these
+   - ramps: 0–2 per lap (not every lap), on long open lanes, mostly along the long axis, with a clear landing
+   - edge junk: pallet piles and tyre piles in a band along the walls (cover at the edges, the lanes stay open)
+   - field cover: short hay-bale walls and single tyre piles in the ring around the bowl, always ≥ 140 apart so
+     cars (and enemies) can drive between any two of them
+   - cones: little slalom rows in whatever open ground is left */
+const KEEP = () => [
+  { x: GATE.x, y: AH - 150, r: 300 },          // pit driveway mouth
+  { x: AW / 2, y: AH / 2, r: 230 }             // centre bowl
+];
+const inCraneLane = (x, y, m = 0) => Math.abs(Math.hypot(x - CRANE.x, y - CRANE.y) - 900) < 85 + m;
+const kept = (x, y, r) => KEEP().some(k => Math.hypot(k.x - x, k.y - y) < k.r + r) || inCraneLane(x, y, r);
 export function makeObs() {
-  const ramps = []; let n = 0;
-  while (ramps.length < 2 && n++ < 2000) {
-    const d = rnd(0, TAU), L = 150, W = 80, H = 30, x = rnd(300, AW - 300), y = rnd(260, AH - 260);
+  const obs = [], pads = [], ramps = [];
+  // landmark radio tower: right-hand corners are farthest from the pit (bottom-left) and the crane (top-left)
+  if (!G.towerPos) { const top = Math.random() < .5; G.towerPos = { x: AW - rnd(300, 380), y: top ? rnd(260, 340) : AH - rnd(280, 360) } }
+  const T = G.towerPos; obs.push({ x: T.x, y: T.y, r: 58, k: 'tower', h: 9999 });
+  const clear = (x, y, r, gap = 140) => !kept(x, y, r) && x > EDGE + r + 40 && x < AW - EDGE - r - 40 && y > EDGE + r + 40 && y < AH - EDGE - r - 40 &&
+    !obs.some(b => Math.hypot(b.x - x, b.y - y) < b.r + r + gap) && !pads.some(p => Math.hypot(p.x - x, p.y - y) < PUMP_R + 70 + r);
+  // pump pads, spread out: each new pad is the best of a few tries, scored by its distance to the others
+  for (let k = 0; k < 3; k++) {
+    let best = null, bd = -1;
+    for (let i = 0; i < 60; i++) {
+      const x = rnd(280, AW - 280), y = rnd(260, AH - 260); if (!clear(x, y, PUMP_R + 40, 60)) continue;
+      const d = Math.min(1e9, ...pads.map(p => Math.hypot(p.x - x, p.y - y))); if (d > bd) { bd = d; best = { x, y } }
+    }
+    if (best) pads.push(best);
+  }
+  // ramps: not every lap
+  const nR = Math.random() < .3 ? 0 : Math.random() < .55 ? 1 : 2; let n = 0;
+  while (ramps.length < nR && n++ < 2500) {
+    const d = (Math.random() < .7 ? (Math.random() < .5 ? 0 : Math.PI) : rnd(0, TAU)) + rnd(-.45, .45);
+    const L = 150, W = 130, H = 30, x = rnd(300, AW - 300), y = rnd(260, AH - 260);
     const c = Math.cos(d), s = Math.sin(d), cx = x + c * L / 2, cy = y + s * L / 2, lx = x + c * (L + 170), ly = y + s * (L + 170);
-    if (Math.hypot(cx - AW / 2, cy - AH / 2) < 300 || Math.hypot(cx - GATE.x, cy - GATE.y1) < 320) continue;
+    if (kept(cx, cy, 90) || kept(lx, ly, 60) || inCraneLane(x, y, 40)) continue;
     if (wallDist(x + c * L, y + s * L, c, s) < RUNWAY) continue; // room to fly and land
     if (wallDist(x, y, -c, -s) < 300) continue;                  // room for a run-up
-    if (Math.min(wallDist(cx, cy, -s, c), wallDist(cx, cy, s, -c)) < 140) continue; // not hugging a side wall
+    if (Math.min(wallDist(cx, cy, -s, c), wallDist(cx, cy, s, -c)) < 160) continue; // not hugging a side wall
+    if (obs.some(b => Math.hypot(b.x - cx, b.y - cy) < b.r + 220 || Math.hypot(b.x - lx, b.y - ly) < b.r + 200)) continue;
+    if (pads.some(p => Math.hypot(p.x - cx, p.y - cy) < PUMP_R + 160 || Math.hypot(p.x - lx, p.y - ly) < PUMP_R + 120)) continue;
     if (ramps.some(r => Math.hypot(r.cx - cx, r.cy - cy) < 600 || Math.hypot(r.lx - lx, r.ly - ly) < 360)) continue;
     ramps.push({ x, y, d, c, s, L, W, H, cx, cy, lx, ly, run: wallDist(x + c * L, y + s * L, c, s) });
   }
-  const obs = []; n = 0;
-  while (obs.length < 12 && n++ < 600) {
-    const o = { x: rnd(220, AW - 220), y: rnd(220, AH - 220), r: rnd(26, 42), k: Math.random() < .6 ? 'tire' : 'hay', v: Math.random() * 5 | 0 }; // v: tyre pile style
-    if (Math.hypot(o.x - AW / 2, o.y - AH / 2) < 280 || Math.hypot(o.x - GATE.x, o.y - GATE.y1) < 260 || (Math.abs(o.x - GATE.x) < 140 && o.y > GATE.y1)) continue;
-    if (obs.some(b => Math.hypot(b.x - o.x, b.y - o.y) < b.r + o.r + 140)) continue;
-    if (ramps.some(r => Math.hypot(r.cx - o.x, r.cy - o.y) < r.L / 2 + o.r + 110 || Math.hypot(r.lx - o.x, r.ly - o.y) < o.r + 190 || Math.hypot(r.x - r.c * 120 - o.x, r.y - r.s * 120 - o.y) < o.r + 90)) continue;
-    obs.push(o);
+  const nearRamp = (x, y, r) => ramps.some(rp => Math.hypot(rp.cx - x, rp.cy - y) < rp.L / 2 + rp.W / 2 + r + 90 || Math.hypot(rp.lx - x, rp.ly - y) < r + 200 || Math.hypot(rp.x - rp.c * 120 - x, rp.y - rp.s * 120 - y) < r + 100);
+  const put = (o, gap) => { if (!clear(o.x, o.y, o.r, gap) || nearRamp(o.x, o.y, o.r)) return false; obs.push(o); return true };
+  // edge junk: a point on the wall band (110–240 in from a wall), pallets more often than tyres
+  const edgeSpot = () => {
+    const side = Math.random() * 4 | 0, inset = rnd(110, 240);
+    return side === 0 ? { x: rnd(160, AW - 160), y: inset } : side === 1 ? { x: rnd(160, AW - 160), y: AH - inset } : side === 2 ? { x: inset, y: rnd(160, AH - 160) } : { x: AW - inset, y: rnd(160, AH - 160) };
+  };
+  for (let want = 5, n2 = 0; want > 0 && n2 < 400; n2++) { const p = edgeSpot(); if (put({ ...p, r: rnd(32, 42), k: 'pallet', v: Math.random() * 4 | 0 }, 150)) want-- }
+  for (let want = 3, n2 = 0; want > 0 && n2 < 400; n2++) { const p = edgeSpot(); if (put({ ...p, r: rnd(28, 40), k: 'tire', v: Math.random() * 5 | 0 }, 150)) want-- }
+  // field cover in the ring around the bowl: hay walls (2–3 bales in a row) and lone tyre piles
+  const ringSpot = () => { const a = rnd(0, TAU), d = rnd(300, 600); return { x: AW / 2 + Math.cos(a) * d * 1.35, y: AH / 2 + Math.sin(a) * d * .85 } };
+  for (let want = 3, n2 = 0; want > 0 && n2 < 400; n2++) {
+    const p = ringSpot(), a = rnd(0, TAU), k = 2 + (Math.random() < .5 ? 1 : 0), r = rnd(25, 29), step = r * 2 + 3;
+    const row = Array.from({ length: k }, (_, i) => ({ x: p.x + Math.cos(a) * (i - (k - 1) / 2) * step, y: p.y + Math.sin(a) * (i - (k - 1) / 2) * step, r, k: 'hay' }));
+    if (row.every(o => clear(o.x, o.y, o.r, 150) && !nearRamp(o.x, o.y, o.r))) { obs.push(...row); want-- }
   }
+  for (let want = 3, n2 = 0; want > 0 && n2 < 400; n2++) { const p = ringSpot(); if (put({ ...p, r: rnd(26, 38), k: 'tire', v: Math.random() * 5 | 0 }, 160)) want-- }
+  G.pads = pads;
   // single tyre stacks hug both sides (from a quarter of the way up) and the back of every ramp,
   // so nothing can wedge itself into the steep faces
   for (const r of ramps) {
@@ -116,7 +160,7 @@ export function makeObs() {
   const cones = []; n = 0;
   while (cones.length < 4 && n++ < 300) {
     const x = rnd(260, AW - 260), y = rnd(260, AH - 260), a = rnd(0, TAU), k = 3 + (Math.random() * 3 | 0);
-    if (obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 120) || ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < 220) || Math.hypot(x - GATE.x, y - GATE.y1) < 200) continue;
+    if (obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 120) || ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < 220) || pads.some(p => Math.hypot(p.x - x, p.y - y) < PUMP_R + 60) || Math.hypot(x - GATE.x, y - GATE.y1) < 200 || inCraneLane(x, y)) continue;
     for (let i = 0; i < k && cones.length < 4; i++) cones.push({ hx: x + Math.cos(a) * i * 46, hy: y + Math.sin(a) * i * 46 });
   }
   G.cones = cones; resetCones();
@@ -160,11 +204,11 @@ export function start(i) {
   for (const k of ['enemies', 'bullets', 'ebul', 'mines', 'fires', 'scraps', 'parts', 'texts', 'pend', 'zaps']) G[k] = [];
   Object.assign(G, { wave: 0, scrap: 0, score: 0, wrecks: 0, bestDrift: 0, offer: [] });
   Object.assign(G.drift, { on: false, pts: 0, mult: 1, heat: 0, off: 0 });
-  makeGround(); makeObs(); G.cam.x = G.P.x; G.cam.y = G.P.y;
+  G.towerPos = null; makeGround(); G.cam.x = G.P.x; G.cam.y = G.P.y;
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = Math.random() < G.S.pumpChance ? PUMP_FIRST : Infinity; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = []; resetCones(); // pumps only show up some laps (S.pumpChance)
+  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = Math.random() < G.S.pumpChance ? PUMP_FIRST : Infinity; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = []; makeObs(); // new field layout every lap (ramps only on some laps); pumps only show up some laps (S.pumpChance)
   G.crane = { st: 'idle', t: rnd(16, 26), side: G.crane ? G.crane.side : 0, a: CRANE.rest[G.crane ? G.crane.side : 0], R: 900, hit: new Set() };
   Object.assign(G.P, { x: GATE.x, y: GATE.y0, a: -Math.PI / 2, vx: 0, vy: 0, z: 0, vz: 0, air: false, intro: true, iy: GATE.y0, ix: GATE.x, iwl: null, stun: 0 }); G.gateV = 1; G.cam.x = GATE.x; G.cam.y = AH + 420;
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
@@ -283,6 +327,9 @@ export function inLane(r, x, y, m) {
 // where the next pump goes: shown as a green marker a few seconds before it opens
 function pumpSpot() {
   const P = G.P;
+  // the layout keeps a few open pads for pumps: use one that's not right under you
+  const ok = (G.pads || []).filter(p => Math.hypot(p.x - P.x, p.y - P.y) > 380);
+  if (ok.length) return { ...ok[Math.random() * ok.length | 0] };
   for (let i = 0; i < 80; i++) {
     const x = rnd(240, AW - 240), y = rnd(240, AH - 240);
     if (Math.hypot(x - P.x, y - P.y) < 380) continue;
