@@ -71,7 +71,7 @@ export const ELITES = ['harvester', 'monster', 'tow'];
 
 export const PACKS = [
   { id: 'britland', cars: ['mini', 'taxi'], colors: ['#c8102e', '#012169'] },
-  { id: 'f1', cars: ['f1', 'safety'], colors: ['#e10600', '#15151e'] }
+  { id: 'f1', cars: ['f1', 'safety'], colors: ['#e10600', '#15151e'], flip: true } // flip: mirror the car art so every pack car faces right
 ];
 
 // tag colours: weapons red, armour blue, ram yellow; the rest green (handling, utility, repair) or purple (engine, drift)

@@ -65,7 +65,7 @@ export function buildMenu(p) {
     const [name, desc, cars] = L().packs[pk.id];
     const bg = A.packs[pk.id] ? `background-image:linear-gradient(90deg,rgba(24,26,30,.9),rgba(24,26,30,.35)),url(${A.packs[pk.id]})` : `background-image:linear-gradient(120deg,${pk.colors[0]},${pk.colors[1]})`;
     return `<div class="pack" style="${bg}" aria-disabled="true"><span class="soon">${esc(t('soon'))}</span><b>${esc(name)}</b><span class="d">${esc(desc)}</span>
-      <span class="chips">${cars.map((c, k) => { const src = A.cars[pk.cars[k]]; return `<span class="pc">${src ? `<img src="${src}" alt="">` : ''}${esc(c)}</span>` }).join('')}</span></div>`;
+      <span class="chips">${cars.map((c, k) => { const src = A.cars[pk.cars[k]]; return `<span class="pc">${src ? `<img src="${src}" alt=""${pk.flip ? ' style="transform:scaleX(-1)"' : ''}>` : ''}${esc(c)}</span>` }).join('')}</span></div>`;
   }).join('') + '</div>';
   renderLangs(); applyStatic();
 }
@@ -165,14 +165,14 @@ export function wire(onStart, onMenu, onLang) {
 
 
 /* ---------- gauge cluster (bottom-left) ----------
-   One SVG in a 330×250 box, after a real tach/fuel/nitro cluster:
+   One SVG in a 360×250 box, after a real tach/fuel/nitro cluster:
    - speedo: 270° sweep 0–240 km/h, cream ticks on a rusty steel bezel, yellow/red zone at the top end;
      the lap is shown in the gear window above the hub, the digital speed below it
-   - fuel: the painted half-dial (assets/ui/fuel-gauge.png + fuel-needle.png) overlapping top-left,
+   - fuel: the painted half-dial (assets/ui/fuel-gauge.png + fuel-needle.png) overlapping bottom-right,
      a procedural half-dial if that art is missing; litres underneath
-   - nitro: a round pod overlapping bottom-right with 8 LED segments
+   - nitro: a round pod overlapping top-left with 8 LED segments
    Optional full-face art: assets/ui/cluster-speedo.png and cluster-nitro.png (square, transparent). */
-const SPD_MAX = 240, SC = { x: 192, y: 138, r: 100 }, FU = { x: 72, y: 70, w: 150 }, NO = { x: 290, y: 208, r: 40 };
+const SPD_MAX = 240, SC = { x: 150, y: 140, r: 100 }, FU = { x: 290, y: 200, w: 140 }, NO = { x: 48, y: 50, r: 38 };
 const KMH = .6; // display factor: game units/s → km/h
 const ang = v => -135 + Math.max(0, Math.min(1, v / SPD_MAX)) * 270;
 const pol = (cx, cy, r, a) => [cx + r * Math.sin(a * Math.PI / 180), cy - r * Math.cos(a * Math.PI / 180)];
@@ -230,7 +230,7 @@ function buildCluster() {
     <circle cx="${NO.x}" cy="${NO.y}" r="${NO.r - 6}" fill="#111" stroke="#55514b" stroke-width="2"/>${bolts(NO.x, NO.y, NO.r, 4, 45)}`) + `
     <circle class="nosGlow" cx="${NO.x}" cy="${NO.y}" r="${NO.r + 6}" fill="none" stroke="#5fc8f0" stroke-width="4" style="filter:drop-shadow(0 0 6px #5fc8f0)"/>
     <text x="${NO.x - 13}" y="${NO.y + 13}" font-size="9" fill="#5fc8f0" transform="rotate(-90 ${NO.x - 13} ${NO.y + 13})" letter-spacing="1">NOS</text>${leds}`;
-  el.innerHTML = `<svg viewBox="0 0 330 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${speedo}${gear}${digits}${sNeedle}${fuel}${fNeedle}${fuelTxt}${nitro}</svg>`;
+  el.innerHTML = `<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${speedo}${gear}${digits}${sNeedle}${fuel}${fNeedle}${fuelTxt}${nitro}</svg>`;
   CL = { sn: $('clSN'), fn: $('clFN'), spd: $('clSpd'), lap: $('clLap'), ang: $('clAng'), fuel: $('clFuel'), leds: [...el.querySelectorAll('.led')], el, lastLap: 0, s: -135 };
   set($('clLapLbl'), t('lapShort'));
 }
@@ -263,6 +263,7 @@ export function hud() {
   $('heatBar').style.width = (drift.heat * 100) + '%';
   set($('heatTxt'), drift.heat > .05 ? t('heatPct', { p: Math.round(drift.heat * 80) }) : t('heat'));
   clusterHud(P);
+  $('vign').classList.toggle('on', !!G.siphon && G.state === 'play');
   const cd = $('count'), n = G.startT > 0 ? String(Math.ceil(G.startT)) : '';
   if (cd._n !== n) { cd._n = n; if (n || cd.textContent) { cd.textContent = n || t('go'); cd.className = n ? 'tick' : 'tick go'; void cd.offsetWidth; cd.classList.add('on') } }
   set($('scrapTxt'), fmt(G.scrap)); set($('wreckTxt'), t('wrecks', { n: fmt(G.wrecks) }));

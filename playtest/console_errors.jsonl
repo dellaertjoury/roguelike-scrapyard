@@ -252,3 +252,15 @@
 {"run": "c5", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-speedo.png", "t": 1795531950.195569}
 {"run": "c5", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-nitro.png", "t": 1795531950.1959977}
 {"run": "c5", "kind": "warning", "text": "[.WebGL-0x231c001cd600]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795531951.3701868}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/garage-bg.jpg", "t": 1795532125.5014486}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/obstacles/hay-side.jpg", "t": 1795532125.5025713}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/obstacles/hay-top.png", "t": 1795532125.5781932}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-speedo.png", "t": 1795532125.8240292}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-nitro.png", "t": 1795532125.8251188}
+{"run": "c6", "kind": "warning", "text": "[.WebGL-0x9a4001b8a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795532127.0552118}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/garage-bg.jpg", "t": 1795532136.1897106}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/obstacles/hay-side.jpg", "t": 1795532136.1944656}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/obstacles/hay-top.png", "t": 1795532136.195179}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-speedo.png", "t": 1795532136.4599617}
+{"run": "c6", "kind": "http", "text": "404 http://localhost:8790/assets/ui/cluster-nitro.png", "t": 1795532136.4617872}
+{"run": "c6", "kind": "warning", "text": "[.WebGL-0xbdc001c9a00]GL Driver Message (OpenGL, Performance, GL_CLOSE_PATH_NV, High): GPU stall due to ReadPixels (this message will no longer repeat)", "t": 1795532137.3503563}

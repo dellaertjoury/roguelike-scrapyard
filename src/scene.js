@@ -659,9 +659,9 @@ export function render(dt) {
       if (nb < 1200) put(blobs, nb++, hx, hz, hy, 4.5, 4.5, 4.5, G.time * 4, 0, 0x55585e);
     }
   }
-  for (const b of G.ebul) if (ng < 1200) put(glows, ng++, b.x, 14, b.y, 5.5, 5.5, 5.5, G.time * 5, G.time * 4, 0xb8ff70);
+  for (const b of G.ebul) if (ng < 1200) put(glows, ng++, b.x, 14, b.y, 5.5, 5.5, 5.5, G.time * 5, G.time * 4, 0xff3a2a); // enemy shots: red
   for (const m of G.mines) if (ng < 1200) put(glows, ng++, m.x, 5.5, m.y, 2.6, 2.6, 2.6, 0, 0, m.arm > 0 ? 0x888888 : (Math.sin(m.t * 10) > 0 ? 0xff3a2a : 0x6a1a10));
-  for (const b of G.bullets) if (ns < 1600) streak(ns++, b.x, b.y, 16, b.x - b.vx * .018, b.y - b.vy * .018, 16, 2.4, 0xffe9a0);
+  for (const b of G.bullets) if (ns < 1600) streak(ns++, b.x, b.y, 16, b.x - b.vx * .018, b.y - b.vy * .018, 16, 2.4, 0xffffff); // your shots: white
   for (const z of G.zaps) {
     let px = z.x1, py = z.y1;
     for (let i = 1; i <= 6 && ns < 1600; i++) {
@@ -685,6 +685,7 @@ export function render(dt) {
   let ncan = 0;
   for (const c of G.cans) {
     if (ncan >= 30) break;
+    if (c.t > 2 && Math.sin(c.t * 30) < 0) continue; // blink before it evaporates
     const bob = 8 + canZ(c) + Math.sin(G.time * 4 + c.x) * 2;
     if (canSprites) { canSprites[ncan].visible = true; canSprites[ncan].position.set(c.x, bob + 10, c.y); ncan++ }
     else put(canPool, ncan++, c.x, bob, c.y, 1, 1, 1, G.time * 2 + c.x);
@@ -697,6 +698,13 @@ export function render(dt) {
     if (ns < 1598) { streak(ns++, s.x - r, s.y - r, 1, s.x + r, s.y + r, 1, 4, 0xff4a30); streak(ns++, s.x + r, s.y - r, 1, s.x - r, s.y + r, 1, 4, 0xff4a30) }
     if (nring < 119) { put(rings, nring++, s.x, 1.1, s.y, base * (1.6 + k * 1.4), 1, base * (1.6 + k * 1.4), 0, 0, 0xff3a2a); put(rings, nring++, s.x, 1.1, s.y, base * 1.5, 1, base * 1.5, 0, 0, 0x7a160c) }
     if (nsoft < 500) put(soft, nsoft++, s.x, 1, s.y, base * 5.5 * pulse, 1, base * 5.5 * pulse, 0, 0, 0x7a1408);
+  }
+  // thief hoses: a sagging black hose from the thief to your car, green fuel blobs running along it to the thief
+  if (P) for (const e of G.enemies) {
+    if (!e.hose || ns > 1590) continue;
+    const N = 7, pt = k => { const u = k / N; return [P.x + (e.x - P.x) * u, P.y + (e.y - P.y) * u, 10 + (P.z || 0) * (1 - u) - Math.sin(Math.PI * u) * 7] };
+    for (let k = 0; k < N; k++) { const a = pt(k), b = pt(k + 1); streak(ns++, a[0], a[1], a[2], b[0], b[1], b[2], 4, 0x1d1b1a) }
+    for (let j = 0; j < 3 && ng < 1200; j++) { const u = (G.time * 1.6 + j / 3) % 1, a = pt(u * N); put(glows, ng++, a[0], a[2] + 1, a[1], 2.6, 2.6, 2.6, 0, 0, 0x9fe070) }
   }
   finish(blobs, nb); finish(glows, ng); finish(streaks, ns); finish(soft, nsoft); finish(rings, nring); finish(eliteSaws, eliteSawN); eliteSawN = 0;
   if (fireDecal) finish(fireDecal, nfire);

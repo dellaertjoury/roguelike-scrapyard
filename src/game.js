@@ -181,7 +181,8 @@ function kill(e, scored) {
   for (let i = 0; i < 5; i++) { g.fillStyle = Math.random() < .5 ? e.col : '#3b3530'; g.save(); g.translate(e.x + rnd(-e.r, e.r), e.y + rnd(-e.r, e.r)); g.rotate(rnd(0, TAU)); g.fillRect(-4, -2, rnd(5, 10), rnd(3, 6)); g.restore() }
   G.groundDirty = true;
   let n = e.sc; for (let i = 0; i < e.sc; i++) if (Math.random() < G.S.luck) n++;
-  if (scored && e.stolen > 0) G.cans.push({ x: e.x, y: e.y, l: Math.max(5, e.stolen), t: 0 });
+  const st = (e.stolen || 0) + (e.siph || 0); // includes fuel still in the hose
+  if (scored && st > .05) G.cans.push({ x: e.x, y: e.y, l: st, t: 0 });
   if (scored) {
     G.wrecks++; G.score += e.sc * 40;
     for (let i = 0; i < Math.min(n, 14); i++) { const a = rnd(0, TAU), s = rnd(40, 200); G.scraps.push({ x: e.x, y: e.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, v: n > 14 && i === 0 ? n - 13 : 1, t: 0 }) }
@@ -217,6 +218,14 @@ function bankDrift() {
 // is worth exactly its reserve (+20 s of lap) and there is no way to freeze the lap clock.
 export const START_T = 3; // 3-2-1 countdown: no fuel burn, spawns, throttle or guns until GO
 // a pump holds 30 L (= 30 s of lap) and pours it straight in while you stand on the pad: 6 L/s, so ~5 s to drain
+// fuel thieves: hook a hose within HOSE_R, drain HOSE_RATE L/s up to THIEF_STEAL, the hose snaps past HOSE_BREAK
+export const HOSE_R = 130, HOSE_BREAK = 210, HOSE_RATE = 3, CAN_LIFE = 3;
+function dropHose(e, snapped) {
+  const P = G.P; e.hose = false; e.flee = 3;
+  if (e.siph > .05) { e.stolen = (e.stolen || 0) + e.siph; txt(P.x, P.y - 40, t('fStolen', { l: fmtL(e.siph) }), '#ff6b5a', 18, 1) }
+  if (snapped) puff((e.x + P.x) / 2, (e.y + P.y) / 2, 6, { c: 0x9fe070, glow: true, s0: 40, s1: 140, l0: .3, l1: .6, z0: 2, z1: 4, z: 10, vz0: 20, vz1: 60 });
+  e.siph = 0;
+}
 export const BURN = 1, PUMP_R = 92, PUMP_FLOW = 6, PUMP_RESERVE = 30, PUMP_RESPAWN = 15, PUMP_FIRST = 8, THIEF_STEAL = 6;
 export const fmtL = l => (Math.round(l * 10) / 10).toLocaleString(lang() === 'en' ? 'en-US' : lang() === 'vls' ? 'nl-BE' : lang());
 // Is (x, y) within m of a ramp's lane: 260 of run-up, the ramp, and the flight/landing strip?
@@ -249,7 +258,7 @@ function fuelStep(dt) {
     c.t += dt;
     if (Math.abs(P.z - canZ(c)) < 14 && Math.hypot(c.x - P.x, c.y - P.y) < P.r + 14 && G.fuel < G.tank) { const l = Math.min(c.l, G.tank - G.fuel); G.fuel += l; c.got = true; txt(c.x, c.y - 30, t('fFuel', { l: fmtL(l) }), '#7fdcaa', 20, 1.1) }
   }
-  G.cans = G.cans.filter(c => !c.got);
+  G.cans = G.cans.filter(c => !c.got && c.t < CAN_LIFE); // dropped fuel evaporates after 3 s
 }
 
 /* ---------- garage: slot-based build ---------- */
@@ -527,6 +536,7 @@ export function update(dt) {
   const P = G.P, S = G.S, W = G.W, CD = G.CD, drift = G.drift;
   if (G.startT > 0) G.startT = Math.max(0, G.startT - dt);
   const live = G.startT <= 0;
+  G.siphon = false;
 
   /* driving: split velocity into forward and lateral; grip eats lateral, handbrake drops grip */
   const fx = Math.cos(P.a), fy = Math.sin(P.a);
@@ -616,14 +626,16 @@ export function update(dt) {
   for (const e of G.enemies) {
     const dx = P.x - e.x, dy = P.y - e.y, d = Math.hypot(dx, dy) || 1; let spd = e.spd;
     let want = e.type === 'rust' ? Math.atan2(P.y + P.vy * .35 - e.y, P.x + P.vx * .35 - e.x) : Math.atan2(dy, dx);
-    if (e.type === 'thief') { // siphon: grab fuel on contact, run off, come back for more
+    if (e.type === 'thief') { // siphon: hook a hose onto you when close, drain fuel, then run off with it
       if (e.flee > 0) { e.flee -= dt; want = Math.atan2(-dy, -dx); spd *= 1.15 }
-      else if (d < e.r + P.r + 10 && P.z < 10 && G.fuel > 0 && G.time > (G.stealCd || 0)) {
-        G.stealCd = G.time + 1.2; // one siphon at a time, even when a pack of thieves pins you
-        const l = Math.min(THIEF_STEAL, G.fuel); G.fuel -= l; e.stolen = (e.stolen || 0) + l; e.flee = 3;
-        txt(P.x, P.y - 40, t('fStolen', { l: fmtL(l) }), '#ff6b5a', 18, 1);
-        puff(P.x, P.y, 8, { c: 0x9fe070, glow: true, s0: 40, s1: 140, l0: .3, l1: .6, z0: 2, z1: 4, z: 10, vz0: 20, vz1: 60 });
-      }
+      else if (e.hose) {
+        if (d > HOSE_BREAK || P.z > 20 || G.fuel <= 0) dropHose(e, d > HOSE_BREAK);
+        else {
+          const l = Math.min(HOSE_RATE * dt, G.fuel, THIEF_STEAL - e.siph); G.fuel -= l; e.siph += l; e.hoseT += dt; G.siphon = true;
+          if (d < 80) spd *= .35; // hang back on the hose instead of ramming
+          if (e.siph >= THIEF_STEAL - .01) dropHose(e, false);
+        }
+      } else if (d < HOSE_R && P.z < 10 && G.fuel > 0 && G.enemies.filter(o => o.hose).length < 2) { e.hose = true; e.siph = 0; e.hoseT = 0 }
     }
     if (e.type === 'spit') {
       if (d < 300) want += Math.PI * .55;
