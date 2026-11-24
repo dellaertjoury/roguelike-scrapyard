@@ -219,7 +219,7 @@ let hayMats = null, hayInst = null;
 const hayArt = () => A.obs && A.obs.side && A.obs.top;
 function buildHay() {
   if (hayInst) { scene.remove(hayInst); hayInst.geometry.dispose(); hayInst.dispose(); hayInst = null }
-  const bales = G.obs.filter(o => o.k !== 'tire'); if (!hayArt() || !bales.length) return;
+  const bales = G.obs.filter(o => o.k === 'hay'); if (!hayArt() || !bales.length) return;
   if (!hayMats) {
     const tex = (img, rep) => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.wrapS = THREE.RepeatWrapping; t.repeat.set(rep, 1); t.needsUpdate = true; return t };
     hayMats = [new THREE.MeshLambertMaterial({ map: tex(A.obs.side, 3) }), new THREE.MeshLambertMaterial({ map: tex(A.obs.top, 1) }), new THREE.MeshLambertMaterial({ map: tex(A.obs.top, 1) })];
@@ -232,6 +232,11 @@ function buildHay() {
 function buildObstacles() {
   dispose(obsGroup); obsGroup.clear();
   for (const o of G.obs) {
+    if (o.k === 'rt') { // ramp barrier: one stack of two tyres, the top one red or white
+      const s = o.r / 14;
+      for (let l = 0; l < 2; l++) { const t = mesh(tireGeo, l ? ((o.x + o.y) % 3 < 1 ? tireRed : tireM) : tireM); t.scale.setScalar(s); t.position.set(o.x, 5.5 * s + l * 11 * s, o.y); obsGroup.add(t) }
+      continue;
+    }
     if (o.k === 'tire') {
       for (let i = 0; i < 3; i++) {
         const a = i / 3 * TAU + o.x, s = o.r * .55 / 16;

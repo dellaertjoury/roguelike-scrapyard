@@ -6,7 +6,7 @@ Tips: genereer met een vaste seed of met je logo als stijlreferentie (Midjourney
 
 Benzine: de wijzerplaat en naald vervangen de ingebouwde CSS-meter zodra ze in `assets/ui/` staan; de vloerdecal vervangt de grijze betonplaat onder de pomp.
 
-Al gemaakt en in het spel: alle logo's, achtergronden (behalve `garage-bg.jpg`), de arena-vloer, alle auto's en pakketten, de 22 onderdeel-iconen, de HUD-iconen, de elite- en thief-portretten, het vuurspoor, de pompvloer, de pomp, de jerrycan en de benzinemeter met naald. Ook in het spel: de vijand-portretten (`elites/rust.png`, `spit.png`, `brute.png`) in de ronde-banners van ronde 1, 3 en 4. Nog open: `garage-bg.jpg` (tot dan gebruikt de garage de arena-achtergrond, gedimd), de nieuwe meterkast (`ui/cluster-speedo.png`, `ui/cluster-nitro.png`) en de strobalen (`obstacles/hay-top.png`, `obstacles/hay-side.jpg`). Alles werkt al zonder: de meterkast wordt dan in de game zelf getekend.
+Al gemaakt en in het spel: alle logo's, achtergronden (behalve `garage-bg.jpg`), de arena-vloer, alle auto's en pakketten, de 22 onderdeel-iconen, de HUD-iconen, de elite- en thief-portretten, het vuurspoor, de pompvloer, de pomp, de jerrycan en de benzinemeter met naald. Ook in het spel: de vijand-portretten (`elites/rust.png`, `spit.png`, `brute.png`) in de ronde-banners van ronde 1, 3 en 4. Nog open: `garage-bg.jpg` (tot dan gebruikt de garage de arena-achtergrond, gedimd), de nieuwe meterkast (`ui/cluster-speedo.png`, `ui/cluster-nitro.png`). De strobalen (`obstacles/`) zitten erin. Alles werkt al zonder: de meterkast wordt dan in de game zelf getekend.
 
 ```text
 === assets/logo-fr.png · 1600×600 · transparante achtergrond (achtergrond verwijderen) ===

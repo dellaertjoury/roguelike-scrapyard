@@ -66,13 +66,14 @@ export function makeGround() {
 // Every ramp faces open ground: from the lip there is at least RUNWAY of clear arena before
 // the tyre wall, and launches are capped (launchCap) so no jump can carry a car past it.
 // The landing zone beyond the lip is kept clear of obstacles.
-export const JUMP_MAX = 400, RUNWAY = JUMP_MAX + 120;
+const RT_R = 13;
+export const JUMP_MAX = 240, RUNWAY = JUMP_MAX + 140;
 const wallDist = (x, y, c, s) => Math.min(c > 1e-6 ? (AW - EDGE - x) / c : c < -1e-6 ? (x - EDGE) / -c : 1e9, s > 1e-6 ? (AH - EDGE - y) / s : s < -1e-6 ? (y - EDGE) / -s : 1e9);
 export function makeObs() {
   const ramps = []; let n = 0;
   while (ramps.length < 2 && n++ < 2000) {
     const d = rnd(0, TAU), L = 150, W = 80, H = 30, x = rnd(300, AW - 300), y = rnd(260, AH - 260);
-    const c = Math.cos(d), s = Math.sin(d), cx = x + c * L / 2, cy = y + s * L / 2, lx = x + c * (L + 260), ly = y + s * (L + 260);
+    const c = Math.cos(d), s = Math.sin(d), cx = x + c * L / 2, cy = y + s * L / 2, lx = x + c * (L + 170), ly = y + s * (L + 170);
     if (Math.hypot(cx - AW / 2, cy - AH / 2) < 300) continue;
     if (wallDist(x + c * L, y + s * L, c, s) < RUNWAY) continue; // room to fly and land
     if (wallDist(x, y, -c, -s) < 300) continue;                  // room for a run-up
@@ -87,6 +88,13 @@ export function makeObs() {
     if (obs.some(b => Math.hypot(b.x - o.x, b.y - o.y) < b.r + o.r + 140)) continue;
     if (ramps.some(r => Math.hypot(r.cx - o.x, r.cy - o.y) < r.L / 2 + o.r + 110 || Math.hypot(r.lx - o.x, r.ly - o.y) < o.r + 190 || Math.hypot(r.x - r.c * 120 - o.x, r.y - r.s * 120 - o.y) < o.r + 90)) continue;
     obs.push(o);
+  }
+  // single tyre stacks hug both sides (from a quarter of the way up) and the back of every ramp,
+  // so nothing can wedge itself into the steep faces
+  for (const r of ramps) {
+    const at = (u, v) => obs.push({ x: r.x + r.c * u - r.s * v, y: r.y + r.s * u + r.c * v, r: RT_R, k: 'rt' });
+    for (let u = r.L * .25; u <= r.L + 1; u += RT_R * 2) for (const sd of [-1, 1]) at(u, sd * (r.W / 2 + RT_R + 2));
+    for (let v = -r.W / 2 - RT_R + 2; v <= r.W / 2 + RT_R - 2; v += RT_R * 2) at(r.L + RT_R + 4, v);
   }
   G.obs = obs; G.ramps = ramps; G.obsVersion++;
 }
@@ -219,7 +227,7 @@ function bankDrift() {
 // 60 L tank, burns 1 L/s (2 L/s on nitro), so a lap with no refuelling lasts 60 s.
 // A pump opens somewhere on the map; standing in its zone adds 5 L every 3 s until its 20 L reserve
 // is used up, then it closes and another opens 15 s later. Fuel keeps burning while you fill, so a pump
-// is worth exactly its reserve (+20 s of lap) and there is no way to freeze the lap clock.
+// is worth exactly its reserve (+30 s of lap) and there is no way to freeze the lap clock.
 // paint per enemy type, after the portraits: olive wreckers, teal spitters, mustard brutes (a few shades each)
 const TYPE_COL = { rust: ['#7f8f3a', '#6f8034', '#8d9a4a'], spit: ['#3f8a8f', '#367a80', '#4b9499'], brute: ['#e0a92a', '#d49a22'] };
 export const START_T = 3; // 3-2-1 countdown: no fuel burn, spawns, throttle or guns until GO
@@ -344,7 +352,7 @@ function collideStatic(o, r, bounce) {
     const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy), m = r + b.r;
     if (d < m) {
       const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = b.x + nx * m; o.y = b.y + ny * m;
-      bounceOff(o, nx, ny, bounce, b.k === 'tire', o.x - nx * r, o.y - ny * r);
+      bounceOff(o, nx, ny, bounce, b.k !== 'hay', o.x - nx * r, o.y - ny * r);
     }
   }
   const pu = G.pump; // the pump itself is a small solid post
@@ -378,17 +386,18 @@ function rampStep(o, px, py, dt) {
   if (!ra && o.z > 6) {
     const r = o.rampRef; let along = r ? o.vx * r.c + o.vy * r.s : 0;
     if (r) { const cap = launchCap(r); if (along > cap) { const k = cap / along; o.vx *= k; o.vy *= k; along = cap } }
-    o.air = true; o.airT = 0; o.vz = Math.max(0, along) * .95 + 30; o.rampRef = null; o.crushJump = false;
+    o.air = true; o.airT = 0; o.vz = Math.max(0, along) * LIFT + 30; o.rampRef = null; o.crushJump = false;
     return;
   }
   o.z = h; o.rampRef = ra ? ra.r : null;
   o.pitch = ra ? Math.atan2(ra.r.H, ra.r.L) * (Math.cos(o.a) * ra.r.c + Math.sin(o.a) * ra.r.s) : 0;
 }
-// Fastest launch whose jump (flight = v * 2(.95v + 30) / g) still lands before the tyre wall.
-// Nitro still makes jumps longer, just never longer than the open ground in front of the ramp.
+// Fastest launch whose jump (flight = v * 2(LIFT·v + 30) / g) still stays within JUMP_MAX and lands before the tyre wall.
+// Nitro still makes jumps a bit longer, never longer than that.
+const LIFT = .6;
 function launchCap(r) {
   const D = Math.min(JUMP_MAX, r.run - 90);
-  return Math.max(120, (-60 + Math.sqrt(3600 + 7.6 * GRAV * D)) / 3.8);
+  return Math.max(110, (-60 + Math.sqrt(3600 + 8 * LIFT * GRAV * D)) / (4 * LIFT));
 }
 // Ramps are solid from the back and sides. Push a car that is inside out through the nearest
 // face (back or side) and kill its velocity into that face. Also used after any other push.
