@@ -85,9 +85,9 @@ export const ECOL = ['#7c9a5e', '#a8452f', '#4f7a92', '#b49a5a', '#7a62a0', '#8a
 export const ENEMY = n => ({
   rust:  { r: 17, len: 42, wid: 22, hp: 16 + n * 7, spd: 95 + n * 3, dmg: 8 + n * .8, mass: .9, turn: 2.4, sc: 1 },
   spit:  { r: 17, len: 40, wid: 22, hp: 20 + n * 6, spd: 90 + n * 2, dmg: 6 + n * .6, mass: .8, turn: 2.6, sc: 2 },
-  brute: { r: 25, len: 62, wid: 32, hp: 80 + n * 20, spd: 70 + n * 2, dmg: 18 + n * 1.5, mass: 2.6, turn: 1.6, sc: 4 },
+  brute: { r: 28, len: 62, wid: 32, hp: 80 + n * 20, spd: 70 + n * 2, dmg: 18 + n * 1.5, mass: 2.6, turn: 1.6, sc: 4 },
   // elites: one every 5 laps, in this order, each with its own special move
   harvester: { r: 46, len: 112, wid: 56, hp: 650 * (n / 5) + n * 60, spd: 80, dmg: 30 + n, mass: 8, turn: 1.3, sc: 40, elite: true, col: '#e0b040' },
   monster:   { r: 36, len: 72, wid: 48, hp: 560 * (n / 5) + n * 55, spd: 88, dmg: 26 + n, mass: 6, turn: 1.7, sc: 40, elite: true, col: '#7a3ab0' },
-  tow:       { r: 32, len: 88, wid: 38, hp: 520 * (n / 5) + n * 50, spd: 96, dmg: 22 + n, mass: 5, turn: 1.6, sc: 40, elite: true, col: '#e8a020' }
+  tow:       { r: 36, len: 88, wid: 38, hp: 520 * (n / 5) + n * 50, spd: 96, dmg: 22 + n, mass: 5, turn: 1.6, sc: 40, elite: true, col: '#e8a020' }
 });

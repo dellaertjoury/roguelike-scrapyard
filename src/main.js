@@ -21,7 +21,7 @@ UI.buildMenu(portraits);
 UI.loading(1);
 UI.wire(
   i => { SC.hideDemo(); start(i) },
-  () => { G.state = 'menu'; G.enemies = []; G.P = null; makeGround(); makeObs(); UI.buildMenu(); UI.show('menu') },
+  () => { G.state = 'menu'; G.enemies = []; G.texts = []; G.P = null; makeGround(); makeObs(); UI.buildMenu(); UI.show('menu') },
   () => { makeGround() } // repaint the arena title in the new language
 );
 G.on.play = () => UI.show(null);
@@ -43,21 +43,25 @@ addEventListener('keydown', e => {
   }
 });
 addEventListener('keyup', e => { G.keys[e.code] = false });
+UI.touch(pause);
 addEventListener('blur', () => { for (const k in G.keys) G.keys[k] = false; pause() });
 document.addEventListener('visibilitychange', () => { if (document.hidden) pause() });
 
 /* loop */
 let last = performance.now();
 function frame(now) {
-  const dt = Math.min(.033, (now - last) / 1000); last = now;
+  // real elapsed time, run in steps of at most 1/30 s: slow devices stay at normal speed instead of slow motion
+  const raw = Math.min(.1, (now - last) / 1000); last = now;
   try {
-    if (G.state === 'menu') SC.attract(dt);
+    const live = ['play', 'clear', 'dead'].includes(G.state);
+    if (G.state === 'menu') SC.attract(raw);
     else {
-      update(['play', 'clear', 'dead'].includes(G.state) ? dt : 0);
-      SC.render(dt);
+      if (live) { let rem = raw; while (rem > 1e-4) { const s = Math.min(rem, 1 / 30); update(s); rem -= s } }
+      else update(0);
+      SC.render(raw);
       UI.hud();
     }
-    UI.texts(SC.project);
+    UI.texts(live ? SC.project : null);
   } catch (err) { console.error(err) }
   requestAnimationFrame(frame);
 }

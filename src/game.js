@@ -125,7 +125,7 @@ export function start(i) {
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.waveLen = 60; G.waveT = G.waveLen; G.spawnT = 1.2; G.state = 'play';
+  G.wave++; G.waveLen = 60; G.driftScrap = 0; G.waveT = G.waveLen; G.spawnT = 1.2; G.state = 'play';
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
   G.banner = { s: ['lap', { n: G.wave }], elite, sub: elite ? ['eliteSub', { name: L().elites[elite][0], hint: L().elites[elite][1] }] : ['holdOut', { s: G.waveLen }], id: Math.random() };
   if (elite) queue(elite);
@@ -133,16 +133,21 @@ export function nextWave() {
   for (let i = 0; i < Math.min(5, 1 + Math.floor(G.wave / 2)); i++) queue('rust');
   G.on.play && G.on.play();
 }
-function queue(type) {
+function spawnSpot() {
   const P = G.P;
-  for (let t = 0; t < 20; t++) {
+  for (let t = 0; t < 30; t++) {
     const a = rnd(0, TAU), d = rnd(360, 640);
     const x = clamp(P.x + Math.cos(a) * d, EDGE + 60, AW - EDGE - 60), y = clamp(P.y + Math.sin(a) * d, EDGE + 60, AH - EDGE - 60);
     if (Math.hypot(x - P.x, y - P.y) < 280) continue;
     if (G.obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 50)) continue;
     if (G.ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < r.L / 2 + 40)) continue;
-    const tt = ELITES.includes(type) ? 1.8 : 1.1; G.pend.push({ x, y, t: tt, max: tt, type, elite: tt > 1.5 }); return;
+    return { x, y };
   }
+  return null;
+}
+function queue(type) {
+  const p = spawnSpot(); if (!p) return;
+  const tt = ELITES.includes(type) ? 1.8 : 1.1; G.pend.push({ x: p.x, y: p.y, t: tt, max: tt, type, elite: tt > 1.5 });
 }
 function spawn(type, x, y) {
   const D = ENEMY(G.wave)[type], P = G.P;
@@ -172,7 +177,7 @@ function kill(e, scored) {
   if (scored) {
     G.wrecks++; G.score += e.sc * 40;
     for (let i = 0; i < Math.min(n, 14); i++) { const a = rnd(0, TAU), s = rnd(40, 200); G.scraps.push({ x: e.x, y: e.y, vx: Math.cos(a) * s, vy: Math.sin(a) * s, v: n > 14 && i === 0 ? n - 13 : 1, t: 0 }) }
-  } else G.scrap += n;
+  } // cars still alive at the end of a lap just explode: no scrap for them
 }
 function endWave() {
   for (const e of G.enemies) kill(e, false);
@@ -189,11 +194,12 @@ function die() {
 function bankDrift() {
   const d = G.drift;
   if (d.pts > 40) {
-    const p = Math.round(d.pts), s = Math.floor(p / 160);
-    G.score += p; G.scrap += s; G.bestDrift = Math.max(G.bestDrift, p);
+    // at most 3 scrap per combo and a per-lap cap, so circling alone can't out-earn wrecking cars
+    const p = Math.round(d.pts), cap = Math.max(0, 6 + 2 * G.wave - G.driftScrap), s = Math.min(3, Math.floor(p / 250), cap);
+    G.score += p; G.scrap += s; G.driftScrap += s; G.bestDrift = Math.max(G.bestDrift, p);
     txt(G.P.x, G.P.y - 30, t('fDrift', { p: fmt(p) }) + (s ? ' · ' + t('fScrap', { s }) : ''), '#ffc23d', 18, 1.2);
   }
-  d.pts = 0; d.mult = 1; d.on = false;
+  d.pts = 0; d.mult = 1; d.on = false; d.time = 0;
 }
 
 /* ---------- garage: slot-based build ---------- */
@@ -210,13 +216,15 @@ export function recompute() {
   if (G.P && oldMax) G.P.hp = clamp(G.P.hp + Math.max(0, S.maxhp - oldMax), 1, S.maxhp);
 }
 export const lvlOf = it => { const b = G.build[PART[it.id].slot]; return b && b.id === it.id ? b.lvl : 0 };
-export const price = it => Math.round(PART[it.id].cost * (1 + (G.wave - 1) * .14) * (1 + .5 * lvlOf(it)));
+// prices compound 15% per lap so late-lap income doesn't buy everything at once
+export const priceScale = () => Math.pow(1.15, G.wave - 1);
+export const price = it => Math.round(PART[it.id].cost * priceScale() * (1 + .5 * lvlOf(it)));
 export const nameOf = it => { const d = PART[it.id]; return d.w ? L().w[d.w][0] : L().parts[it.id][0] };
 export const descOf = it => {
   const d = PART[it.id]; if (!d.w) return L().parts[it.id][1];
   const l = Math.min(d.max, lvlOf(it) + 1); return L().w[d.w][1](l, ...WSTAT[d.w](l));
 };
-export const repairCost = () => 6 + G.wave * 2;
+export const repairCost = () => Math.round(8 * priceScale()) + G.wave;
 const canOffer = it => lvlOf(it) < PART[it.id].max;
 const OFFER = 5;
 // Locked cards survive rerolls and stay in the garage for the next lap.
@@ -230,7 +238,7 @@ function roll() {
   }
   return out;
 }
-function openShop() { G.state = 'shop'; G.rerollCost = 2 + G.wave; G.offer = roll(); G.on.shop && G.on.shop() }
+function openShop() { G.state = 'shop'; G.rerollCost = Math.round(2 * priceScale()) + G.wave; G.offer = roll(); G.on.shop && G.on.shop() }
 export function buy(i) {
   const it = G.offer[i]; if (!it || it.sold || !canOffer(it)) return false;
   const p = price(it); if (p > G.scrap) return false;
@@ -269,8 +277,8 @@ function bounceOff(o, nx, ny, bounce, tire, cx, cy) {
 function collideStatic(o, r, bounce) {
   if (o.z < 26) for (const b of G.obs) {
     const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy), m = r + b.r;
-    if (d < m && d > 0) {
-      const nx = dx / d, ny = dy / d; o.x = b.x + nx * m; o.y = b.y + ny * m;
+    if (d < m) {
+      const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = b.x + nx * m; o.y = b.y + ny * m;
       bounceOff(o, nx, ny, bounce, b.k === 'tire', o.x - nx * r, o.y - ny * r);
     }
   }
@@ -298,14 +306,32 @@ function rampStep(o, px, py, dt) {
     if (o.z <= h) land(o, h);
     return;
   }
-  if (h > o.z + 8) { o.x = px; o.y = py; o.vx *= -.5; o.vy *= -.5; if (o === G.P) G.shake = Math.max(G.shake, 6); return }
+  if (h > o.z + 8) { rampPushOut(o, ra.r, true); return }
   if (!ra && o.z > 6) {
     const r = o.rampRef, along = r ? o.vx * r.c + o.vy * r.s : 0;
-    o.air = true; o.airT = 0; o.vz = Math.max(0, along) * .95 + 30; o.rampRef = null;
+    o.air = true; o.airT = 0; o.vz = Math.max(0, along) * .95 + 30; o.rampRef = null; o.crushJump = false;
     return;
   }
   o.z = h; o.rampRef = ra ? ra.r : null;
   o.pitch = ra ? Math.atan2(ra.r.H, ra.r.L) * (Math.cos(o.a) * ra.r.c + Math.sin(o.a) * ra.r.s) : 0;
+}
+// Ramps are solid from the back and sides. Push a car that is inside out through the nearest
+// face (back or side) and kill its velocity into that face. Also used after any other push.
+function rampPushOut(o, r, bounce) {
+  const dx = o.x - r.x, dy = o.y - r.y, u = dx * r.c + dy * r.s, v = -dx * r.s + dy * r.c;
+  const back = r.L - u, side = r.W / 2 - Math.abs(v);
+  let nx, ny, dist;
+  if (back < side) { nx = r.c; ny = r.s; dist = back } else { const sg = v >= 0 ? 1 : -1; nx = -r.s * sg; ny = r.c * sg; dist = side }
+  o.x += nx * (dist + 1); o.y += ny * (dist + 1);
+  const vn = o.vx * nx + o.vy * ny; if (vn < 0) { o.vx -= vn * nx * (bounce ? 1.5 : 1); o.vy -= vn * ny * (bounce ? 1.5 : 1) }
+  if (o === G.P && bounce) G.shake = Math.max(G.shake, 6);
+}
+function rampSolid(o) {
+  if (o.air || o.dead) return;
+  for (const r of G.ramps) {
+    const dx = o.x - r.x, dy = o.y - r.y, u = dx * r.c + dy * r.s, v = -dx * r.s + dy * r.c;
+    if (u >= 0 && u <= r.L && Math.abs(v) <= r.W / 2 && r.H * u / r.L > o.z + 8) rampPushOut(o, r, false);
+  }
 }
 function land(o, h) {
   const impact = -o.vz; o.air = false; o.z = h; o.vz = 0; o.pitch = 0;
@@ -322,7 +348,7 @@ function land(o, h) {
   }
   const P = o, S = G.S;
   G.shake = Math.max(G.shake, 4 + impact / 40); G.cheer = 1;
-  if (P.airT > .35) {
+  if (P.airT > .35 && !P.crushJump) {
     const pts = Math.round(P.airT * 300), sc = Math.floor(P.airT * 4);
     G.score += pts; G.scrap += sc;
     txt(P.x, P.y - 34, t('fAir', { t: P.airT.toFixed(1) }) + (sc ? ' · ' + t('fScrap', { s: sc }) : ''), '#8fd0ea', 18, 1.2);
@@ -330,11 +356,13 @@ function land(o, h) {
   // landing on a car crushes it, and you bounce off its roof
   let crushed = false;
   for (const e of G.enemies) {
-    if (e.dead || e.air || Math.hypot(e.x - P.x, e.y - P.y) > P.r + e.r * .8) continue;
+    if (e.dead || e.air || (e.crushcd || 0) > G.time || Math.hypot(e.x - P.x, e.y - P.y) > P.r + e.r * .8) continue;
+    e.crushcd = G.time + 1.5;
     hurt(e, (45 + impact * .3) * S.mass * S.dmg); crushed = true;
     puff(e.x, e.y, 14, { c: 0xffd27a, glow: true, k: 's', s0: 120, s1: 360, l0: .15, l1: .4, z: 18, vz0: 40, vz1: 200, grav: 500 });
   }
-  if (crushed) { txt(P.x, P.y - 58, t('fCrush'), '#ffc23d', 22, 1); P.air = true; P.vz = 140; P.airT = 0; P.z = Math.max(P.z, 16) }
+  if (crushed) { txt(P.x, P.y - 58, t('fCrush'), '#ffc23d', 22, 1); P.air = true; P.vz = 140; P.airT = 0; P.z = Math.max(P.z, 16); P.crushJump = true }
+  else P.crushJump = false;
 }
 
 /* ---------- elite special moves ---------- */
@@ -348,7 +376,13 @@ function eliteMove(e, dt, d) {
       return 1;
     }
     if (S.st === 'wind') { S.t -= dt; if (S.t <= 0) S.st = 'out'; return .1 }
-    if (S.st === 'out') { S.d += 640 * dt; if (S.d >= 300) { S.d = 300; S.st = 'hold'; S.t = .35 } }
+    if (S.st === 'out') {
+      S.d += 640 * dt; if (S.d >= 300) { S.d = 300; S.st = 'hold'; S.t = .35 }
+      // blades bite into tyres and bales instead of passing through them
+      for (const b of harvesterBlades(e)) if (G.obs.some(o => Math.hypot(o.x - b.x, o.y - b.y) < o.r + b.R * .5)) {
+        S.st = 'hold'; S.t = .35; puff(b.x, b.y, 10, { c: 0xfff0c0, glow: true, k: 's', s0: 150, s1: 350, l0: .1, l1: .25, z: 10, vz0: 30, vz1: 120, grav: 400 }); break;
+      }
+    }
     else if (S.st === 'hold') { S.t -= dt; if (S.t <= 0) S.st = 'in' }
     else if (S.st === 'in') { S.d -= 380 * dt; if (S.d <= 0) { S.d = 0; S.st = 'idle'; e.cd = rnd(3.5, 5) } }
     for (const b of harvesterBlades(e)) {
@@ -370,7 +404,7 @@ function eliteMove(e, dt, d) {
     else if (H.st === 'fly') {
       H.x += H.vx * dt; H.y += H.vy * dt; H.t -= dt;
       if (P.z < 20 && Math.hypot(P.x - H.x, P.y - H.y) < P.r + 8) { H.st = 'hooked'; H.t = 1.8; hitPlayer(e.dmg * .4); txt(P.x, P.y - 40, t('fHooked'), '#ff6b5a', 18, 1) }
-      else if (H.t <= 0) H.st = 'back';
+      else if (H.t <= 0 || G.obs.some(o => Math.hypot(o.x - H.x, o.y - H.y) < o.r + 4)) H.st = 'back';
     } else if (H.st === 'hooked') {
       H.x = P.x; H.y = P.y; H.t -= dt;
       const dx = e.x - P.x, dy = e.y - P.y, dd = Math.hypot(dx, dy) || 1;
@@ -392,6 +426,13 @@ export function harvesterBlades(e) {
     out.push({ bx, by, x: bx + fx * d, y: by + fy * d, R: 17 });
   }
   return out;
+}
+
+// Collision circles of a car: its main circle, plus a nose circle for the Harvester's long comb.
+const MAIN = [[0, 0, 0]];
+function bodyCircles(e) {
+  if (e.type !== 'harvester') { MAIN[0][2] = e.r; return MAIN }
+  const k = e.len * .62; return [[0, 0, e.r], [Math.cos(e.a) * k, Math.sin(e.a) * k, 30]];
 }
 
 function hitPlayer(d) {
@@ -471,9 +512,13 @@ export function update(dt) {
   }
   P.wl = wl;
   if (isDrift) {
-    drift.on = true; drift.off = 0;
-    drift.pts += slip * dt * drift.mult * 1.05;
-    drift.mult = Math.min(5, drift.mult + dt * .45 * S.driftGain);
+    drift.on = true; drift.off = 0; drift.time = (drift.time || 0) + dt;
+    // drifting close to other cars is worth much more than drifting in an empty corner
+    const near = G.enemies.some(e => !e.dead && Math.abs(e.x - P.x) < 200 && Math.abs(e.y - P.y) < 200 && Math.hypot(e.x - P.x, e.y - P.y) < 200);
+    drift.near = near;
+    drift.pts += slip * dt * drift.mult * (near ? 1.4 : .4);
+    drift.mult = Math.min(5, drift.mult + dt * (near ? .7 : .3) * S.driftGain);
+    if (drift.time > 8) bankDrift(); // one combo lasts at most 8 s
     drift.heat = Math.min(1, drift.heat + dt * .6 * S.driftGain);
     P.nitro = Math.min(1, P.nitro + dt * .18 * S.driftGain * S.nitroFill);
     const lf = G.fires[G.fires.length - 1];
@@ -495,7 +540,12 @@ export function update(dt) {
       queue(G.wave >= 4 && r < .08 + G.wave * .012 ? 'brute' : G.wave >= 3 && r < .33 ? 'spit' : 'rust');
     }
   }
-  for (const s of G.pend) { s.t -= dt; if (s.t <= 0) { spawn(s.type, s.x, s.y); s.done = true } }
+  for (const s of G.pend) {
+    s.t -= dt; if (s.t > 0) continue;
+    // the player may have driven onto the marker meanwhile: move it rather than spawn on top of them
+    if (Math.hypot(s.x - P.x, s.y - P.y) < 170) { const p = spawnSpot(); if (p) { s.x = p.x; s.y = p.y; s.t = s.max * .6; continue } }
+    spawn(s.type, s.x, s.y); s.done = true;
+  }
   G.pend = G.pend.filter(s => !s.done);
   if (G.waveT <= 0) { endWave(); return }
 
@@ -536,9 +586,9 @@ export function update(dt) {
 
   /* ramming: both cars get hurt. Damage to you grows with impact speed and with
      how heavy the other car is compared to yours; whoever drove into whom also counts. */
-  for (const e of E) {
+  for (const e of E) for (const [ox, oy, er] of bodyCircles(e)) {
     if (e.dead || Math.abs(P.z - e.z) > 14) continue;
-    const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy), m = P.r + e.r;
+    const dx = e.x + ox - P.x, dy = e.y + oy - P.y, d = Math.hypot(dx, dy), m = P.r + er;
     if (d < m + 4 && S.spikes && e.hitcd <= 0) { e.hitcd = .3; hurt(e, 12 * S.spikes * S.dmg) }
     if (d < m && d > 0) {
       const nx = dx / d, ny = dy / d, ov = m - d, pm = S.mass, em = e.mass;
@@ -559,6 +609,8 @@ export function update(dt) {
       } else if (P.inv <= 0) hitPlayer(e.dmg * .6);
     }
   }
+
+  for (const e of E) rampSolid(e); rampSolid(P);
 
   /* weapons */
   if (W.mg) {

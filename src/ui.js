@@ -75,26 +75,25 @@ const icon = (id, cls = 'ico') => {
 };
 const lockSvg = on => `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2" fill="currentColor"/><path d="M8 11V8a4 4 0 0 1 ${on ? '8 0v3' : '7.5-1.5'}" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"/></svg>`;
 
-// Blueprint: top-down car outline (front up) with a chip per slot and a leader line to where it sits.
-const BP = { // [anchor on the car, chip centre] in svg units (360 x 440)
-  front: [[180, 64], [180, 22]], hood: [[180, 118], [300, 108]], roof: [[180, 218], [300, 218]],
-  sides: [[122, 218], [60, 218]], trunk: [[180, 318], [300, 330]], rear: [[180, 376], [180, 420]]
-};
+// Blueprint: top-down car outline (front up) with a numbered marker on each slot,
+// and a list underneath so part names are never cut off, in any language.
+const BP = { front: [180, 58], hood: [180, 118], roof: [180, 218], sides: [118, 218], trunk: [180, 318], rear: [180, 382] };
 function renderBlueprint() {
-  const lines = SLOTS.map(s => { const [[ax, ay], [cx, cy]] = BP[s]; return `<line x1="${ax}" y1="${ay}" x2="${cx}" y2="${cy}"/><circle cx="${ax}" cy="${ay}" r="4"/>` }).join('');
-  const svg = `<svg viewBox="0 0 360 440" aria-hidden="true">
+  const marks = SLOTS.map((s, i) => { const [x, y] = BP[s]; return `<g class="mk${G.build[s] ? ' on' : ''}" data-slot="${s}"><circle cx="${x}" cy="${y}" r="13"/><text x="${x}" y="${y + 5}">${i + 1}</text></g>` }).join('')
+    + `<g class="mk${G.build.sides ? ' on' : ''}" data-slot="sides"><circle cx="242" cy="218" r="13"/><text x="242" y="223">5</text></g>`;
+  const svg = `<svg viewBox="80 40 200 360" aria-hidden="true">
     <g class="car-o"><rect x="113" y="100" width="14" height="48" rx="4"/><rect x="233" y="100" width="14" height="48" rx="4"/>
     <rect x="113" y="290" width="14" height="48" rx="4"/><rect x="233" y="290" width="14" height="48" rx="4"/>
     <rect x="125" y="68" width="110" height="304" rx="30"/><rect x="138" y="165" width="84" height="108" rx="12"/>
     <line x1="140" y1="160" x2="220" y2="160"/><line x1="140" y1="280" x2="220" y2="280"/>
-    <rect x="132" y="60" width="96" height="8" rx="3"/><rect x="132" y="372" width="96" height="8" rx="3"/></g>
-    <g class="lead">${lines}</g></svg>`;
-  const chips = SLOTS.map(s => {
-    const b = G.build[s], [, [cx, cy]] = BP[s];
-    const inner = b ? `${icon(b.id, 'ico xs')}<span class="pn">${esc(partName(b.id))}</span><span class="lv">Lv ${b.lvl}/${PART[b.id].max}</span>` : `<span class="pn empty">${esc(t('empty'))}</span>`;
-    return `<div class="slot${b ? ' on' : ''}" data-slot="${s}" style="left:${cx / 3.6}%;top:${cy / 4.4}%"><span class="sn">${esc(L().slots[s])}</span><span class="sv">${inner}</span></div>`;
+    <rect x="132" y="60" width="96" height="8" rx="3"/><rect x="132" y="372" width="96" height="8" rx="3"/></g>${marks}</svg>`;
+  const rows = SLOTS.map((s, i) => {
+    const b = G.build[s];
+    return `<li class="bprow${b ? ' on' : ''}" data-slot="${s}"><span class="num">${i + 1}</span>
+      <span class="sl"><span class="sn">${esc(L().slots[s])}</span><span class="pn${b ? '' : ' empty'}">${b ? esc(partName(b.id)) : esc(t('empty'))}</span></span>
+      ${b ? `${icon(b.id, 'ico xs')}<span class="lv">Lv ${b.lvl}/${PART[b.id].max}</span>` : ''}</li>`;
   }).join('');
-  $('blueprint').innerHTML = `<div class="bpwrap">${svg}${chips}</div>`;
+  $('blueprint').innerHTML = `<div class="bpwrap">${svg}</div><ol class="bplist">${rows}</ol>`;
 }
 export function renderShop() {
   set($('shopTitle'), t('garage', { n: G.wave }));
@@ -149,7 +148,7 @@ export function wire(onStart, onMenu, onLang) {
     if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList.contains('card')) { ev.preventDefault(); act(ev, ev.target) }
   });
   // hovering a part lights up the slot it goes into
-  const hl = s => { for (const el of document.querySelectorAll('#blueprint .slot')) el.classList.toggle('hl', el.dataset.slot === s) };
+  const hl = s => { for (const el of document.querySelectorAll('#blueprint [data-slot]')) el.classList.toggle('hl', el.dataset.slot === s) };
   $('cards').addEventListener('pointerover', ev => { const c = ev.target.closest('.card'); hl(c && c.dataset.slot) });
   $('cards').addEventListener('focusin', ev => { const c = ev.target.closest('.card'); hl(c && c.dataset.slot) });
   $('cards').addEventListener('pointerleave', () => hl(null));
@@ -195,20 +194,46 @@ export function hud() {
   }
 }
 
-/* floating numbers, projected from the 3D world */
-const fx = $('fx'), pool = [];
+/* floating numbers and off-screen spawn arrows, projected from the 3D world */
+const fx = $('fx'), pool = [], arrows = [];
 for (let i = 0; i < 40; i++) { const d = document.createElement('div'); fx.appendChild(d); pool.push(d) }
+for (let i = 0; i < 14; i++) { const d = document.createElement('i'); d.className = 'edge'; fx.appendChild(d); arrows.push(d) }
 export function texts(project) {
-  let i = 0;
-  for (const tx of G.texts) {
-    if (i >= pool.length) break;
-    const p = project(tx.x, tx.y, 40 + (1 - tx.life / tx.max) * 30); if (!p.ok) continue;
-    const d = pool[i++];
-    d.style.display = 'block';
-    d.style.transform = `translate(${p.x}px,${p.y}px) translate(-50%,-50%)`;
-    d.style.opacity = Math.min(1, tx.life / tx.max * 2);
-    d.style.fontSize = tx.size + 'px'; d.style.color = tx.col;
-    set(d, tx.s);
+  let i = 0, k = 0;
+  if (project) {
+    for (const tx of G.texts) {
+      if (i >= pool.length) break;
+      const p = project(tx.x, tx.y, 40 + (1 - tx.life / tx.max) * 30); if (!p.ok) continue;
+      const d = pool[i++];
+      d.style.display = 'block';
+      d.style.transform = `translate(${p.x}px,${p.y}px) translate(-50%,-50%)`;
+      d.style.opacity = Math.min(1, tx.life / tx.max * 2);
+      d.style.fontSize = tx.size + 'px'; d.style.color = tx.col;
+      set(d, tx.s);
+    }
+    // a red arrow at the screen edge for every spawn marker you can't see, a yellow one for an elite
+    const W = fx.clientWidth, H = fx.clientHeight, m = 26, cx = W / 2, cy = H / 2;
+    const targets = G.pend.map(s => [s.x, s.y, s.elite]);
+    for (const e of G.enemies) if (e.elite) targets.push([e.x, e.y, true]);
+    for (const [x, y, el] of targets) {
+      if (k >= arrows.length) break;
+      const p = project(x, y, 0); if (p.x > m && p.x < W - m && p.y > m && p.y < H - m) continue;
+      const dx = p.x - cx, dy = p.y - cy, sc = Math.min((cx - m) / Math.abs(dx || 1e-6), (cy - m) / Math.abs(dy || 1e-6));
+      const a = arrows[k++]; a.style.display = 'block'; a.classList.toggle('el', !!el);
+      a.style.transform = `translate(${cx + dx * sc}px,${cy + dy * sc}px) translate(-50%,-50%) rotate(${Math.atan2(dy, dx)}rad)`;
+    }
   }
   for (; i < pool.length; i++) pool[i].style.display = 'none';
+  for (; k < arrows.length; k++) arrows[k].style.display = 'none';
+}
+
+/* touch controls: on-screen buttons that press the same keys as the keyboard */
+export function touch(pause) {
+  const box = $('touch'); if (!box) return;
+  for (const b of box.querySelectorAll('[data-key]')) {
+    const down = e => { e.preventDefault(); b.setPointerCapture?.(e.pointerId); G.keys[b.dataset.key] = true; b.classList.add('on') };
+    const up = () => { G.keys[b.dataset.key] = false; b.classList.remove('on') };
+    b.addEventListener('pointerdown', down); b.addEventListener('pointerup', up); b.addEventListener('pointercancel', up); b.addEventListener('lostpointercapture', up);
+  }
+  $('tPause').addEventListener('click', pause);
 }

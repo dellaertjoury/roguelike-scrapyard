@@ -35,6 +35,49 @@ scene.add(sun, sun.target);
 const SUN_OFF = new THREE.Vector3(-520, 1100, 380);
 
 /* ---------- helpers ---------- */
+// Batching: many small static meshes are baked into a few meshes with per-vertex colours,
+// which cuts draw calls (and shadow draws) a lot. Geometry/materials flagged keep are shared.
+const keep = (...xs) => { for (const x of xs) x.userData.keep = true; return xs[0] };
+function dispose(obj) {
+  obj.traverse(m => {
+    if (!m.isMesh) return;
+    if (!m.geometry.userData.keep) m.geometry.dispose();
+    for (const mt of Array.isArray(m.material) ? m.material : [m.material]) if (!mt.userData.keep) mt.dispose();
+  });
+}
+function bake(m, matrix) {
+  const g = m.geometry.index ? m.geometry.toNonIndexed() : m.geometry.clone();
+  g.applyMatrix4(matrix);
+  const n = g.attributes.position.count, col = new Float32Array(n * 3), mats = Array.isArray(m.material) ? m.material : [m.material];
+  if (Array.isArray(m.material) && g.groups.length) { for (const gr of g.groups) { const c = mats[gr.materialIndex].color; for (let i = gr.start; i < Math.min(n, gr.start + gr.count); i++) c.toArray(col, i * 3) } }
+  else { const c = mats[0].color; for (let i = 0; i < n; i++) c.toArray(col, i * 3) }
+  const out = { pos: g.attributes.position.array, nor: g.attributes.normal.array, col }; g.dispose(); return out;
+}
+function joinBaked(list) {
+  let n = 0; for (const b of list) n += b.pos.length;
+  const pos = new Float32Array(n), nor = new Float32Array(n), col = new Float32Array(n); let o = 0;
+  for (const b of list) { pos.set(b.pos, o); nor.set(b.nor, o); col.set(b.col, o); o += b.pos.length }
+  const g = new THREE.BufferGeometry();
+  g.setAttribute('position', new THREE.BufferAttribute(pos, 3)); g.setAttribute('normal', new THREE.BufferAttribute(nor, 3)); g.setAttribute('color', new THREE.BufferAttribute(col, 3));
+  g.computeBoundingSphere(); return g;
+}
+const VC_LIT = keep(new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true }));
+const VC_LIT2 = keep(new THREE.MeshLambertMaterial({ vertexColors: true, flatShading: true, side: THREE.DoubleSide }));
+const VC_BASIC = keep(new THREE.MeshBasicMaterial({ vertexColors: true }));
+const isLit = m => (Array.isArray(m) ? m : [m]).every(x => x.isMeshLambertMaterial);
+const isBasic = m => !Array.isArray(m) && m.isMeshBasicMaterial;
+// Merge the meshes in `meshes` (with their matrices relative to `parent`) into one lit and one unlit mesh.
+function mergeInto(parent, meshes, matrixOf, litMat = VC_LIT) {
+  const lit = [], basic = [];
+  for (const m of meshes) { if (isLit(m.material)) lit.push(m); else if (isBasic(m.material)) basic.push(m) }
+  const add = (list, mat, shadow) => {
+    if (!list.length) return null;
+    const mm = new THREE.Mesh(joinBaked(list.map(m => bake(m, matrixOf(m)))), mat); mm.castShadow = shadow; mm.receiveShadow = true; parent.add(mm);
+    for (const m of list) { m.parent && m.parent.remove(m); if (!m.geometry.userData.keep) m.geometry.dispose(); for (const mt of [].concat(m.material)) if (!mt.userData.keep) mt.dispose() }
+    return mm;
+  };
+  return [add(lit, litMat, true), add(basic, VC_BASIC, false)];
+}
 const lam = (color, o = {}) => new THREE.MeshLambertMaterial({ color, flatShading: true, ...o });
 const mesh = (geo, mat, shadow = true) => { const m = new THREE.Mesh(geo, mat); m.castShadow = shadow; m.receiveShadow = true; return m };
 const dummy = new THREE.Object3D();
@@ -67,7 +110,8 @@ sand.position.set(AW / 2, -.6, AH / 2); sand.receiveShadow = true; scene.add(san
 }
 
 // tyre wall around the arena (low-poly torus = tyre with a hole)
-const tireGeo = new THREE.TorusGeometry(11, 5.5, 5, 10).rotateX(Math.PI / 2);
+const tireGeo = keep(new THREE.TorusGeometry(11, 5.5, 5, 10).rotateX(Math.PI / 2));
+const STATIC = new THREE.Group(); scene.add(STATIC);
 {
   const spots = [];
   for (let x = EDGE / 2; x < AW; x += 34) spots.push([x, EDGE / 2], [x, AH - EDGE / 2]);
@@ -90,9 +134,9 @@ const crowdMesh = (() => {
   const stands = [[AW * .3, -95, 1], [AW * .7, -95, 1], [AW * .5, AH + 95, -1]];
   const concrete = lam(0xd9d4cb), roofM = lam(0xe8553a);
   for (const [cx, cz, dir] of stands) {
-    for (let r = 0; r < 3; r++) { const step = mesh(new THREE.BoxGeometry(380, 12 * (r + 1), 22), concrete); step.position.set(cx, 6 * (r + 1), cz - dir * r * 22); scene.add(step) }
-    const roof = mesh(new THREE.BoxGeometry(400, 4, 80), roofM); roof.position.set(cx, 78, cz - dir * 22); scene.add(roof);
-    for (const px of [-190, 190]) { const pole = mesh(new THREE.CylinderGeometry(2.5, 2.5, 78, 6), concrete); pole.position.set(cx + px, 39, cz - dir * 56); scene.add(pole) }
+    for (let r = 0; r < 3; r++) { const step = mesh(new THREE.BoxGeometry(380, 12 * (r + 1), 22), concrete); step.position.set(cx, 6 * (r + 1), cz - dir * r * 22); STATIC.add(step) }
+    const roof = mesh(new THREE.BoxGeometry(400, 4, 80), roofM); roof.position.set(cx, 78, cz - dir * 22); STATIC.add(roof);
+    for (const px of [-190, 190]) { const pole = mesh(new THREE.CylinderGeometry(2.5, 2.5, 78, 6), concrete); pole.position.set(cx + px, 39, cz - dir * 56); STATIC.add(pole) }
     for (let r = 0; r < 3; r++) for (let k = 0; k < 30; k++) crowd.push({ x: cx - 170 + k * 11.7 + rnd(-2, 2), y: 12 * (r + 1) + 8, z: cz - dir * r * 22, ph: rnd(0, TAU) });
   }
   const im = new THREE.InstancedMesh(new THREE.BoxGeometry(7, 15, 6), lam(0xffffff), crowd.length);
@@ -115,12 +159,12 @@ const crowdMesh = (() => {
     const s = rnd(30, 62), tr = new THREE.Group();
     const trunk = mesh(trunkG, trunkM); trunk.position.y = 15; tr.add(trunk);
     const crown = mesh(crownG, crownMs[placed % 4]); crown.scale.set(s, s * rnd(1, 1.3), s); crown.position.y = 30 + s * .7; crown.rotation.set(rnd(0, 3), rnd(0, 3), 0); tr.add(crown);
-    tr.position.set(x, 0, z); scene.add(tr); placed++;
+    tr.position.set(x, 0, z); STATIC.add(tr); placed++;
   }
   for (let i = 0; i < 40; i++) {
     const x = rnd(-700, AW + 700), z = rnd(-600, AH + 600);
     if (!outside(x, z, 120) || nearStand(x, z)) continue;
-    const r = mesh(rockG, rockM); r.scale.set(rnd(10, 30), rnd(8, 20), rnd(10, 30)); r.rotation.set(rnd(0, 3), rnd(0, 3), 0); r.position.set(x, 4, z); scene.add(r);
+    const r = mesh(rockG, rockM); r.scale.set(rnd(10, 30), rnd(8, 20), rnd(10, 30)); r.rotation.set(rnd(0, 3), rnd(0, 3), 0); r.position.set(x, 4, z); STATIC.add(r);
   }
   // crushed-car piles in the corners
   const crushed = new THREE.InstancedMesh(new THREE.BoxGeometry(48, 14, 26), lam(0xffffff), 4 * 14);
@@ -136,24 +180,27 @@ const crowdMesh = (() => {
   scene.add(crushed);
   const poleM = lam(0x8d9096), headM = lam(0x3a3d42), glowM = new THREE.MeshBasicMaterial({ color: 0xfffbe0 });
   for (const [x, z] of [[-60, -60], [AW + 60, -60], [-60, AH + 60], [AW + 60, AH + 60]]) {
-    const p = mesh(new THREE.CylinderGeometry(4, 6, 240, 6), poleM); p.position.set(x, 120, z); scene.add(p);
-    const h = mesh(new THREE.BoxGeometry(60, 26, 14), headM); h.position.set(x, 245, z); h.lookAt(AW / 2, 0, AH / 2); scene.add(h);
-    const l = new THREE.Mesh(new THREE.PlaneGeometry(52, 18), glowM); l.position.copy(h.position); l.lookAt(AW / 2, 0, AH / 2); l.translateZ(7.2); scene.add(l);
+    const p = mesh(new THREE.CylinderGeometry(4, 6, 240, 6), poleM); p.position.set(x, 120, z); STATIC.add(p);
+    const h = mesh(new THREE.BoxGeometry(60, 26, 14), headM); h.position.set(x, 245, z); h.lookAt(AW / 2, 0, AH / 2); STATIC.add(h);
+    const l = new THREE.Mesh(new THREE.PlaneGeometry(52, 18), glowM); l.position.copy(h.position); l.lookAt(AW / 2, 0, AH / 2); l.translateZ(7.2); STATIC.add(l);
   }
   const flagM = new THREE.MeshLambertMaterial({ color: 0xe8553a, side: THREE.DoubleSide, flatShading: true });
   for (const [x, z] of [[AW * .15, -70], [AW * .85, -70], [AW * .15, AH + 70], [AW * .85, AH + 70], [-70, AH * .5], [AW + 70, AH * .5]]) {
-    const p = mesh(new THREE.CylinderGeometry(1.5, 1.5, 90, 5), poleM); p.position.set(x, 45, z); scene.add(p);
-    const f = mesh(new THREE.PlaneGeometry(34, 22), flagM); f.position.set(x + 17, 78, z); f.rotation.y = .3; scene.add(f);
+    const p = mesh(new THREE.CylinderGeometry(1.5, 1.5, 90, 5), poleM); p.position.set(x, 45, z); STATIC.add(p);
+    const f = mesh(new THREE.PlaneGeometry(34, 22), flagM); f.position.set(x + 17, 78, z); f.rotation.y = .3; STATIC.add(f);
   }
 }
+
+// bake all static scenery (stands, trees, rocks, poles, flags) into two meshes
+{ STATIC.updateMatrixWorld(true); const ms = []; STATIC.traverse(m => { if (m.isMesh) ms.push(m) }); mergeInto(STATIC, ms, m => m.matrixWorld, VC_LIT2) }
 
 /* ---------- obstacles (rebuilt each run) ---------- */
 const obsGroup = new THREE.Group(); scene.add(obsGroup);
 let obsBuilt = -1;
-const tireM = lam(0x2a2826), tireRed = lam(0xe24a32), hayM = lam(0xe2bf62), hayTop = lam(0xedd283);
+const tireM = keep(lam(0x2a2826)), tireRed = keep(lam(0xe24a32)), hayM = keep(lam(0xe2bf62)), hayTop = keep(lam(0xedd283));
 // A wooden kicker: triangular profile extruded across its width, red-white side
 // boards, hazard-yellow edge rails and a white lip so you can read it from above.
-const woodM = lam(0xb98a55), rampSideM = lam(0xe24a32), railM = lam(0xffc23d), lipM = lam(0xf4efe4), plankM = lam(0x8f6438);
+const woodM = keep(lam(0xb98a55)), rampSideM = keep(lam(0xe24a32)), railM = keep(lam(0xffc23d)), lipM = keep(lam(0xf4efe4)), plankM = keep(lam(0x8f6438));
 function buildRamp(r) {
   const g = new THREE.Group(), sh = new THREE.Shape();
   sh.moveTo(0, 0); sh.lineTo(r.L, 0); sh.lineTo(r.L, r.H); sh.closePath();
@@ -167,7 +214,7 @@ function buildRamp(r) {
   return g;
 }
 function buildObstacles() {
-  obsGroup.clear();
+  dispose(obsGroup); obsGroup.clear();
   for (const o of G.obs) {
     if (o.k === 'tire') {
       for (let i = 0; i < 3; i++) {
@@ -182,14 +229,18 @@ function buildObstacles() {
     }
   }
   for (const r of G.ramps) obsGroup.add(buildRamp(r));
+  // one batched mesh for every tyre, bale and ramp of this run
+  obsGroup.updateMatrixWorld(true); const ms = []; obsGroup.traverse(m => { if (m.isMesh) ms.push(m) });
+  const keepMs = obsGroup.children.slice(); mergeInto(obsGroup, ms, m => m.matrixWorld);
+  for (const c of keepMs) if (c.isGroup) obsGroup.remove(c);
   obsBuilt = G.obsVersion;
 }
 
 /* ---------- cars ---------- */
 const DARK = new THREE.Color(0x1e1a16);
-const tyreM = lam(0x1f1d1c), rimM = lam(0xb8bcc2), glassM = lam(0x26313a), bumperM = lam(0x4a4c50), whiteM = lam(0xf4efe4);
-const headM = new THREE.MeshBasicMaterial({ color: 0xfff2c0 }), tailM = new THREE.MeshBasicMaterial({ color: 0xff3a2a });
-const wheelG = new THREE.CylinderGeometry(1, 1, 1, 8);
+const tyreM = keep(lam(0x1f1d1c)), rimM = keep(lam(0xb8bcc2)), glassM = keep(lam(0x26313a)), bumperM = keep(lam(0x4a4c50)), whiteM = keep(lam(0xf4efe4));
+const headM = keep(new THREE.MeshBasicMaterial({ color: 0xfff2c0 })), tailM = keep(new THREE.MeshBasicMaterial({ color: 0xff3a2a }));
+const wheelG = keep(new THREE.CylinderGeometry(1, 1, 1, 8));
 
 export function buildCar({ len: L, wid: W, color, kind, shape }) {
   shape = shape || { cabL: .42, cabX: -.1, cabH: .36 };
@@ -245,6 +296,15 @@ export function buildCar({ len: L, wid: W, color, kind, shape }) {
     for (const z of [-1, 1]) { const ex = mesh(new THREE.CylinderGeometry(3, 3, 30, 6), lam(0x3a3a3a)); ex.position.set(-L * .3, by + 22, z * W * .3); tilt.add(ex) }
   }
   const dims = { L, W, r, bh, by, top: by + bh / 2, cabL, cabX: L * shape.cabX, cabH, roofY: by + bh / 2 + cabH };
+  // batch: body-coloured pieces into one mesh, everything else into one vertex-coloured mesh, each wheel into one mesh
+  const bodyMs = tilt.children.filter(c => c.isMesh && c.material === body);
+  if (bodyMs.length > 1) { const bm = new THREE.Mesh(joinBaked(bodyMs.map(m => { m.updateMatrix(); return bake(m, m.matrix) })), body); bm.castShadow = bm.receiveShadow = true; for (const m of bodyMs) { tilt.remove(m); m.geometry.dispose() } tilt.add(bm) }
+  const rest = tilt.children.filter(c => c.isMesh && c.material !== body); rest.forEach(m => m.updateMatrix());
+  mergeInto(tilt, rest, m => m.matrix);
+  for (let i = 0; i < wheels.length; i++) {
+    const pv = wheels[i].parent; pv.children.forEach(m => m.updateMatrix());
+    const [wm] = mergeInto(pv, pv.children.slice(), m => m.matrix); wheels[i] = wm;
+  }
   return { root, tilt, body, roof, base: new THREE.Color(color), wheels, front, turret, r, kind, dims };
 }
 
@@ -271,7 +331,7 @@ const streaks = pool(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial
 const scrapPool = pool(new THREE.CylinderGeometry(7, 7, 3, 6), lam(0xffffff), 400); scrapPool.castShadow = true;
 const minePool = pool(new THREE.CylinderGeometry(9, 10, 4, 8), lam(0x2e2e30), 20); minePool.castShadow = true;
 const sawG = (() => { const sh = new THREE.Shape(); for (let k = 0; k <= 16; k++) { const r = k % 2 ? 9 : 13, b = k / 16 * TAU; k ? sh.lineTo(Math.cos(b) * r, Math.sin(b) * r) : sh.moveTo(r, 0) } return new THREE.ExtrudeGeometry(sh, { depth: 2, bevelEnabled: false }).rotateX(-Math.PI / 2) })();
-const sawM = lam(0xd0d3d8), armM = lam(0x6b6e74), hubM = lam(0x2f3033);
+const sawM = keep(lam(0xd0d3d8)), armM = keep(lam(0x6b6e74)), hubM = keep(lam(0x2f3033)); keep(sawG);
 // ---------- visible garage parts ----------
 // Every installed part gets a model on its slot. Rebuilt when the build changes.
 const M = {
@@ -280,6 +340,7 @@ const M = {
   gun: lam(0x55585e), white: lam(0xf4efe4), glowBlue: new THREE.MeshBasicMaterial({ color: 0xbfe8ff }),
   glowRed: new THREE.MeshBasicMaterial({ color: 0xff3a2a }), glowOrange: new THREE.MeshBasicMaterial({ color: 0xff8a2a })
 };
+for (const m of Object.values(M)) keep(m);
 const box = (w, h, d, m, x, y, z, g) => { const o = mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); g.add(o); return o };
 const cyl = (r1, r2, h, n, m, x, y, z, g, rot) => { const o = mesh(new THREE.CylinderGeometry(r1, r2, h, n), m); o.position.set(x, y, z); if (rot) o.rotation.set(...rot); g.add(o); return o };
 function partMesh(o, id, l, P) {
@@ -362,7 +423,7 @@ function partMesh(o, id, l, P) {
     case 'spoiler': {
       const h = 5 + l * 1.5; box(6 + l, 1.2, W * 1.08, M.dark, -L * .43, top + h, 0, g);
       for (const z of [-W * .3, W * .3]) box(1.5, h, 1.5, M.dark, -L * .43, top + h / 2, z, g);
-      for (const z of [-W * .54, W * .54]) box(6 + l, 4, 1, o.body, -L * .43, top + h + 1, z, g);
+      const finM = lam(o.base); for (const z of [-W * .54, W * .54]) box(6 + l, 4, 1, finM, -L * .43, top + h + 1, z, g);
       break;
     }
     case 'nitro': {
@@ -399,16 +460,16 @@ function partMesh(o, id, l, P) {
       for (const s of [-1, 1]) { box(L * .7, 2.4, 2, M.dark, 0, D.r * .9, s * (W / 2 + .6), g); const gl = mesh(new THREE.BoxGeometry(L * .66, .9, .7), new THREE.MeshBasicMaterial({ color: 0xff8a2a }), false); gl.position.set(0, D.r * .6, s * (W / 2 + 1.5)); g.add(gl); o.skirtGlow.push(gl) }
       break;
     }
-    case 'slicks': for (const w of o.wheels) w.scale.y = W * .22 * (1 + .28 * l); break;
+    case 'slicks': for (const w of o.wheels) w.scale.z = 1 + .28 * l; break;
   }
   return g;
 }
 function syncParts(o, P) {
   const sig = SLOTS.map(s => G.build[s] ? G.build[s].id + G.build[s].lvl : '-').join('|') + P.car.id;
   if (o.partSig !== sig) {
-    if (o.parts) o.tilt.remove(o.parts);
+    if (o.parts) { o.tilt.remove(o.parts); dispose(o.parts) }
     o.turret = null; o.blades = []; o.pipeGlow = null; o.skirtGlow = null;
-    for (const w of o.wheels) w.scale.y = o.dims.W * .22;
+    for (const w of o.wheels) w.scale.z = 1;
     const g = new THREE.Group();
     for (const s of SLOTS) { const b = G.build[s]; if (b) g.add(partMesh(o, b.id, b.lvl, P)) }
     o.tilt.add(g); o.parts = g; o.partSig = sig;
@@ -457,7 +518,7 @@ function placeCamera(cx, cz, shake) {
 let texT = 0;
 function syncGround(dt) {
   texT -= dt;
-  if (G.groundDirty && texT <= 0) { groundTex.needsUpdate = true; G.groundDirty = false; texT = .1 }
+  if (G.groundDirty && texT <= 0) { groundTex.needsUpdate = true; G.groundDirty = false; texT = .25 } // ~4 uploads/s max
   if (obsBuilt !== G.obsVersion) buildObstacles();
 }
 let cheer = 0;
@@ -476,7 +537,7 @@ function poseCar(o, x, y, a, lat, accel, sp, steer, dt, z = 0, pitch = 0) {
   o.tilt.rotation.x += (clamp(-lat / 900, -.1, .1) - o.tilt.rotation.x) * Math.min(1, dt * 8);
   o.tilt.rotation.z += (clamp(-accel / 4000, -.05, .05) + pitch - o.tilt.rotation.z) * Math.min(1, dt * 10);
   for (const f of o.front) f.rotation.y = -steer * .45;
-  for (const w of o.wheels) w.rotation.y += sp * dt / o.r;
+  for (const w of o.wheels) w.rotation.z -= sp * dt / o.r;
 }
 
 /* ---------- main render ---------- */
@@ -488,7 +549,7 @@ export function render(dt) {
 
   // player car
   if (P) {
-    if (playerCarId !== P.car.id) { if (player) scene.remove(player.root); player = buildCar({ ...P.car, kind: 'player' }); scene.add(player.root); playerCarId = P.car.id }
+    if (playerCarId !== P.car.id) { if (player) { scene.remove(player.root); dispose(player.root); player.partSig = null } player = buildCar({ ...P.car, kind: 'player' }); scene.add(player.root); playerCarId = P.car.id }
     const alive = ['play', 'clear', 'shop', 'pause'].includes(G.state);
     player.root.visible = alive && !(P.inv > 0 && Math.sin(G.time * 40) > 0);
     poseCar(player, P.x, P.y, P.a, P.air ? 0 : P.lat, P.air ? 0 : (P.fwd - lastFwd) / Math.max(dt, .001), P.fwd, P.steer, dt, P.z, P.pitch); lastFwd = P.fwd;
@@ -597,7 +658,7 @@ export function attract(dt) {
   syncGround(dt); animateCrowd(dt);
   for (const [e, o] of active) release(o, e.type); active.clear();
   if (player) player.root.visible = false;
-  if (!demo.length) for (let i = 0; i < 6; i++) { const o = buildCar({ len: 46, wid: 24, color: i ? ECOL[i * 2] : '#e8553a', kind: i ? 'rust' : 'player' }); scene.add(o.root); demo.push(o) }
+  if (!demo.length) for (let i = 0; i < 6; i++) { const o = buildCar({ len: 46, wid: 24, color: i ? ECOL[(i * 2) % ECOL.length] : '#e8553a', kind: i ? 'rust' : 'player' }); scene.add(o.root); demo.push(o) }
   demo.forEach((o, i) => {
     const a = demoT * .45 + i * TAU / 6, x = AW / 2 + Math.cos(a) * 520, y = AH / 2 + Math.sin(a) * 330;
     const head = a + Math.PI / 2 + .55;
@@ -632,7 +693,7 @@ export function portraits(cars) {
   const out = cars.map(c => {
     const o = buildCar({ ...c, kind: 'player' }); o.root.rotation.y = .5; sc.add(o.root);
     const s = 52 / c.len; o.root.scale.setScalar(s);
-    r.render(sc, cam); const url = r.domElement.toDataURL('image/png'); sc.remove(o.root); return url;
+    r.render(sc, cam); const url = r.domElement.toDataURL('image/png'); sc.remove(o.root); dispose(o.root); return url;
   });
   r.dispose(); r.forceContextLoss && r.forceContextLoss();
   return out;
