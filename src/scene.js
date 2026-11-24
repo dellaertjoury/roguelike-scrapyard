@@ -264,19 +264,43 @@ const tyreM = keep(lam(0x1f1d1c)), rimM = keep(lam(0xb8bcc2)), glassM = keep(lam
 const headM = keep(new THREE.MeshBasicMaterial({ color: 0xfff2c0 })), tailM = keep(new THREE.MeshBasicMaterial({ color: 0xff3a2a }));
 const wheelG = keep(new THREE.CylinderGeometry(1, 1, 1, 8));
 
-export function buildCar({ len: L, wid: W, color, kind, shape }) {
+// Painted skins (assets/skins/<id>-top.png + <id>-side.png): the top image wraps the body's top face and,
+// cropped, the roof plate; the side image wraps both flanks. Front of the car = right edge of both images.
+const skinTex = {};
+function skinFor(key) {
+  const sk = A.skins && A.skins[key]; if (!sk) return null;
+  if (!skinTex[key]) { const tx = img => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; t.needsUpdate = true; t.userData.keep = true; return t }; skinTex[key] = { top: tx(sk.top), side: tx(sk.side) } }
+  return skinTex[key];
+}
+export function buildCar({ id, len: L, wid: W, color, kind, shape }) {
   shape = shape || { cabL: .42, cabX: -.1, cabH: .36 };
   const root = new THREE.Group(), tilt = new THREE.Group(); root.add(tilt);
-  const body = lam(color), roof = lam(new THREE.Color(color).multiplyScalar(.82));
+  const sk = skinFor(kind === 'player' ? id : kind);
+  if (sk) color = '#ffffff'; // the paint comes from the skin; tinting (damage, hit flash) multiplies it
+  const body = sk ? new THREE.MeshLambertMaterial({ map: sk.top }) : lam(color), roof = lam(new THREE.Color(color).multiplyScalar(.82));
   const r = kind === 'monster' ? W * .42 : W * .22, bh = W * .4, by = (kind === 'monster' ? r * 1.5 : r * .9) + bh / 2;
-  const b = mesh(new THREE.BoxGeometry(L, bh, W), body); b.position.y = by; tilt.add(b);
-  // hood slope: a thin wedge-ish top plate in body colour
-  const hood = mesh(new THREE.BoxGeometry(L * .28, bh * .2, W * .86), body); hood.position.set(L * .3, by + bh * .55, 0); tilt.add(hood);
+  const cabH = W * shape.cabH, cabL = L * shape.cabL, roofX = L * shape.cabX - cabL * .12;
+  if (sk) {
+    const sideM = new THREE.MeshLambertMaterial({ map: sk.side }); sideM.color = body.color; sideM.emissive = body.emissive;
+    const endM = lam(0x4a4744);
+    const b = new THREE.Mesh(new THREE.BoxGeometry(L, bh, W), [endM, endM, body, endM, sideM, sideM]); b.position.y = by; b.castShadow = b.receiveShadow = true; b.userData.skin = true; tilt.add(b);
+    // roof plate shows the matching crop of the top image
+    const rt = sk.top.clone(); rt.userData.keep = false; rt.needsUpdate = true;
+    rt.repeat.set(cabL * .62 / L, .8); rt.offset.set((roofX - cabL * .31) / L + .5, .1);
+    const roofTop = new THREE.MeshLambertMaterial({ map: rt }); roofTop.color = body.color; roofTop.emissive = body.emissive;
+    const rp = new THREE.Mesh(new THREE.BoxGeometry(cabL * .62, 1.4, W * .8), [endM, endM, roofTop, endM, endM, endM]); rp.position.set(roofX, by + bh / 2 + cabH + .5, 0); rp.castShadow = true; rp.userData.skin = true; tilt.add(rp);
+  } else {
+    const b = mesh(new THREE.BoxGeometry(L, bh, W), body); b.position.y = by; tilt.add(b);
+    // hood slope: a thin wedge-ish top plate in body colour
+    const hood = mesh(new THREE.BoxGeometry(L * .28, bh * .2, W * .86), body); hood.position.set(L * .3, by + bh * .55, 0); tilt.add(hood);
+  }
   // glass cabin with a painted roof plate set back, so the windshield shows from above
-  const cabH = W * shape.cabH, cabL = L * shape.cabL, cab = mesh(new THREE.BoxGeometry(cabL, cabH, W * .84), glassM);
+  const cab = mesh(new THREE.BoxGeometry(cabL, cabH, W * .84), glassM);
   cab.position.set(L * shape.cabX, by + bh / 2 + cabH / 2, 0); tilt.add(cab);
-  const roofP = mesh(new THREE.BoxGeometry(cabL * .62, 1.4, W * .8), roof); roofP.position.set(L * shape.cabX - cabL * .12, by + bh / 2 + cabH + .5, 0); tilt.add(roofP);
-  const roundel = mesh(new THREE.CylinderGeometry(W * .17, W * .17, .6, 10), whiteM, false); roundel.position.set(L * .32, by + bh / 2 + bh * .12, 0); tilt.add(roundel);
+  if (!sk) {
+    const roofP = mesh(new THREE.BoxGeometry(cabL * .62, 1.4, W * .8), roof); roofP.position.set(roofX, by + bh / 2 + cabH + .5, 0); tilt.add(roofP);
+    const roundel = mesh(new THREE.CylinderGeometry(W * .17, W * .17, .6, 10), whiteM, false); roundel.position.set(L * .32, by + bh / 2 + bh * .12, 0); tilt.add(roundel);
+  }
   for (const s of [1, -1]) {
     const bp = mesh(new THREE.BoxGeometry(3, bh * .45, W * 1.04), bumperM); bp.position.set(s * (L / 2 + 1), r * .9 + bh * .25, 0); tilt.add(bp);
     for (const z of [-1, 1]) {
@@ -292,18 +316,18 @@ export function buildCar({ len: L, wid: W, color, kind, shape }) {
   }
   // enemy looks follow the portraits in assets/elites: one beat-up 80s sedan, rusty roof rack,
   // rust on the arches; the wrecker gets a primer door, the spitter primer patches, the brute chevrons and plates
-  const roofY = by + bh / 2 + cabH, roofX = L * shape.cabX - cabL * .12;
+  const roofY = by + bh / 2 + cabH;
   const rustM = lam(0x9a4a22), rackM = lam(0xa0522d);
-  if (kind === 'rust' || kind === 'spit' || kind === 'brute') {
+  if (!sk && (kind === 'rust' || kind === 'spit' || kind === 'brute')) {
     for (const z of [-1, 1]) { const rl = mesh(new THREE.BoxGeometry(cabL * .78, 1.6, 1.6), rackM); rl.position.set(roofX, roofY + 3.2, z * W * .36); tilt.add(rl) }
     for (const u of [-.32, 0, .32]) { const cb = mesh(new THREE.BoxGeometry(1.6, 1.6, W * .74), rackM); cb.position.set(roofX + u * cabL * .78, roofY + 3.2, 0); tilt.add(cb) }
     for (const sx of [1, -1]) for (const z of [-1, 1]) { const ar = mesh(new THREE.BoxGeometry(L * .16, bh * .5, 1.2), rustM, false); ar.position.set(sx * L * .3, by - bh * .1, z * (W / 2 + .4)); tilt.add(ar) }
     const hr = mesh(new THREE.BoxGeometry(L * .1, .8, W * .22), rustM, false); hr.position.set(L * .4, by + bh / 2 + .3, -W * .28); tilt.add(hr);
   }
-  if (kind === 'rust') { const door = mesh(new THREE.BoxGeometry(L * .2, bh * .8, .8), lam(0xbfc2c4), false); door.position.set(L * .02, by, W / 2 + .3); tilt.add(door) }
-  if (kind === 'spit') for (const [u, z, w] of [[.32, .2, .2], [-.36, -.25, .18], [.18, -.3, .12]]) { const pt = mesh(new THREE.BoxGeometry(L * w, .8, W * .26), lam(0xe8e2d4), false); pt.position.set(L * u, by + bh / 2 + .3, z * W); tilt.add(pt) }
+  if (!sk && kind === 'rust') { const door = mesh(new THREE.BoxGeometry(L * .2, bh * .8, .8), lam(0xbfc2c4), false); door.position.set(L * .02, by, W / 2 + .3); tilt.add(door) }
+  if (!sk && kind === 'spit') for (const [u, z, w] of [[.32, .2, .2], [-.36, -.25, .18], [.18, -.3, .12]]) { const pt = mesh(new THREE.BoxGeometry(L * w, .8, W * .26), lam(0xe8e2d4), false); pt.position.set(L * u, by + bh / 2 + .3, z * W); tilt.add(pt) }
   if (kind === 'brute') {
-    for (const u of [.36, .26]) { const ch = mesh(new THREE.BoxGeometry(L * .05, .8, W * .8), lam(0x2a2826), false); ch.position.set(L * u, by + bh / 2 + .35, 0); tilt.add(ch) }
+    if (!sk) for (const u of [.36, .26]) { const ch = mesh(new THREE.BoxGeometry(L * .05, .8, W * .8), lam(0x2a2826), false); ch.position.set(L * u, by + bh / 2 + .35, 0); tilt.add(ch) }
     for (const z of [-1, 1]) { const pl = mesh(new THREE.BoxGeometry(cabL * .7, cabH * .8, 1), lam(0x5d6064)); pl.position.set(L * shape.cabX, by + bh / 2 + cabH * .45, z * W * .43); tilt.add(pl) }
     const spikeG = new THREE.ConeGeometry(2.4, 8, 4).rotateZ(-Math.PI / 2), spikeM = lam(0x8d9096);
     for (let i = 0; i < 4; i++) { const sp = mesh(spikeG, spikeM); sp.position.set(L / 2 + 9, by, -W * .42 + i * W * .28); tilt.add(sp) }
@@ -343,13 +367,13 @@ export function buildCar({ len: L, wid: W, color, kind, shape }) {
   // batch: body-coloured pieces into one mesh, everything else into one vertex-coloured mesh, each wheel into one mesh
   const bodyMs = tilt.children.filter(c => c.isMesh && c.material === body);
   if (bodyMs.length > 1) { const bm = new THREE.Mesh(joinBaked(bodyMs.map(m => { m.updateMatrix(); return bake(m, m.matrix) })), body); bm.castShadow = bm.receiveShadow = true; for (const m of bodyMs) { tilt.remove(m); m.geometry.dispose() } tilt.add(bm) }
-  const rest = tilt.children.filter(c => c.isMesh && c.material !== body); rest.forEach(m => m.updateMatrix());
+  const rest = tilt.children.filter(c => c.isMesh && c.material !== body && !c.userData.skin); rest.forEach(m => m.updateMatrix());
   mergeInto(tilt, rest, m => m.matrix);
   for (let i = 0; i < wheels.length; i++) {
     const pv = wheels[i].parent; pv.children.forEach(m => m.updateMatrix());
     const [wm] = mergeInto(pv, pv.children.slice(), m => m.matrix); wheels[i] = wm;
   }
-  return { root, tilt, body, roof, base: new THREE.Color(color), wheels, front, turret, r, kind, dims };
+  return { root, tilt, body, roof, base: new THREE.Color(color), wheels, front, turret, r, kind, dims, skinned: !!sk };
 }
 
 /* enemy car pooling */
@@ -357,7 +381,7 @@ const pools = {}, active = new Map();
 function acquire(e) {
   const p = pools[e.type] || (pools[e.type] = []);
   const o = p.pop() || buildCar({ len: e.len, wid: e.wid, color: e.col, kind: e.type });
-  o.base.set(e.col); o.root.visible = true; scene.add(o.root); return o;
+  if (!o.skinned) o.base.set(e.col); o.root.visible = true; scene.add(o.root); return o;
 }
 function release(o, type) { o.root.visible = false; scene.remove(o.root); (pools[type] || (pools[type] = [])).push(o) }
 

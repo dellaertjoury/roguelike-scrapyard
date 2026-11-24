@@ -1,7 +1,7 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
 import { G, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
 import { CARS, PART, SLOTS, TAGC, PACKS } from './data.js';
-import { LANGS, t, L, lang, setLang } from './i18n.js';
+import { t, L } from './i18n.js';
 import { A } from './assets.js';
 
 const $ = id => document.getElementById(id);
@@ -36,11 +36,6 @@ export function applyStatic() {
     if (src && !el.querySelector('img.uico')) el.insertAdjacentHTML('afterbegin', `<img class="uico" src="${src}" alt="">`);
   }
 }
-function renderLangs() {
-  $('langs').innerHTML = `<span class="lbl">${esc(t('lang'))}</span>` + LANGS.map(l =>
-    `<button class="lang${l.id === lang() ? ' on' : ''}" data-lang="${l.id}" aria-pressed="${l.id === lang()}">${l.name}</button>`).join('');
-}
-
 /* ---------- menu ---------- */
 let best = null, portraits = [];
 const loadBest = () => { try { best = JSON.parse(localStorage.getItem('scrapyard-best')) } catch (e) { best = null } };
@@ -48,7 +43,7 @@ const partName = id => { const d = PART[id]; return d.w ? L().w[d.w][0] : L().pa
 export function buildMenu(p) {
   if (p) portraits = p;
   loadBest();
-  const logo = A.logos[lang()] || A.logos.en;
+  const logo = A.logos.vls;
   $('title').innerHTML = logo ? `<img src="${logo}" alt="${esc(t('title'))}">` : esc(t('title'));
   if (A.menuBg) $('menu').style.backgroundImage = `linear-gradient(rgba(24,26,30,.2),rgba(24,26,30,.45) 45%,rgba(24,26,30,.82)),url(${A.menuBg.src})`;
   set($('bestLine'), best ? t('best', { lap: best.wave, score: fmt(best.score) }) : t('pick'));
@@ -67,7 +62,7 @@ export function buildMenu(p) {
     return `<div class="pack" style="${bg}" aria-disabled="true"><span class="soon">${esc(t('soon'))}</span><b>${esc(name)}</b><span class="d">${esc(desc)}</span>
       <span class="chips">${cars.map((c, k) => { const src = A.cars[pk.cars[k]]; return `<span class="pc">${src ? `<img src="${src}" alt=""${pk.flip ? ' style="transform:scaleX(-1)"' : ''}>` : ''}${esc(c)}</span>` }).join('')}</span></div>`;
   }).join('') + '</div>';
-  renderLangs(); applyStatic();
+  applyStatic();
 }
 
 /* ---------- garage ---------- */
@@ -138,10 +133,6 @@ export function showOver() {
 
 export function wire(onStart, onMenu, onLang) {
   $('cars').addEventListener('click', ev => { const b = ev.target.closest('.car'); if (b) onStart(+b.dataset.i) });
-  $('langs').addEventListener('click', ev => {
-    const b = ev.target.closest('[data-lang]'); if (!b) return;
-    setLang(b.dataset.lang); buildMenu(); onLang();
-  });
   const act = (ev, card) => {
     const lk = ev.target.closest('.lockbtn');
     if (lk) { toggleLock(+lk.dataset.lock); renderShop(); return }
@@ -224,12 +215,12 @@ function buildCluster() {
     <path class="fuelRing" d="M${FU.x - fw / 2 - 3} ${FU.y + 8}A${fw / 2 + 3} ${fw / 2 + 3} 0 0 1 ${FU.x + fw / 2 + 3} ${FU.y + 8}" fill="none" stroke-width="4"/>`;
   // nitro pod: 8 LED bars, the bottom two red
   let leds = '';
-  for (let i = 0; i < 8; i++) leds += `<rect class="led" x="${NO.x - 6}" y="${NO.y + 24 - i * 6.4}" width="22" height="4.6" rx="1.5" fill="#353d42"/>`;
+  for (let i = 0; i < 8; i++) leds += `<rect class="led" x="${NO.x - 4}" y="${(NO.y + 20.1 - i * 6.4).toFixed(1)}" width="20" height="4.6" rx="1.5" fill="#353d42"/>`; // column centred in the pod
   const nitro = (nArt ? `<image href="${nArt}" x="${NO.x - NO.r - 4}" y="${NO.y - NO.r - 4}" width="${2 * NO.r + 8}" height="${2 * NO.r + 8}"/>` : `
     <circle cx="${NO.x}" cy="${NO.y}" r="${NO.r + 4}" fill="#3b3936" stroke="#1d1c1a" stroke-width="4"/>${rust(NO.x, NO.y, NO.r + 2, 6, 3)}
     <circle cx="${NO.x}" cy="${NO.y}" r="${NO.r - 6}" fill="#111" stroke="#55514b" stroke-width="2"/>${bolts(NO.x, NO.y, NO.r, 4, 45)}`) + `
     <circle class="nosGlow" cx="${NO.x}" cy="${NO.y}" r="${NO.r + 6}" fill="none" stroke="#5fc8f0" stroke-width="4" style="filter:drop-shadow(0 0 6px #5fc8f0)"/>
-    <text x="${NO.x - 13}" y="${NO.y + 13}" font-size="9" fill="#5fc8f0" transform="rotate(-90 ${NO.x - 13} ${NO.y + 13})" letter-spacing="1">NOS</text>${leds}`;
+    <text x="${NO.x - 8}" y="${NO.y}" text-anchor="middle" font-size="9" fill="#5fc8f0" transform="rotate(-90 ${NO.x - 8} ${NO.y})" letter-spacing="1">NOS</text>${leds}`;
   el.innerHTML = `<svg viewBox="0 0 360 250" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">${speedo}${gear}${digits}${sNeedle}${fuel}${fNeedle}${fuelTxt}${nitro}</svg>`;
   CL = { sn: $('clSN'), fn: $('clFN'), spd: $('clSpd'), lap: $('clLap'), ang: $('clAng'), fuel: $('clFuel'), leds: [...el.querySelectorAll('.led')], el, lastLap: 0, s: -135 };
   set($('clLapLbl'), t('lapShort'));
@@ -267,8 +258,14 @@ export function hud() {
   const cd = $('count'), n = G.startT > 0 ? String(Math.ceil(G.startT)) : '';
   if (cd._n !== n) { cd._n = n; if (n || cd.textContent) { cd.textContent = n || t('go'); cd.className = n ? 'tick' : 'tick go'; void cd.offsetWidth; cd.classList.add('on') } }
   set($('scrapTxt'), fmt(G.scrap)); set($('wreckTxt'), t('wrecks', { n: fmt(G.wrecks) }));
+  // drift meter: tube = multiplier ×1 → ×5, thin white clock = time left in this combo (8 s max), green pulse when it banks
+  const dm = $('driftMtr'), live = drift.on && drift.pts > 5;
   set($('driftNum'), fmt(drift.pts)); set($('driftMul'), `×${drift.mult.toFixed(1)}`);
-  $('driftPnl').classList.toggle('hot', drift.on && drift.pts > 5);
+  $('driftFill').style.height = (live ? (drift.mult - 1) / 4 * 100 : 0).toFixed(1) + '%';
+  $('driftClock').style.height = (live ? Math.max(0, 1 - (drift.time || 0) / 8) * 100 : 0).toFixed(1) + '%';
+  dm.classList.toggle('on', live);
+  if (dm._was && !live && drift.pts === 0) { dm.classList.remove('bank'); void dm.offsetWidth; dm.classList.add('bank') }
+  dm._was = live;
   const elite = G.enemies.find(e => e.elite);
   $('bossPnl').classList.toggle('hide', !elite);
   if (elite) { $('bossBar').style.width = (elite.hp / elite.max * 100) + '%'; set($('eliteName'), L().elites[elite.type][0]) }

@@ -139,17 +139,17 @@ export function start(i) {
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T;
+  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpT = PUMP_FIRST; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = [];
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
   G.banner = { s: ['lap', { n: G.wave }], elite, sub: elite ? ['eliteSub', { name: L().elites[elite][0], hint: L().elites[elite][1] }] : ['tankFull', { l: G.tank }], id: Math.random() };
-  // each enemy type is introduced with its portrait (assets/elites/<type>.png) the lap it first shows up
+  // each enemy type gets a line in the banner the lap it first shows up
   if (G.wave === 1) G.banner.elite = 'rust';
   if (G.wave === 2) Object.assign(G.banner, { elite: 'thief', sub: ['thiefIntro'] });
   if (G.wave === 3) Object.assign(G.banner, { elite: 'spit', sub: ['spitIntro'] });
   if (G.wave === 4) Object.assign(G.banner, { elite: 'brute', sub: ['bruteIntro'] });
-  if (elite) queue(elite);
+  G.eliteDue = elite; // queued at GO, like every other spawn
   // gentle start: 1 car on lap 1, slowly more after that
-  for (let i = 0; i < Math.min(5, 1 + Math.floor(G.wave / 2)); i++) queue('rust');
+  G.openers = Math.min(5, 1 + Math.floor(G.wave / 2)); // the lap's first wreckers are queued at GO
   G.on.play && G.on.play();
 }
 function spawnSpot() {
@@ -240,8 +240,8 @@ function dropHose(e, snapped) {
   if (snapped) puff((e.x + P.x) / 2, (e.y + P.y) / 2, 6, { c: 0x9fe070, glow: true, s0: 40, s1: 140, l0: .3, l1: .6, z0: 2, z1: 4, z: 10, vz0: 20, vz1: 60 });
   e.siph = 0;
 }
-export const BURN = 1, PUMP_R = 92, PUMP_FLOW = 6, PUMP_RESERVE = 30, PUMP_RESPAWN = 15, PUMP_FIRST = 8, THIEF_STEAL = 6;
-export const fmtL = l => (Math.round(l * 10) / 10).toLocaleString(lang() === 'en' ? 'en-US' : lang() === 'vls' ? 'nl-BE' : lang());
+export const BURN = 1, PUMP_R = 92, PUMP_FLOW = 6, PUMP_RESERVE = 30, PUMP_FIRST = 8, THIEF_STEAL = 6;
+export const fmtL = l => (Math.round(l * 10) / 10).toLocaleString('nl-BE');
 // Is (x, y) within m of a ramp's lane: 260 of run-up, the ramp, and the flight/landing strip?
 export function inLane(r, x, y, m) {
   const dx = x - r.x, dy = y - r.y, u = dx * r.c + dy * r.s, v = -dx * r.s + dy * r.c;
@@ -265,7 +265,7 @@ function fuelStep(dt) {
   G.filling = !!filling;
   if (filling) {
     const l = Math.min(PUMP_FLOW * dt, pu.res, G.tank - G.fuel); G.fuel += l; pu.res -= l; pu.got += l;
-    if (pu.res <= .01) { txt(pu.x, pu.y - 40, t('pumpEmpty'), '#ffc23d', 18, 1.2); G.pump = null; G.pumpT = PUMP_RESPAWN }
+    if (pu.res <= .01) { txt(pu.x, pu.y - 40, t('pumpEmpty'), '#ffc23d', 18, 1.2); G.pump = null; G.pumpT = Infinity } // one pump per lap: the next one opens next lap
   }
   G.fuel -= dt * (BURN + (P.boost ? 1 : 0));
   for (const c of G.cans) {
@@ -549,8 +549,8 @@ export function update(dt) {
   }
   if (G.state !== 'play') return;
   const P = G.P, S = G.S, W = G.W, CD = G.CD, drift = G.drift;
-  if (G.startT > 0) G.startT = Math.max(0, G.startT - dt);
-  const live = G.startT <= 0;
+  if (G.startT > 0) { G.startT = Math.max(0, G.startT - dt); if (G.startT === 0) { for (let i = 0; i < (G.openers || 0); i++) queue('rust'); G.openers = 0; if (G.eliteDue) { queue(G.eliteDue); G.eliteDue = null } } }
+  const live = G.startT <= 0; // nothing spawns, moves in or shoots until the countdown says GO
   G.siphon = false;
 
   /* driving: split velocity into forward and lateral; grip eats lateral, handbrake drops grip */
@@ -629,7 +629,7 @@ export function update(dt) {
       queue(G.wave >= 2 && r > .86 ? 'thief' : G.wave >= 4 && r < .08 + G.wave * .012 ? 'brute' : G.wave >= 3 && r < .33 ? 'spit' : 'rust');
     }
   }
-  for (const s of G.pend) {
+  if (live) for (const s of G.pend) {
     s.t -= dt; if (s.t > 0) continue;
     // the player may have driven onto the marker meanwhile: move it rather than spawn on top of them
     if (Math.hypot(s.x - P.x, s.y - P.y) < 170) { const p = spawnSpot(); if (p) { s.x = p.x; s.y = p.y; s.t = s.max * .6; continue } }

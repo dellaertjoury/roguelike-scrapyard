@@ -1,220 +1,14 @@
-// All player-facing text, per language.
+// All player-facing text. The game is West-Vlaams only.
 // West-Vlaams words picked from regional dialect dictionaries:
 //   oto (auto), barsjok (bumper), tefète (dadelijk), slunse geven (gas geven),
 //   bachten (achter), omooge (omhoog), Pietje Pek (de duivel), kassé (kapot),
 //   glisseren (slippen), plus the typical West-Flemish h-drop (ette, arder, ooibalen).
 
-export const LANGS = [
-  { id: 'en', name: 'English' },
-  { id: 'fr', name: 'Français' },
-  { id: 'de', name: 'Deutsch' },
-  { id: 'es', name: 'Español' },
-  { id: 'vls', name: 'West-Vlams' }
-];
+export const LANGS = [{ id: 'vls', name: 'West-Vlams' }];
 
 const T = {
-  en: {
-    title: 'Scrapyard Derby', pick: 'Pick a junker. Survive the lap, spend scrap in the garage, go again.',
-    best: 'Your best: lap {lap}, {score} points.', startsWith: 'Starts with {w}', lang: 'Language',
-    stat: ['Speed', 'Grip', 'Armour', 'Ram'],
-    k_drive: 'drive', k_hb: 'handbrake, hold to drift', k_nitro: 'nitro, drifting refills it', k_pause: 'pause',
-    k_tip: 'Drifting heats your guns: up to +80% fire rate.',
-    hull: 'Hull', nitro: 'Nitro', heat: 'Heat', heatPct: 'Heat · fire rate +{p}%', lap: 'Lap {n}', lapShort: 'LAP', go: 'GO!', scrap: 'Scrap',
-    wrecks: '{n} wrecks', drift: 'Drift', driftPill: 'DRIFT', kmh: 'KM/H', boss: 'The Harvester',
-    holdOut: 'Hold out {s}s', bossIn: 'Boss incoming', lapClear: 'Lap cleared', garageOpen: 'Garage is open',
-    fDrift: 'Drift {p}', fScrap: '+{s} scrap', fCombo: 'Combo wrecked', fAir: 'Air {t}s', fCrush: 'Crushed!',
-    garage: 'Garage · lap {n} survived', scrapAmt: '{n} scrap', next: 'Next lap', reroll: 'Reroll · {c}',
-    lock: 'Lock', locked: 'Locked', isNew: 'New', lvl: 'Lv {a} → {b}', owned: 'owned {n}', fitted: 'Fitted', price: '{p} scrap',
-    myParts: 'Your parts', noParts: 'Nothing fitted yet.', lockHint: 'Locked parts stay in the garage for your next visit.',
-    st: ['Hull', 'Top speed', 'Grip', 'Armour', 'Ram power', 'Ram self-damage', 'Damage', 'Fire rate', 'Regen', 'Magnet'],
-    wrecked: 'Wrecked', reached: 'Reached lap {lap} in the {car}', overLine: '{w} wrecks · best drift {d} · score {s}',
-    newBest: 'New personal best', back: 'Back to the pits', paused: 'Paused', resume: 'Resume',
-    loading: 'Warming up the engines…',
-    tips: ['Drifting heats your guns: up to +80% fire rate.', "Tyre walls bounce you back. Hay bales don't.",
-      'Hit a ramp at speed to fly over the pack. Land on a car to crush it.', 'Ramming hurts both cars. The heavier one wins.',
-      'Lock a part in the garage to keep it for the next lap.', "Drive onto the gas pump pad: it pours up to 30 L (+30 s) straight into your tank. When the tank runs dry, the lap ends.", "Green siphon cars steal fuel. Wreck them and grab the jerrycan to get it back."],
-    elites: {"harvester": ["The Harvester", "watch out for its flying saw blades"], "monster": ["Big Wheel", "get out of the red circle before it lands"], "tow": ["The Wrecker", "hit nitro to break free from its hook"]},
-    eliteSub: "Elite! {name}: {hint}", fHooked: "Hooked!", fFree: "Free!",
-    fuel: "Fuel", tankFull: "Full tank: {l} L. Refuel at the pump", outOfFuel: "Out of fuel", fStolen: "-{l} L stolen!", fFuel: "+{l} L", pumpOpen: "Pump open", pumpEmpty: "Pump dry", pumpGot: "+{l} L · +{l} s",
-    thiefIntro: "New: fuel thieves steal 6 L. Wreck them to get it back.", spitIntro: "New: spitters keep their distance and shoot red slugs. Dodge and close in.", bruteIntro: "New: brutes are slow, heavy rammers with a steel bar. Don't meet them head-on.",
-    tags: { Weapon: 'Weapon', 'Weapon mod': 'Weapon mod', Engine: 'Engine', Handling: 'Handling', Armour: 'Armour', Ram: 'Ram', Drift: 'Drift', Utility: 'Utility', Repair: 'Repair' },
-    cars: { hatch: ['Stray Hatch', 'Light and twitchy, grips like glue. Folds if you look at it wrong.'],
-      muscle: ['Rust Muscle', 'V8 brawler that loves going sideways. Heat builds faster in a slide.'],
-      hearse: ['Iron Hearse', 'Slow, heavy, armoured. Rams for a living and lays mines behind it.'] },
-    w: {
-      mg: ['Roof MG', (l, d) => `Auto-fires at the nearest car. ${l >= 3 ? 'Twin barrels. ' : ''}${d} dmg per round`],
-      mines: ['Mine Layer', (l, d, s) => `Drops a proximity mine behind you every ${s}s. ${d} blast dmg`],
-      tesla: ['Tesla Coil', (l, d, n) => `Zaps a target and arcs to ${n} more. ${d} dmg`],
-      flame: ['Flamethrower', (l, d) => `Torches everything in a forward cone. ${d} dmg per tick`],
-      saw: ['Side Saws', (l, d) => `Spinning blades on steel arms, left and right. Lv 4+: two per side. ${d} dmg per hit`]
-    },
-    parts: {"magnet": ["Crane Magnet", "+55 scrap pickup range per level"], "cage": ["Roll Cage", "+25 max hull and 4% less damage per level"], "v8": ["V8 Blower", "+10% top speed, +13% acceleration per level"], "rounds": ["Ammo Crate", "+15% damage for every weapon per level"], "cooler": ["Gun Cooler", "+12% fire rate for every weapon per level"], "plow": ["Ram Plow", "+35% ram damage and 20% less self-damage per level"], "spikes": ["Spike Grille", "Anything touching you takes 12 damage per tick, per level"], "bullbar": ["Bull Bar", "+6% armour and +12% mass per level"], "exhaust": ["Afterburner Pipes", "Drifting leaves a trail of burning fuel, hotter per level"], "spoiler": ["Spoiler", "+10% grip, +5% steering per level"], "nitro": ["Nitro Tanks", "Nitro refills 40% faster and pushes 10% harder per level"], "ballast": ["Concrete Ballast", "+30% mass and +10 hull per level, 5% slower off the line"], "toolbox": ["Toolbox", "Regenerate 0.8 hull per second per level"], "scrapbin": ["Scrap Bin", "+20% chance of extra scrap from wrecks per level"], "plate": ["Door Plates", "Take 8% less damage per level"], "skirts": ["Drift Skirts", "Drift combo and weapon heat build 30% faster per level"], "slicks": ["Wide Slicks", "+15% grip, +8% steering per level"]},
-    slots: {"roof": "Roof", "hood": "Hood", "front": "Front bumper", "rear": "Rear bumper", "trunk": "Trunk", "sides": "Sides"},
-    packs: {"britland": ["Britland", "The Mini Cooper and the classic London taxi. Tea break optional.", ["Mini Cooper", "London Taxi"]], "f1": ["Fast AF Package", "A Formula 1 car and the Safety Car. Very fast, very fragile.", ["F1 Car", "Safety Car"]]},
-    forSale: "For sale",
-    blueprint: "Blueprint",
-    empty: "Empty",
-    replaces: "Replaces {x}",
-    upTo: "Upgrade to Lv {n}",
-    fits: "{s}",
-    repair: "Repair 50% · {c}",
-    maxed: "Max level",
-    soon: "Coming soon",
-    packsTitle: "Expansion packs"
-  },
-
-  fr: {
-    title: 'Derby de la Casse', pick: 'Choisis ta poubelle roulante. Survis au tour, dépense ta ferraille au garage, et on remet ça.',
-    best: 'Ton record : tour {lap}, {score} points.', startsWith: 'Commence avec : {w}', lang: 'Langue',
-    stat: ['Vitesse', 'Adhérence', 'Blindage', 'Bélier'],
-    k_drive: 'conduire', k_hb: 'frein à main, maintiens pour drifter', k_nitro: 'nitro, le drift la recharge', k_pause: 'pause',
-    k_tip: "Le drift fait chauffer tes armes : jusqu'à +80 % de cadence.",
-    hull: 'Carrosserie', nitro: 'Nitro', heat: 'Chauffe', heatPct: 'Chauffe · cadence +{p} %', lap: 'Tour {n}', lapShort: 'TOUR', go: 'PARTEZ !', scrap: 'Ferraille',
-    wrecks: '{n} épaves', drift: 'Drift', driftPill: 'DRIFT', kmh: 'KM/H', boss: 'La Moissonneuse',
-    holdOut: 'Tiens {s} s', bossIn: 'Le boss arrive', lapClear: 'Tour terminé', garageOpen: 'Le garage est ouvert',
-    fDrift: 'Drift {p}', fScrap: '+{s} ferraille', fCombo: 'Combo cassé', fAir: 'Vol {t} s', fCrush: 'Écrasé !',
-    garage: 'Garage · tour {n} survécu', scrapAmt: '{n} ferraille', next: 'Tour suivant', reroll: 'Relancer · {c}',
-    lock: 'Garder', locked: 'Gardé', isNew: 'Nouveau', lvl: 'Niv. {a} → {b}', owned: 'possédé ×{n}', fitted: 'Monté', price: '{p} ferraille',
-    myParts: 'Tes pièces', noParts: "Rien de monté pour l'instant.", lockHint: 'Les pièces gardées restent au garage pour ta prochaine visite.',
-    st: ['Carrosserie', 'Vitesse max', 'Adhérence', 'Blindage', "Puissance d'impact", 'Dégâts subis en percutant', 'Dégâts', 'Cadence', 'Régénération', 'Aimant'],
-    wrecked: 'Épave !', reached: 'Tour {lap} atteint avec : {car}', overLine: '{w} épaves · meilleur drift {d} · score {s}',
-    newBest: 'Nouveau record perso', back: 'Retour aux stands', paused: 'En pause', resume: 'Reprendre',
-    loading: 'Chauffe des moteurs…',
-    tips: ["Le drift fait chauffer tes armes : jusqu'à +80 % de cadence.", 'Les murs de pneus te renvoient. Les bottes de foin, non.',
-      "Prends un tremplin à fond pour survoler la meute. Atterris sur une voiture pour l'écraser.", 'Percuter fait mal aux deux voitures. Le plus lourd gagne.',
-      'Garde une pièce au garage pour la retrouver au tour suivant.', "Roule sur la dalle de la pompe : jusqu'à 30 L (+30 s) d'un coup dans ton réservoir. Quand le réservoir est vide, le tour se termine.", "Les voitures vertes siphonnent ton carburant. Détruis-les et ramasse le jerrican pour le récupérer."],
-    elites: {"harvester": ["La Moissonneuse", "attention à ses lames volantes"], "monster": ["Grosse Roue", "sors du cercle rouge avant qu'elle retombe"], "tow": ["La Dépanneuse", "la nitro te libère de son crochet"]},
-    eliteSub: "Élite ! {name} : {hint}", fHooked: "Accroché !", fFree: "Libéré !",
-    fuel: "Carburant", tankFull: "Plein : {l} L. Fais le plein à la pompe", outOfFuel: "Panne sèche", fStolen: "-{l} L volés !", fFuel: "+{l} L", pumpOpen: "Pompe ouverte", pumpEmpty: "Pompe à sec", pumpGot: "+{l} L · +{l} s",
-    thiefIntro: "Nouveau : les voleurs de carburant prennent 6 L. Détruis-les pour le récupérer.", spitIntro: "Nouveau : les cracheurs gardent leurs distances et tirent des balles rouges. Esquive et fonce.", bruteIntro: "Nouveau : les brutes sont lentes et lourdes, avec un pare-buffle en acier. Évite le face-à-face.",
-    tags: { Weapon: 'Arme', 'Weapon mod': "Mod d'arme", Engine: 'Moteur', Handling: 'Tenue de route', Armour: 'Blindage', Ram: 'Bélier', Drift: 'Drift', Utility: 'Utilitaire', Repair: 'Réparation' },
-    cars: { hatch: ['Citadine Errante', 'Légère et nerveuse, elle colle à la route. Se plie si tu la regardes de travers.'],
-      muscle: ['Muscle Rouillée', 'Bagarreuse V8 qui adore glisser. La chauffe monte plus vite en drift.'],
-      hearse: ['Corbillard de Fer', 'Lent, lourd, blindé. Il vit pour percuter et sème des mines derrière lui.'] },
-    w: {
-      mg: ['Mitrailleuse de toit', (l, d) => `Tire seule sur la voiture la plus proche. ${l >= 3 ? 'Double canon. ' : ''}${d} dégâts par balle`],
-      mines: ['Poseur de mines', (l, d, s) => `Lâche une mine derrière toi toutes les ${s} s. ${d} dégâts d'explosion`],
-      tesla: ['Bobine Tesla', (l, d, n) => `Électrocute une cible et rebondit sur ${n} autres. ${d} dégâts`],
-      flame: ['Lance-flammes', (l, d) => `Grille tout ce qui est devant toi. ${d} dégâts par tick`],
-      saw: ['Scies latérales', (l, d) => `Lames rotatives sur bras d'acier, à gauche et à droite. Niv. 4+ : deux par côté. ${d} dégâts par coup`]
-    },
-    parts: {"magnet": ["Grue aimantée", "+55 de portée de ramassage par niveau"], "cage": ["Arceau de sécurité", "+25 de carrosserie max et 4 % de dégâts en moins par niveau"], "v8": ["Compresseur V8", "+10 % de vitesse max, +13 % d'accélération par niveau"], "rounds": ["Caisse de munitions", "+15 % de dégâts pour toutes les armes par niveau"], "cooler": ["Refroidisseur d'armes", "+12 % de cadence pour toutes les armes par niveau"], "plow": ["Lame bélier", "+35 % de dégâts d'impact et 20 % de dégâts subis en moins par niveau"], "spikes": ["Calandre à pointes", "Tout ce qui te touche subit 12 dégâts par tick, par niveau"], "bullbar": ["Pare-buffle", "+6 % de blindage et +12 % de masse par niveau"], "exhaust": ["Échappements postcombustion", "Le drift laisse une traînée de carburant en feu, plus chaude à chaque niveau"], "spoiler": ["Aileron", "+10 % d'adhérence, +5 % de direction par niveau"], "nitro": ["Bouteilles de nitro", "La nitro se recharge 40 % plus vite et pousse 10 % plus fort par niveau"], "ballast": ["Lest en béton", "+30 % de masse et +10 de carrosserie par niveau, départ 5 % plus lent"], "toolbox": ["Caisse à outils", "Régénère 0,8 de carrosserie par seconde par niveau"], "scrapbin": ["Bac à ferraille", "+20 % de chances de ferraille en plus par niveau"], "plate": ["Plaques de portière", "Subis 8 % de dégâts en moins par niveau"], "skirts": ["Jupes de drift", "Le combo de drift et la chauffe montent 30 % plus vite par niveau"], "slicks": ["Slicks larges", "+15 % d'adhérence, +8 % de direction par niveau"]},
-    slots: {"roof": "Toit", "hood": "Capot", "front": "Pare-chocs avant", "rear": "Pare-chocs arrière", "trunk": "Coffre", "sides": "Flancs"},
-    packs: {"britland": ["Britland", "La Mini Cooper et le taxi londonien. Pause thé en option.", ["Mini Cooper", "Taxi londonien"]], "f1": ["Pack Fast AF", "Une Formule 1 et la voiture de sécurité. Très rapide, très fragile.", ["Formule 1", "Voiture de sécurité"]]},
-    forSale: "À vendre",
-    blueprint: "Plan",
-    empty: "Vide",
-    replaces: "Remplace {x}",
-    upTo: "Passer au niv. {n}",
-    fits: "{s}",
-    repair: "Réparer 50 % · {c}",
-    maxed: "Niveau max",
-    soon: "Bientôt",
-    packsTitle: "Packs d'extension"
-  },
-
-  de: {
-    title: 'Schrottplatz-Derby', pick: 'Schnapp dir eine Schrottkiste. Überlebe die Runde, verbrate den Schrott in der Werkstatt, und nochmal.',
-    best: 'Dein Rekord: Runde {lap}, {score} Punkte.', startsWith: 'Startet mit {w}', lang: 'Sprache',
-    stat: ['Tempo', 'Grip', 'Panzerung', 'Rammen'],
-    k_drive: 'fahren', k_hb: 'Handbremse, halten zum Driften', k_nitro: 'Nitro, Driften lädt es auf', k_pause: 'Pause',
-    k_tip: 'Driften heizt deine Waffen auf: bis zu +80 % Feuerrate.',
-    hull: 'Karosserie', nitro: 'Nitro', heat: 'Hitze', heatPct: 'Hitze · Feuerrate +{p} %', lap: 'Runde {n}', lapShort: 'RUNDE', go: 'LOS!', scrap: 'Schrott',
-    wrecks: '{n} Wracks', drift: 'Drift', driftPill: 'DRIFT', kmh: 'KM/H', boss: 'Der Mähdrescher',
-    holdOut: 'Halte {s} s durch', bossIn: 'Boss im Anmarsch', lapClear: 'Runde geschafft', garageOpen: 'Die Werkstatt hat offen',
-    fDrift: 'Drift {p}', fScrap: '+{s} Schrott', fCombo: 'Combo kaputt', fAir: 'Flug {t} s', fCrush: 'Zerquetscht!',
-    garage: 'Werkstatt · Runde {n} überlebt', scrapAmt: '{n} Schrott', next: 'Nächste Runde', reroll: 'Neu würfeln · {c}',
-    lock: 'Behalten', locked: 'Behalten ✓', isNew: 'Neu', lvl: 'Lv {a} → {b}', owned: '{n}× verbaut', fitted: 'Verbaut', price: '{p} Schrott',
-    myParts: 'Deine Teile', noParts: 'Noch nichts verbaut.', lockHint: 'Behaltene Teile warten bis zum nächsten Besuch in der Werkstatt.',
-    st: ['Karosserie', 'Höchstgeschw.', 'Grip', 'Panzerung', 'Rammkraft', 'Eigenschaden beim Rammen', 'Schaden', 'Feuerrate', 'Regeneration', 'Magnet'],
-    wrecked: 'Schrott!', reached: 'Runde {lap} erreicht mit: {car}', overLine: '{w} Wracks · bester Drift {d} · Punkte {s}',
-    newBest: 'Neuer persönlicher Rekord', back: 'Zurück in die Box', paused: 'Pause', resume: 'Weiter',
-    loading: 'Motoren werden warmgefahren…',
-    tips: ['Driften heizt deine Waffen auf: bis zu +80 % Feuerrate.', 'Reifenwände schleudern dich zurück. Strohballen nicht.',
-      'Nimm die Schanze mit Tempo und flieg über das Feld. Lande auf einem Auto, um es zu zerquetschen.', 'Rammen tut beiden Autos weh. Der Schwerere gewinnt.',
-      'Behalte ein Teil in der Werkstatt, dann liegt es in der nächsten Runde noch da.', "Fahr auf die Zapfsäulen-Platte: bis zu 30 L (+30 s) direkt in den Tank. Ist der Tank leer, endet die Runde.", "Grüne Abzapfer klauen Sprit. Schrott sie und schnapp dir den Kanister, dann ist er wieder da."],
-    elites: {"harvester": ["Der Mähdrescher", "Vorsicht vor seinen fliegenden Sägeblättern"], "monster": ["Das Monsterrad", "raus aus dem roten Kreis, bevor es landet"], "tow": ["Der Abschlepper", "mit Nitro reißt du dich vom Haken los"]},
-    eliteSub: "Elite! {name}: {hint}", fHooked: "Am Haken!", fFree: "Frei!",
-    fuel: "Sprit", tankFull: "Voller Tank: {l} L. Nachtanken an der Zapfsäule", outOfFuel: "Tank leer", fStolen: "-{l} L geklaut!", fFuel: "+{l} L", pumpOpen: "Zapfsäule offen", pumpEmpty: "Zapfsäule leer", pumpGot: "+{l} L · +{l} s",
-    thiefIntro: "Neu: Spritdiebe klauen 6 L. Schrott sie, dann ist er wieder da.", spitIntro: "Neu: Spucker halten Abstand und schießen rote Kugeln. Ausweichen und ran!", bruteIntro: "Neu: Brocken sind langsam, schwer und haben einen Stahlbügel. Nicht frontal treffen.",
-    tags: { Weapon: 'Waffe', 'Weapon mod': 'Waffen-Mod', Engine: 'Motor', Handling: 'Fahrwerk', Armour: 'Panzerung', Ram: 'Rammen', Drift: 'Drift', Utility: 'Werkzeug', Repair: 'Reparatur' },
-    cars: { hatch: ['Streuner', 'Leicht und nervös, klebt wie Kaugummi. Faltet sich, wenn man sie schief anschaut.'],
-      muscle: ['Rost-Muscle', 'V8-Raufbold, der am liebsten quer fährt. Die Hitze steigt im Drift schneller.'],
-      hearse: ['Eiserner Leichenwagen', 'Langsam, schwer, gepanzert. Rammt beruflich und legt Minen hinter sich.'] },
-    w: {
-      mg: ['Dach-MG', (l, d) => `Feuert automatisch auf das nächste Auto. ${l >= 3 ? 'Doppellauf. ' : ''}${d} Schaden pro Schuss`],
-      mines: ['Minenleger', (l, d, s) => `Lässt alle ${s} s eine Mine hinter dir fallen. ${d} Explosionsschaden`],
-      tesla: ['Teslaspule', (l, d, n) => `Schockt ein Ziel und springt auf ${n} weitere über. ${d} Schaden`],
-      flame: ['Flammenwerfer', (l, d) => `Röstet alles vor dir. ${d} Schaden pro Tick`],
-      saw: ['Seitensägen', (l, d) => `Rotierende Sägeblätter an Stahlarmen, links und rechts. Ab Lv 4: zwei pro Seite. ${d} Schaden pro Treffer`]
-    },
-    parts: {"magnet": ["Kranmagnet", "+55 Sammelreichweite pro Stufe"], "cage": ["Überrollkäfig", "+25 max. Karosserie und 4 % weniger Schaden pro Stufe"], "v8": ["V8-Kompressor", "+10 % Höchstgeschwindigkeit, +13 % Beschleunigung pro Stufe"], "rounds": ["Munitionskiste", "+15 % Schaden für alle Waffen pro Stufe"], "cooler": ["Waffenkühler", "+12 % Feuerrate für alle Waffen pro Stufe"], "plow": ["Rammschild", "+35 % Rammschaden und 20 % weniger Eigenschaden pro Stufe"], "spikes": ["Stachelgrill", "Alles, was dich berührt, nimmt 12 Schaden pro Tick und Stufe"], "bullbar": ["Kuhfänger", "+6 % Panzerung und +12 % Masse pro Stufe"], "exhaust": ["Nachbrenner-Rohre", "Driften hinterlässt brennenden Sprit, heißer mit jeder Stufe"], "spoiler": ["Heckspoiler", "+10 % Grip, +5 % Lenkung pro Stufe"], "nitro": ["Nitroflaschen", "Nitro lädt 40 % schneller und schiebt 10 % stärker pro Stufe"], "ballast": ["Betonballast", "+30 % Masse und +10 Karosserie pro Stufe, 5 % langsamer beim Anfahren"], "toolbox": ["Werkzeugkiste", "Regeneriert 0,8 Karosserie pro Sekunde und Stufe"], "scrapbin": ["Schrottkiste", "+20 % Chance auf extra Schrott pro Stufe"], "plate": ["Türpanzer", "Nimm 8 % weniger Schaden pro Stufe"], "skirts": ["Drift-Schweller", "Drift-Combo und Hitze steigen 30 % schneller pro Stufe"], "slicks": ["Breite Slicks", "+15 % Grip, +8 % Lenkung pro Stufe"]},
-    slots: {"roof": "Dach", "hood": "Motorhaube", "front": "Frontstoßstange", "rear": "Heckstoßstange", "trunk": "Kofferraum", "sides": "Seiten"},
-    packs: {"britland": ["Britland", "Der Mini Cooper und das klassische Londoner Taxi. Teepause optional.", ["Mini Cooper", "London-Taxi"]], "f1": ["Fast-AF-Paket", "Ein Formel-1-Wagen und das Safety Car. Sehr schnell, sehr zerbrechlich.", ["Formel-1-Wagen", "Safety Car"]]},
-    forSale: "Zu verkaufen",
-    blueprint: "Bauplan",
-    empty: "Leer",
-    replaces: "Ersetzt {x}",
-    upTo: "Auf Lv {n} verbessern",
-    fits: "{s}",
-    repair: "Reparieren 50 % · {c}",
-    maxed: "Max. Stufe",
-    soon: "Demnächst",
-    packsTitle: "Erweiterungen"
-  },
-
-  es: {
-    title: 'Derbi del Desguace', pick: 'Elige tu cacharro. Sobrevive a la vuelta, gasta la chatarra en el taller y vuelta a empezar.',
-    best: 'Tu récord: vuelta {lap}, {score} puntos.', startsWith: 'Empieza con {w}', lang: 'Idioma',
-    stat: ['Velocidad', 'Agarre', 'Blindaje', 'Embestida'],
-    k_drive: 'conducir', k_hb: 'freno de mano, mantén para derrapar', k_nitro: 'nitro, derrapar lo recarga', k_pause: 'pausa',
-    k_tip: 'Derrapar calienta tus armas: hasta +80 % de cadencia.',
-    hull: 'Chasis', nitro: 'Nitro', heat: 'Calor', heatPct: 'Calor · cadencia +{p} %', lap: 'Vuelta {n}', lapShort: 'VUELTA', go: '¡YA!', scrap: 'Chatarra',
-    wrecks: '{n} destrozados', drift: 'Derrape', driftPill: 'DERRAPE', kmh: 'KM/H', boss: 'La Cosechadora',
-    holdOut: 'Aguanta {s} s', bossIn: 'Llega el jefe', lapClear: 'Vuelta superada', garageOpen: 'El taller está abierto',
-    fDrift: 'Derrape {p}', fScrap: '+{s} chatarra', fCombo: 'Combo roto', fAir: 'Vuelo {t} s', fCrush: '¡Aplastado!',
-    garage: 'Taller · vuelta {n} superada', scrapAmt: '{n} chatarra', next: 'Siguiente vuelta', reroll: 'Cambiar · {c}',
-    lock: 'Guardar', locked: 'Guardado', isNew: 'Nuevo', lvl: 'Nv {a} → {b}', owned: 'tienes {n}', fitted: 'Montado', price: '{p} chatarra',
-    myParts: 'Tus piezas', noParts: 'Aún no has montado nada.', lockHint: 'Las piezas guardadas te esperan en el taller la próxima vez.',
-    st: ['Chasis', 'Vel. máxima', 'Agarre', 'Blindaje', 'Fuerza de embestida', 'Daño propio al embestir', 'Daño', 'Cadencia', 'Regeneración', 'Imán'],
-    wrecked: '¡Siniestro total!', reached: 'Llegaste a la vuelta {lap} con: {car}', overLine: '{w} destrozados · mejor derrape {d} · puntos {s}',
-    newBest: 'Nuevo récord personal', back: 'Volver a boxes', paused: 'En pausa', resume: 'Seguir',
-    loading: 'Calentando motores…',
-    tips: ['Derrapar calienta tus armas: hasta +80 % de cadencia.', 'Los muros de neumáticos te devuelven. Las balas de paja, no.',
-      'Pilla la rampa a tope para volar sobre el grupo. Aterriza sobre un coche para aplastarlo.', 'Embestir duele a los dos coches. Gana el más pesado.',
-      'Guarda una pieza en el taller y seguirá ahí en la siguiente vuelta.', "Sube a la plataforma del surtidor: hasta 30 L (+30 s) directos al depósito. Cuando el depósito se vacía, termina la vuelta.", "Los coches verdes te roban gasolina. Destrúyelos y coge el bidón para recuperarla."],
-    elites: {"harvester": ["La Cosechadora", "cuidado con sus sierras voladoras"], "monster": ["Rueda Gorda", "sal del círculo rojo antes de que aterrice"], "tow": ["La Grúa", "usa el nitro para soltarte del gancho"]},
-    eliteSub: "¡Élite! {name}: {hint}", fHooked: "¡Enganchado!", fFree: "¡Libre!",
-    fuel: "Gasolina", tankFull: "Depósito lleno: {l} L. Reposta en el surtidor", outOfFuel: "Sin gasolina", fStolen: "¡-{l} L robados!", fFuel: "+{l} L", pumpOpen: "Surtidor abierto", pumpEmpty: "Surtidor vacío", pumpGot: "+{l} L · +{l} s",
-    thiefIntro: "Nuevo: los ladrones de gasolina roban 6 L. Destrúyelos para recuperarla.", spitIntro: "Nuevo: los escupidores guardan distancia y disparan balas rojas. Esquiva y acércate.", bruteIntro: "Nuevo: los brutos son lentos y pesados, con una barra de acero. No los embistas de frente.",
-    tags: { Weapon: 'Arma', 'Weapon mod': 'Mejora de arma', Engine: 'Motor', Handling: 'Manejo', Armour: 'Blindaje', Ram: 'Embestida', Drift: 'Derrape', Utility: 'Utilidad', Repair: 'Reparación' },
-    cars: { hatch: ['Utilitario Callejero', 'Ligero y nervioso, se agarra como una lapa. Se arruga si lo miras mal.'],
-      muscle: ['Muscle Oxidado', 'Matón V8 al que le encanta ir de lado. El calor sube más rápido derrapando.'],
-      hearse: ['Coche Fúnebre de Hierro', 'Lento, pesado y blindado. Vive de embestir y deja minas detrás.'] },
-    w: {
-      mg: ['Ametralladora de techo', (l, d) => `Dispara sola al coche más cercano. ${l >= 3 ? 'Doble cañón. ' : ''}${d} de daño por bala`],
-      mines: ['Lanzaminas', (l, d, s) => `Suelta una mina detrás de ti cada ${s} s. ${d} de daño por explosión`],
-      tesla: ['Bobina Tesla', (l, d, n) => `Electrocuta a un objetivo y salta a ${n} más. ${d} de daño`],
-      flame: ['Lanzallamas', (l, d) => `Achicharra todo lo que tienes delante. ${d} de daño por tick`],
-      saw: ['Sierras laterales', (l, d) => `Hojas giratorias en brazos de acero, a izquierda y derecha. Nv 4+: dos por lado. ${d} de daño por golpe`]
-    },
-    parts: {"magnet": ["Grúa imán", "+55 de alcance para recoger chatarra por nivel"], "cage": ["Jaula antivuelco", "+25 de chasis máximo y 4 % menos de daño por nivel"], "v8": ["Compresor V8", "+10 % de velocidad máxima, +13 % de aceleración por nivel"], "rounds": ["Caja de munición", "+15 % de daño para todas las armas por nivel"], "cooler": ["Refrigerador de armas", "+12 % de cadencia para todas las armas por nivel"], "plow": ["Pala ariete", "+35 % de daño al embestir y 20 % menos de daño propio por nivel"], "spikes": ["Rejilla con pinchos", "Todo lo que te toque recibe 12 de daño por tick y nivel"], "bullbar": ["Defensa tubular", "+6 % de blindaje y +12 % de masa por nivel"], "exhaust": ["Escapes de postcombustión", "Derrapar deja combustible ardiendo, más caliente con cada nivel"], "spoiler": ["Alerón", "+10 % de agarre, +5 % de giro por nivel"], "nitro": ["Botellas de nitro", "El nitro se recarga un 40 % más rápido y empuja un 10 % más por nivel"], "ballast": ["Lastre de hormigón", "+30 % de masa y +10 de chasis por nivel, arranque 5 % más lento"], "toolbox": ["Caja de herramientas", "Regenera 0,8 de chasis por segundo y nivel"], "scrapbin": ["Cubo de chatarra", "+20 % de probabilidad de chatarra extra por nivel"], "plate": ["Placas en las puertas", "Recibe un 8 % menos de daño por nivel"], "skirts": ["Faldones de derrape", "El combo de derrape y el calor suben un 30 % más rápido por nivel"], "slicks": ["Slicks anchos", "+15 % de agarre, +8 % de giro por nivel"]},
-    slots: {"roof": "Techo", "hood": "Capó", "front": "Parachoques delantero", "rear": "Parachoques trasero", "trunk": "Maletero", "sides": "Laterales"},
-    packs: {"britland": ["Britland", "El Mini Cooper y el clásico taxi londinense. La hora del té es opcional.", ["Mini Cooper", "Taxi de Londres"]], "f1": ["Pack Fast AF", "Un Fórmula 1 y el coche de seguridad. Muy rápido, muy frágil.", ["Fórmula 1", "Coche de seguridad"]]},
-    forSale: "En venta",
-    blueprint: "Plano",
-    empty: "Vacío",
-    replaces: "Sustituye {x}",
-    upTo: "Mejorar a Nv {n}",
-    fits: "{s}",
-    repair: "Reparar 50 % · {c}",
-    maxed: "Nivel máximo",
-    soon: "Próximamente",
-    packsTitle: "Packs de expansión"
-  },
-
   vls: {
-    title: 'Otokerkof Derby', pick: "Kies jen brol-oto. Overleef den toer, steek je schroot in de garasje en doe 't nog e keer.",
+    title: 'Ottokeirkhof', pick: "Kies jen brol-oto. Overleef den toer, steek je schroot in de garasje en doe 't nog e keer.",
     best: 'Jen beste: toer {lap}, {score} punten. Amaai!', startsWith: 'Begint mee {w}', lang: 'Toale',
     stat: ['Rap', 'Grip', 'Pantser', 'Rammen'],
     k_drive: 'rijen', k_hb: 'andrem, ouen vo te glisseren', k_nitro: "nitro, glisseren vult 't were", k_pause: 'efkes stille',
@@ -264,21 +58,15 @@ const T = {
   }
 };
 
-let cur = 'en';
-export function detectLang() {
-  try { const s = localStorage.getItem('scrapyard-lang'); if (s && T[s]) return s } catch (e) { }
-  const n = (navigator.language || 'en').toLowerCase();
-  if (n.startsWith('nl')) return 'vls';
-  for (const l of ['fr', 'de', 'es']) if (n.startsWith(l)) return l;
-  return 'en';
-}
-export function setLang(l) { cur = T[l] ? l : 'en'; try { localStorage.setItem('scrapyard-lang', cur) } catch (e) { } document.documentElement.lang = cur }
+let cur = 'vls';
+export function detectLang() { return 'vls' }
+export function setLang() { cur = 'vls'; document.documentElement.lang = 'nl-BE' }
 export const lang = () => cur;
 export const L = () => T[cur];
 export function t(key, vars) {
-  let s = T[cur][key] ?? T.en[key] ?? key;
+  let s = T[cur][key] ?? key;
   if (vars && typeof s === 'string') for (const k in vars) s = s.split(`{${k}}`).join(vars[k]);
   return s;
 }
-// numbers: decimal comma for languages that use it
-export const num = n => Math.round(n).toLocaleString(cur === 'en' ? 'en-US' : cur === 'vls' ? 'nl-BE' : cur);
+// numbers: Belgian decimal comma
+export const num = n => Math.round(n).toLocaleString('nl-BE');
