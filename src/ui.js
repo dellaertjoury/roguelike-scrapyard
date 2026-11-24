@@ -1,5 +1,5 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
-import { G, CRANE, START_T, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
+import { G, CRANE, START_T, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, targetLvl, tierOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
 import { CARS, PART, SLOTS, TAGC, PACKS, WSTAT } from './data.js';
 import { t, L } from './i18n.js';
 import { A } from './assets.js';
@@ -125,11 +125,12 @@ export function renderShop() {
   set($('shopScrap'), t('scrapAmt', { n: fmt(G.scrap) }));
   $('cards').innerHTML = G.offer.map((it, i) => {
     const d = PART[it.id], p = price(it), col = TAGC[d.tag], poor = p > G.scrap, l = lvlOf(it), cur = G.build[d.slot];
-    const note = it.sold ? t('fitted') : l ? (l >= d.max ? t('maxed') : t('upTo', { n: l + 1 })) : cur ? t('replaces', { x: partName(cur.id) }) : '';
-    return `<div class="card${it.sold ? ' sold' : ''}${it.locked ? ' locked' : ''}${poor && !it.sold ? ' poor' : ''}${cur && !l && !it.sold ? ' swap' : ''}" data-i="${i}" data-slot="${d.slot}" role="button" tabindex="${it.sold ? -1 : 0}" aria-disabled="${!!it.sold || poor}">
+    const tl = targetLvl(it), tr2 = !it.sold && tierOf(it) > 1 ? tl : 1; // badge = the level the find fits at
+    const note = it.sold ? t('fitted') : l ? (l >= d.max ? t('maxed') : t('upTo', { n: tl })) : cur ? t('replaces', { x: partName(cur.id) }) + (tl > 1 ? ' · ' + t('upTo', { n: tl }) : '') : tl > 1 ? t('upTo', { n: tl }) : '';
+    return `<div class="card${tr2 > 1 ? ' t' + tr2 : ''}${it.sold ? ' sold' : ''}${it.locked ? ' locked' : ''}${poor && !it.sold ? ' poor' : ''}${cur && !l && !it.sold ? ' swap' : ''}" data-i="${i}" data-slot="${d.slot}" role="button" tabindex="${it.sold ? -1 : 0}" aria-disabled="${!!it.sold || poor}">
       ${icon(it.id)}
       <span class="cbody"><span class="tag"><b style="color:${col}">${esc(L().tags[d.tag])}</b> · ${esc(L().slots[d.slot])}</span>
-      <b class="nm">${esc(nameOf(it))}</b><span class="d">${esc(descOf(it))}</span>${note ? `<span class="note">${esc(note)}</span>` : ''}</span>
+      <b class="nm">${esc(nameOf(it))}${tr2 > 1 ? `<span class="tierb">${esc(t('tier', { n: tr2 }))}</span>` : ''}</b><span class="d">${esc(descOf(it))}</span>${note ? `<span class="note">${esc(note)}</span>` : ''}</span>
       <span class="cside"><span class="price">${it.sold ? '✓' : esc(t('price', { p }))}</span>
       ${it.sold ? '' : `<button class="lockbtn" data-lock="${i}" aria-pressed="${!!it.locked}" title="${esc(it.locked ? t('locked') : t('lock'))}">${lockSvg(it.locked)}<span>${esc(it.locked ? t('locked') : t('lock'))}</span></button>`}</span></div>`;
   }).join('');

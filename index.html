@@ -228,6 +228,10 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 .card{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:12px;align-items:start;background:var(--glass2);border:2px solid transparent;border-radius:14px;padding:10px 12px;cursor:pointer;transition:border-color .12s,transform .12s}
 .card:hover,.card:focus-visible{border-color:var(--haz);transform:translateX(3px);outline:none}
 .card.locked{border-color:var(--bp)}
+/* tier 2 (silver) and tier 3 (gold) finds: tinted rim and a badge next to the name */
+.card.t2{box-shadow:inset 0 0 0 1px #c9d3de,0 0 14px rgba(201,211,222,.25)}.card.t3{box-shadow:inset 0 0 0 1px #ffc23d,0 0 18px rgba(255,194,61,.35)}
+.tierb{display:inline-block;margin-left:8px;padding:2px 7px;border-radius:6px;font:800 11px/1.3 Rubik,sans-serif;letter-spacing:.06em;text-transform:uppercase;vertical-align:2px;background:#c9d3de;color:#1d1b1a}
+.card.t3 .tierb{background:#ffc23d}
 .card.poor{opacity:.55;cursor:not-allowed}.card.poor:hover{transform:none}
 .card.sold{opacity:.35;cursor:default}
 .ico{flex:none;width:52px;height:52px;border-radius:12px;background:color-mix(in srgb,var(--c) 28%,#2a2c30);display:grid;place-items:center;overflow:hidden;font:800 24px Rubik,sans-serif;color:var(--c)}

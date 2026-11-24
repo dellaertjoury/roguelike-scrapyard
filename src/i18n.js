@@ -51,6 +51,7 @@ const T = {
     empty: "Leeg",
     replaces: "Vervangt {x}",
     upTo: "Nor Lv {n}",
+    tier: "Klasse {n}",
     fits: "{s}",
     repair: "Repareren 50% · {c}",
     maxed: "Ol vul",

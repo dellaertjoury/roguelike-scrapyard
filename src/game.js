@@ -234,7 +234,7 @@ export function quitLap() { if (G.state !== 'pause' && G.state !== 'play') retur
 function endWave() {
   for (const e of G.enemies) kill(e, false);
   G.enemies = []; G.pend = []; G.ebul = [];
-  for (const s of G.scraps) G.scrap += s.v; G.scraps = [];
+  for (const s of G.scraps) G.scrap += s.v * SCRAP_VAL; G.scraps = [];
   G.P.hp = Math.min(G.S.maxhp, G.P.hp + G.S.maxhp * .2);
   bankDrift(); G.state = 'clear'; G.clearT = 2.8; // let the 'out of fuel' sign hang a while before the garage
   G.banner = { s: ['outOfFuel'], sub: ['garageOpen'], id: Math.random() };
@@ -260,7 +260,7 @@ function bankDrift() {
 // is used up, then it closes and another opens 15 s later. Fuel keeps burning while you fill, so a pump
 // is worth exactly its reserve (+30 s of lap) and there is no way to freeze the lap clock.
 // paint per enemy type, after the portraits: olive wreckers, teal spitters, mustard brutes (a few shades each)
-const SPEED_K = { rust: .8, spit: .72, thief: .84, brute: .7 }; // share of the player's top speed
+const SPEED_K = { rust: .74, spit: .66, thief: .78, brute: .64 }; // share of the player's top speed
 const TYPE_COL = { rust: ['#7f8f3a', '#6f8034', '#8d9a4a'], spit: ['#3f8a8f', '#367a80', '#4b9499'], brute: ['#e0a92a', '#d49a22'] };
 export const START_T = 3; // 3-2-1 countdown: no fuel burn, spawns, throttle or guns until GO
 // a pump holds 30 L (= 30 s of lap) and pours it straight in while you stand on the pad: 6 L/s, so ~5 s to drain
@@ -333,23 +333,35 @@ export function recompute() {
 export const lvlOf = it => { const b = G.build[PART[it.id].slot]; return b && b.id === it.id ? b.lvl : 0 };
 // prices compound 15% per lap so late-lap income doesn't buy everything at once
 export const priceScale = () => Math.pow(1.15, G.wave - 1);
-export const price = it => Math.round(PART[it.id].cost * priceScale() * (1 + .5 * lvlOf(it)));
+export const SCRAP_VAL = 2; // every scrap piece picked up is worth this much
+// Garage finds come in tiers: a tier-2/3 card fits the part straight at Lv 2/3 (or +1 if you already have that much).
+// The chance of higher tiers grows with the lap number.
+export const tierOdds = (w = G.wave) => { const t3 = Math.min(.3, Math.max(0, (w - 3) * .045)), t2 = Math.min(.45, Math.max(0, (w - 1) * .06)); return [t2, t3] };
+const rollTier = () => { const [t2, t3] = tierOdds(), r = Math.random(); return r < t3 ? 3 : r < t3 + t2 ? 2 : 1 };
+export const targetLvl = it => Math.min(PART[it.id].max, Math.max(it.tier || 1, lvlOf(it) + 1));
+export const tierOf = it => Math.max(1, targetLvl(it) - lvlOf(it)); // levels this card adds
+// each level costs base × (1 + .5 × (level − 1)); multi-level finds get 15% off
+export const price = it => {
+  const d = PART[it.id], from = lvlOf(it), to = targetLvl(it); let c = 0;
+  for (let l = from + 1; l <= to; l++) c += d.cost * (1 + .5 * (l - 1));
+  return Math.round(c * priceScale() * (to - from > 1 ? .85 : 1));
+};
 export const nameOf = it => { const d = PART[it.id]; return d.w ? L().w[d.w][0] : L().parts[it.id][0] };
 export const descOf = it => {
   const d = PART[it.id]; if (!d.w) return L().parts[it.id][1];
-  const l = Math.min(d.max, lvlOf(it) + 1); return L().w[d.w][1](l, ...WSTAT[d.w](l));
+  const l = targetLvl(it); return L().w[d.w][1](l, ...WSTAT[d.w](l));
 };
 export const repairCost = () => Math.round(8 * priceScale()) + G.wave;
 const canOffer = it => lvlOf(it) < PART[it.id].max;
 const OFFER = 5;
 // Locked cards survive rerolls and stay in the garage for the next lap.
 function roll() {
-  const out = G.offer.filter(it => it.locked && !it.sold && canOffer(it)).map(it => ({ id: it.id, locked: true }));
+  const out = G.offer.filter(it => it.locked && !it.sold && canOffer(it)).map(it => ({ id: it.id, tier: it.tier, locked: true }));
   const pool = PARTS.filter(p => !out.some(o => o.id === p.id) && canOffer(p));
   while (out.length < OFFER && pool.length) {
     const tot = pool.reduce((s, p) => s + (p.w ? 1.3 : 1), 0); let r = Math.random() * tot, k = 0;
     for (; k < pool.length - 1; k++) { r -= pool[k].w ? 1.3 : 1; if (r <= 0) break }
-    out.push({ id: pool[k].id }); pool.splice(k, 1);
+    out.push({ id: pool[k].id, tier: rollTier() }); pool.splice(k, 1);
   }
   return out;
 }
@@ -359,7 +371,7 @@ export function buy(i) {
   const p = price(it); if (p > G.scrap) return false;
   const d = PART[it.id], cur = G.build[d.slot];
   G.scrap -= p; it.sold = true; it.locked = false;
-  G.build[d.slot] = cur && cur.id === it.id ? { id: it.id, lvl: cur.lvl + 1 } : { id: it.id, lvl: 1 };
+  G.build[d.slot] = { id: it.id, lvl: targetLvl(it) };
   recompute();
   return true;
 }
@@ -995,7 +1007,7 @@ export function update(dt) {
     if (d < S.magnet && s.t > .25) { s.mag = true }
     if (s.mag) { const v = 320 + P.sp * 1.4; s.vx = dx / d * v; s.vy = dy / d * v } // once caught, it homes in faster than you can drive
     else { s.vx *= 1 - Math.min(1, 3 * dt); s.vy *= 1 - Math.min(1, 3 * dt) } s.x += s.vx * dt; s.y += s.vy * dt;
-    if (d < P.r + 10 && s.t > .25) { G.scrap += s.v; s.got = true }
+    if (d < P.r + 10 && s.t > .25) { G.scrap += s.v * SCRAP_VAL; s.got = true }
   }
   G.scraps = G.scraps.filter(s => !s.got);
 
