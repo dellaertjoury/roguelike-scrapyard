@@ -1,20 +1,22 @@
-// Game simulation: driving, drifting, enemies, weapons, waves, shop.
+// Game simulation: driving, drifting, jumping, enemies, weapons, laps, garage.
+// (Internally a lap is still called a 'wave'.)
 // Runs on a flat 2D plane (x, y). The 3D scene maps sim y to world z.
-import { CARS, BASE, ITEMS, WNAME, WD, ENEMY, ECOL } from './data.js';
+import { CARS, BASE, PARTS, PART, SLOTS, WSTAT, ENEMY, ECOL, ELITES } from './data.js';
+import { t, L, num } from './i18n.js';
 
 export const AW = 2000, AH = 1360, EDGE = 34, GS = .6;
 export const TAU = Math.PI * 2;
 export const rnd = (a, b) => a + Math.random() * (b - a);
 export const clamp = (v, a, b) => v < a ? a : v > b ? b : v;
 export const angDiff = (a, b) => { let d = a - b; while (d > Math.PI) d -= TAU; while (d < -Math.PI) d += TAU; return d };
-export const fmt = n => Math.round(n).toLocaleString('en-US');
+export const fmt = n => num(n);
 const hex = s => parseInt(s.slice(1), 16);
 
 export const G = {
   state: 'menu', S: null, P: null, W: null, CD: null,
-  enemies: [], bullets: [], ebul: [], mines: [], fires: [], scraps: [], parts: [], texts: [], pend: [], zaps: [], obs: [],
+  enemies: [], bullets: [], ebul: [], mines: [], fires: [], scraps: [], parts: [], texts: [], pend: [], zaps: [], obs: [], ramps: [],
   wave: 0, waveT: 0, waveLen: 1, spawnT: 0, scrap: 0, score: 0, wrecks: 0, bestDrift: 0, shake: 0, time: 0,
-  banner: null, owned: {}, offer: [], rerollCost: 0, clearT: 0,
+  banner: null, build: {}, car: null, offer: [], rerollCost: 0, clearT: 0,
   cam: { x: AW / 2, y: AH / 2 }, drift: { on: false, pts: 0, mult: 1, off: 0, heat: 0 },
   keys: {}, groundDirty: true, obsVersion: 0, cheer: 0, on: {}
 };
@@ -55,20 +57,32 @@ export function makeGround() {
   g.strokeStyle = 'rgba(250,245,232,.32)'; g.lineWidth = 8; g.setLineDash([36, 28]);
   g.strokeRect(300, 300, AW - 600, AH - 600); g.setLineDash([]);
   g.fillStyle = 'rgba(250,245,232,.16)'; g.font = '800 120px Rubik, Impact, sans-serif'; g.textAlign = 'center';
-  g.fillText('SCRAPYARD', AW / 2, 210);
+  g.fillText(t('title').toUpperCase(), AW / 2, 210);
   g.lineCap = 'round';
   G.groundDirty = true;
 }
 
+// Ramps: a wedge that rises from (x, y) along direction d to height H over length L.
+// The landing zone beyond the lip is kept clear of obstacles.
 export function makeObs() {
-  const obs = []; let t = 0;
-  while (obs.length < 12 && t++ < 500) {
+  const ramps = []; let n = 0;
+  while (ramps.length < 2 && n++ < 400) {
+    const d = rnd(0, TAU), L = 150, W = 80, H = 30, x = rnd(300, AW - 300), y = rnd(260, AH - 260);
+    const c = Math.cos(d), s = Math.sin(d), cx = x + c * L / 2, cy = y + s * L / 2, lx = x + c * (L + 200), ly = y + s * (L + 200);
+    if (Math.hypot(cx - AW / 2, cy - AH / 2) < 300) continue;
+    if (lx < 160 || lx > AW - 160 || ly < 160 || ly > AH - 160 || x + c * L < 120 || x + c * L > AW - 120 || y + s * L < 120 || y + s * L > AH - 120) continue;
+    if (ramps.some(r => Math.hypot(r.cx - cx, r.cy - cy) < 600)) continue;
+    ramps.push({ x, y, d, c, s, L, W, H, cx, cy, lx, ly });
+  }
+  const obs = []; n = 0;
+  while (obs.length < 12 && n++ < 600) {
     const o = { x: rnd(220, AW - 220), y: rnd(220, AH - 220), r: rnd(26, 42), k: Math.random() < .6 ? 'tire' : 'hay' };
     if (Math.hypot(o.x - AW / 2, o.y - AH / 2) < 280) continue;
     if (obs.some(b => Math.hypot(b.x - o.x, b.y - o.y) < b.r + o.r + 140)) continue;
+    if (ramps.some(r => Math.hypot(r.cx - o.x, r.cy - o.y) < r.L / 2 + o.r + 110 || Math.hypot(r.lx - o.x, r.ly - o.y) < o.r + 170 || Math.hypot(r.x - r.c * 120 - o.x, r.y - r.s * 120 - o.y) < o.r + 90)) continue;
     obs.push(o);
   }
-  G.obs = obs; G.obsVersion++;
+  G.obs = obs; G.ramps = ramps; G.obsVersion++;
 }
 
 /* ---------- particles & floating text ----------
@@ -98,21 +112,25 @@ export function boom(x, y, r, col) {
 /* ---------- run flow ---------- */
 export function start(i) {
   const c = CARS[i];
-  G.S = Object.assign({}, BASE, c.st);
-  G.P = { x: AW / 2, y: AH / 2, a: -Math.PI / 2, vx: 0, vy: 0, hp: G.S.maxhp, inv: 0, nitro: .6, car: c, len: c.len, wid: c.wid, r: (c.len + c.wid) / 4 + 2, wl: null, boost: false, gunA: -Math.PI / 2, lat: 0, fwd: 0, steer: 0, slipDeg: 0, sp: 0 };
-  G.W = Object.assign({ mg: 0, mines: 0, tesla: 0, flame: 0, saw: 0 }, c.w);
+  G.S = null; G.P = null;
+  G.car = c; G.build = Object.fromEntries(Object.entries(c.build).map(([k, v]) => [k, { id: v[0], lvl: v[1] }]));
+  recompute();
+  G.P = { x: AW / 2, y: AH / 2, a: -Math.PI / 2, vx: 0, vy: 0, hp: 0, inv: 0, nitro: .6, car: c, len: c.len, wid: c.wid, r: (c.len + c.wid) / 4 + 2, wl: null, boost: false, gunA: -Math.PI / 2, lat: 0, fwd: 0, steer: 0, slipDeg: 0, sp: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0 };
+  G.P.hp = G.S.maxhp;
   G.CD = { mg: 0, mines: 0, tesla: 0, flame: 0 };
   for (const k of ['enemies', 'bullets', 'ebul', 'mines', 'fires', 'scraps', 'parts', 'texts', 'pend', 'zaps']) G[k] = [];
-  Object.assign(G, { wave: 0, scrap: 0, score: 0, wrecks: 0, bestDrift: 0, owned: {} });
+  Object.assign(G, { wave: 0, scrap: 0, score: 0, wrecks: 0, bestDrift: 0, offer: [] });
   Object.assign(G.drift, { on: false, pts: 0, mult: 1, heat: 0, off: 0 });
   makeGround(); makeObs(); G.cam.x = G.P.x; G.cam.y = G.P.y;
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.waveLen = Math.min(60, 24 + G.wave * 3); G.waveT = G.waveLen; G.spawnT = 1.2; G.state = 'play';
-  G.banner = { s: `Wave ${G.wave}`, sub: G.wave % 5 === 0 ? 'Boss incoming' : `Survive ${G.waveLen}s`, id: Math.random() };
-  if (G.wave % 5 === 0) queue('boss');
-  for (let i = 0; i < 2 + G.wave; i++) queue('rust');
+  G.wave++; G.waveLen = 60; G.waveT = G.waveLen; G.spawnT = 1.2; G.state = 'play';
+  const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
+  G.banner = { s: ['lap', { n: G.wave }], elite, sub: elite ? ['eliteSub', { name: L().elites[elite][0], hint: L().elites[elite][1] }] : ['holdOut', { s: G.waveLen }], id: Math.random() };
+  if (elite) queue(elite);
+  // gentle start: 1 car on lap 1, slowly more after that
+  for (let i = 0; i < Math.min(5, 1 + Math.floor(G.wave / 2)); i++) queue('rust');
   G.on.play && G.on.play();
 }
 function queue(type) {
@@ -122,16 +140,18 @@ function queue(type) {
     const x = clamp(P.x + Math.cos(a) * d, EDGE + 60, AW - EDGE - 60), y = clamp(P.y + Math.sin(a) * d, EDGE + 60, AH - EDGE - 60);
     if (Math.hypot(x - P.x, y - P.y) < 280) continue;
     if (G.obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 50)) continue;
-    G.pend.push({ x, y, t: type === 'boss' ? 1.6 : .9, max: type === 'boss' ? 1.6 : .9, type }); return;
+    if (G.ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < r.L / 2 + 40)) continue;
+    const tt = ELITES.includes(type) ? 1.8 : 1.1; G.pend.push({ x, y, t: tt, max: tt, type, elite: tt > 1.5 }); return;
   }
 }
 function spawn(type, x, y) {
   const D = ENEMY(G.wave)[type], P = G.P;
   G.enemies.push(Object.assign({
     type, x, y, a: Math.atan2(P.y - y, P.x - x), vx: 0, vy: 0, max: D.hp, flash: 0, cd: rnd(1, 2.5), charge: 0,
-    hitcd: 0, sawcd: 0, burncd: 0, seed: Math.random() * 1e4 | 0,
-    col: type === 'boss' ? '#e0b040' : ECOL[Math.random() * ECOL.length | 0], num: 1 + (Math.random() * 98 | 0)
+    hitcd: 0, sawcd: 0, burncd: 0, z: 0, vz: 0, air: false, airT: 0, pitch: 0, seed: Math.random() * 1e4 | 0,
+    col: ECOL[Math.random() * ECOL.length | 0], num: 1 + (Math.random() * 98 | 0)
   }, D));
+  if (D.elite) G.enemies[G.enemies.length - 1].cd = 2;
   puff(x, y, 12, { c: 0xc8a878, s0: 40, s1: 160, l0: .5, l1: 1, z0: 8, z1: 14, grow: 14, z: 6, vz0: 10, vz1: 40 });
 }
 function hurt(e, d, silent) {
@@ -142,7 +162,7 @@ function hurt(e, d, silent) {
 }
 function kill(e, scored) {
   e.dead = true; boom(e.x, e.y, e.r * 1.3, e.col);
-  G.shake = Math.max(G.shake, e.type === 'boss' ? 18 : e.r / 3); G.cheer = 1;
+  G.shake = Math.max(G.shake, e.elite ? 18 : e.r / 3); G.cheer = 1;
   const gr = g.createRadialGradient(e.x, e.y, 0, e.x, e.y, e.r * 2);
   gr.addColorStop(0, 'rgba(30,22,16,.5)'); gr.addColorStop(1, 'rgba(30,22,16,0)');
   g.fillStyle = gr; g.fillRect(e.x - e.r * 2, e.y - e.r * 2, e.r * 4, e.r * 4);
@@ -160,7 +180,7 @@ function endWave() {
   for (const s of G.scraps) G.scrap += s.v; G.scraps = [];
   G.P.hp = Math.min(G.S.maxhp, G.P.hp + G.S.maxhp * .2);
   bankDrift(); G.state = 'clear'; G.clearT = 1.1;
-  G.banner = { s: 'Wave cleared', sub: 'Garage is open', id: Math.random() };
+  G.banner = { s: ['lapClear'], sub: ['garageOpen'], id: Math.random() };
 }
 function die() {
   G.state = 'dead'; G.clearT = 1.6; const P = G.P;
@@ -171,34 +191,60 @@ function bankDrift() {
   if (d.pts > 40) {
     const p = Math.round(d.pts), s = Math.floor(p / 160);
     G.score += p; G.scrap += s; G.bestDrift = Math.max(G.bestDrift, p);
-    txt(G.P.x, G.P.y - 30, `Drift ${fmt(p)}${s ? ` · +${s} scrap` : ''}`, '#ffc23d', 18, 1.2);
+    txt(G.P.x, G.P.y - 30, t('fDrift', { p: fmt(p) }) + (s ? ' · ' + t('fScrap', { s }) : ''), '#ffc23d', 18, 1.2);
   }
   d.pts = 0; d.mult = 1; d.on = false;
 }
 
-/* ---------- shop ---------- */
-export const price = it => Math.round(it.cost * (1 + (G.wave - 1) * .14));
-export const lvlOf = it => it.w ? G.W[it.w] : (G.owned[it.id] || 0);
-export const nameOf = it => it.w ? WNAME[it.w] : it.name;
-export const descOf = it => it.w ? WD[it.w](G.W[it.w] + 1) : it.d;
+/* ---------- garage: slot-based build ---------- */
+// Stats are always rebuilt from the car's base stats plus every installed part,
+// so replacing a part cleanly removes the old one's effect.
+export function recompute() {
+  const oldMax = G.S ? G.S.maxhp : 0;
+  const S = Object.assign({}, BASE, G.car.st), W = { mg: 0, mines: 0, tesla: 0, flame: 0, saw: 0 };
+  for (const slot of SLOTS) {
+    const b = G.build[slot]; if (!b) continue;
+    const d = PART[b.id]; if (d.w) W[d.w] = b.lvl; else d.f(S, b.lvl);
+  }
+  G.S = S; G.W = W;
+  if (G.P && oldMax) G.P.hp = clamp(G.P.hp + Math.max(0, S.maxhp - oldMax), 1, S.maxhp);
+}
+export const lvlOf = it => { const b = G.build[PART[it.id].slot]; return b && b.id === it.id ? b.lvl : 0 };
+export const price = it => Math.round(PART[it.id].cost * (1 + (G.wave - 1) * .14) * (1 + .5 * lvlOf(it)));
+export const nameOf = it => { const d = PART[it.id]; return d.w ? L().w[d.w][0] : L().parts[it.id][0] };
+export const descOf = it => {
+  const d = PART[it.id]; if (!d.w) return L().parts[it.id][1];
+  const l = Math.min(d.max, lvlOf(it) + 1); return L().w[d.w][1](l, ...WSTAT[d.w](l));
+};
+export const repairCost = () => 6 + G.wave * 2;
+const canOffer = it => lvlOf(it) < PART[it.id].max;
+const OFFER = 5;
+// Locked cards survive rerolls and stay in the garage for the next lap.
 function roll() {
-  const pool = ITEMS.filter(it => it.w ? G.W[it.w] < 5 : !(it.max && (G.owned[it.id] || 0) >= it.max));
-  const out = [];
-  while (out.length < 4 && pool.length) {
-    const tot = pool.reduce((s, it) => s + (it.w ? 1.4 : 1), 0); let r = Math.random() * tot, k = 0;
-    for (; k < pool.length - 1; k++) { r -= pool[k].w ? 1.4 : 1; if (r <= 0) break }
-    out.push({ ...pool[k] }); pool.splice(k, 1);
+  const out = G.offer.filter(it => it.locked && !it.sold && canOffer(it)).map(it => ({ id: it.id, locked: true }));
+  const pool = PARTS.filter(p => !out.some(o => o.id === p.id) && canOffer(p));
+  while (out.length < OFFER && pool.length) {
+    const tot = pool.reduce((s, p) => s + (p.w ? 1.3 : 1), 0); let r = Math.random() * tot, k = 0;
+    for (; k < pool.length - 1; k++) { r -= pool[k].w ? 1.3 : 1; if (r <= 0) break }
+    out.push({ id: pool[k].id }); pool.splice(k, 1);
   }
   return out;
 }
 function openShop() { G.state = 'shop'; G.rerollCost = 2 + G.wave; G.offer = roll(); G.on.shop && G.on.shop() }
 export function buy(i) {
-  const it = G.offer[i], p = price(it);
-  if (!it || it.sold || p > G.scrap) return false;
-  G.scrap -= p; it.sold = true;
-  if (it.w) G.W[it.w]++; else { G.owned[it.id] = (G.owned[it.id] || 0) + 1; it.f(G) }
+  const it = G.offer[i]; if (!it || it.sold || !canOffer(it)) return false;
+  const p = price(it); if (p > G.scrap) return false;
+  const d = PART[it.id], cur = G.build[d.slot];
+  G.scrap -= p; it.sold = true; it.locked = false;
+  G.build[d.slot] = cur && cur.id === it.id ? { id: it.id, lvl: cur.lvl + 1 } : { id: it.id, lvl: 1 };
+  recompute();
   return true;
 }
+export function repair() {
+  const c = repairCost(); if (G.scrap < c || G.P.hp >= G.S.maxhp) return false;
+  G.scrap -= c; G.P.hp = Math.min(G.S.maxhp, G.P.hp + G.S.maxhp * .5); return true;
+}
+export function toggleLock(i) { const it = G.offer[i]; if (it && !it.sold) it.locked = !it.locked }
 export function reroll() { if (G.scrap < G.rerollCost) return; G.scrap -= G.rerollCost; G.rerollCost++; G.offer = roll() }
 
 /* ---------- update ---------- */
@@ -221,7 +267,7 @@ function bounceOff(o, nx, ny, bounce, tire, cx, cy) {
   puff(cx, cy, 5, { c: 0xdccbad, s0: 10, s1: 50, l0: .5, l1: .9, z0: 3, z1: 6, grow: 10, z: 4, vz0: 10, vz1: 30 });
 }
 function collideStatic(o, r, bounce) {
-  for (const b of G.obs) {
+  if (o.z < 26) for (const b of G.obs) {
     const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy), m = r + b.r;
     if (d < m && d > 0) {
       const nx = dx / d, ny = dy / d; o.x = b.x + nx * m; o.y = b.y + ny * m;
@@ -234,12 +280,126 @@ function collideStatic(o, r, bounce) {
   if (o.y < lo) { o.y = lo; bounceOff(o, 0, 1, bounce, true, o.x, EDGE) }
   if (o.y > AH - lo) { o.y = AH - lo; bounceOff(o, 0, -1, bounce, true, o.x, AH - EDGE) }
 }
+/* ---------- ramps & air time ---------- */
+const GRAV = 560;
+function rampAt(x, y) {
+  for (const r of G.ramps) {
+    const dx = x - r.x, dy = y - r.y, u = dx * r.c + dy * r.s, v = -dx * r.s + dy * r.c;
+    if (u >= 0 && u <= r.L && Math.abs(v) <= r.W / 2) return { r, h: r.H * u / r.L };
+  }
+  return null;
+}
+// Called after a car moved from (px, py). Rides up ramps, launches off the lip,
+// handles gravity and landing. The steep back and sides of a ramp act as walls.
+function rampStep(o, px, py, dt) {
+  const ra = rampAt(o.x, o.y), h = ra ? ra.h : 0;
+  if (o.air) {
+    o.vz -= GRAV * dt; o.z += o.vz * dt; o.airT += dt; o.pitch = clamp(o.vz / 700, -.3, .3);
+    if (o.z <= h) land(o, h);
+    return;
+  }
+  if (h > o.z + 8) { o.x = px; o.y = py; o.vx *= -.5; o.vy *= -.5; if (o === G.P) G.shake = Math.max(G.shake, 6); return }
+  if (!ra && o.z > 6) {
+    const r = o.rampRef, along = r ? o.vx * r.c + o.vy * r.s : 0;
+    o.air = true; o.airT = 0; o.vz = Math.max(0, along) * .95 + 30; o.rampRef = null;
+    return;
+  }
+  o.z = h; o.rampRef = ra ? ra.r : null;
+  o.pitch = ra ? Math.atan2(ra.r.H, ra.r.L) * (Math.cos(o.a) * ra.r.c + Math.sin(o.a) * ra.r.s) : 0;
+}
+function land(o, h) {
+  const impact = -o.vz; o.air = false; o.z = h; o.vz = 0; o.pitch = 0;
+  puff(o.x, o.y, 10, { c: 0xdccbad, s0: 60, s1: 160, l0: .5, l1: 1, z0: 6, z1: 10, grow: 12, z: 4, vz0: 10, vz1: 40 });
+  if (o !== G.P) {
+    if (o.slam) { // monster truck lands: shockwave
+      const P = G.P, R = 150; boom(o.x, o.y, 26); G.shake = Math.max(G.shake, 14);
+      puff(o.x, o.y, 26, { c: 0xdccbad, s0: 160, s1: 320, l0: .5, l1: .9, z0: 8, z1: 14, grow: 10, z: 4, vz0: 10, vz1: 40, drag: 3 });
+      const d = Math.hypot(P.x - o.x, P.y - o.y);
+      if (d < R + P.r && P.z < 12) { hitPlayer(o.dmg); const a = Math.atan2(P.y - o.y, P.x - o.x); P.vx += Math.cos(a) * 320; P.vy += Math.sin(a) * 320 }
+      o.slam = null; o.vx *= .2; o.vy *= .2;
+    }
+    return;
+  }
+  const P = o, S = G.S;
+  G.shake = Math.max(G.shake, 4 + impact / 40); G.cheer = 1;
+  if (P.airT > .35) {
+    const pts = Math.round(P.airT * 300), sc = Math.floor(P.airT * 4);
+    G.score += pts; G.scrap += sc;
+    txt(P.x, P.y - 34, t('fAir', { t: P.airT.toFixed(1) }) + (sc ? ' · ' + t('fScrap', { s: sc }) : ''), '#8fd0ea', 18, 1.2);
+  }
+  // landing on a car crushes it, and you bounce off its roof
+  let crushed = false;
+  for (const e of G.enemies) {
+    if (e.dead || e.air || Math.hypot(e.x - P.x, e.y - P.y) > P.r + e.r * .8) continue;
+    hurt(e, (45 + impact * .3) * S.mass * S.dmg); crushed = true;
+    puff(e.x, e.y, 14, { c: 0xffd27a, glow: true, k: 's', s0: 120, s1: 360, l0: .15, l1: .4, z: 18, vz0: 40, vz1: 200, grav: 500 });
+  }
+  if (crushed) { txt(P.x, P.y - 58, t('fCrush'), '#ffc23d', 22, 1); P.air = true; P.vz = 140; P.airT = 0; P.z = Math.max(P.z, 16) }
+}
+
+/* ---------- elite special moves ---------- */
+// Returns a speed multiplier for this frame.
+function eliteMove(e, dt, d) {
+  const P = G.P; e.cd -= dt;
+  if (e.type === 'harvester') { // fires two chained saw blades from its front bumper, then reels them in
+    const S = e.saw || (e.saw = { st: 'idle', t: 0, d: 0 });
+    if (S.st === 'idle') {
+      if (e.cd <= 0 && d < 420 && Math.abs(angDiff(Math.atan2(P.y - e.y, P.x - e.x), e.a)) < .6) { S.st = 'wind'; S.t = .6; txt(e.x, e.y - e.r, '!', '#ff6b5a', 30, .6) }
+      return 1;
+    }
+    if (S.st === 'wind') { S.t -= dt; if (S.t <= 0) S.st = 'out'; return .1 }
+    if (S.st === 'out') { S.d += 640 * dt; if (S.d >= 300) { S.d = 300; S.st = 'hold'; S.t = .35 } }
+    else if (S.st === 'hold') { S.t -= dt; if (S.t <= 0) S.st = 'in' }
+    else if (S.st === 'in') { S.d -= 380 * dt; if (S.d <= 0) { S.d = 0; S.st = 'idle'; e.cd = rnd(3.5, 5) } }
+    for (const b of harvesterBlades(e)) {
+      if (S.d > 10 && P.z < 20 && Math.hypot(P.x - b.x, P.y - b.y) < P.r + b.R) { hitPlayer(e.dmg * .8); puff(b.x, b.y, 8, { c: 0xfff0c0, glow: true, k: 's', s0: 150, s1: 350, l0: .1, l1: .25, z: 10, vz0: 30, vz1: 120, grav: 400 }) }
+    }
+    return .25;
+  }
+  if (e.type === 'monster') { // leaps at where you will be and slams down
+    if (!e.air && e.cd <= 0 && d < 560) {
+      const T = 1.15, tx = clamp(P.x + P.vx * T * .8, EDGE + 60, AW - EDGE - 60), ty = clamp(P.y + P.vy * T * .8, EDGE + 60, AH - EDGE - 60);
+      e.slam = { x: tx, y: ty }; e.vx = (tx - e.x) / T; e.vy = (ty - e.y) / T; e.air = true; e.vz = GRAV * T / 2; e.airT = 0; e.cd = rnd(4.5, 6);
+      e.a = Math.atan2(ty - e.y, tx - e.x);
+    }
+    return 1;
+  }
+  if (e.type === 'tow') { // throws a hook; once it bites you get reeled in until nitro breaks you free
+    const H = e.hook || (e.hook = { st: 'idle', x: e.x, y: e.y });
+    if (H.st === 'idle') { H.x = e.x; H.y = e.y; if (e.cd <= 0 && d < 440 && d > 110) { const a = Math.atan2(P.y + P.vy * .3 - e.y, P.x + P.vx * .3 - e.x); Object.assign(H, { st: 'fly', vx: Math.cos(a) * 470, vy: Math.sin(a) * 470, t: 1.1 }) } }
+    else if (H.st === 'fly') {
+      H.x += H.vx * dt; H.y += H.vy * dt; H.t -= dt;
+      if (P.z < 20 && Math.hypot(P.x - H.x, P.y - H.y) < P.r + 8) { H.st = 'hooked'; H.t = 1.8; hitPlayer(e.dmg * .4); txt(P.x, P.y - 40, t('fHooked'), '#ff6b5a', 18, 1) }
+      else if (H.t <= 0) H.st = 'back';
+    } else if (H.st === 'hooked') {
+      H.x = P.x; H.y = P.y; H.t -= dt;
+      const dx = e.x - P.x, dy = e.y - P.y, dd = Math.hypot(dx, dy) || 1;
+      if (dd > 80) { P.vx += dx / dd * 560 * dt; P.vy += dy / dd * 560 * dt }
+      if (P.boost) { H.st = 'back'; txt(P.x, P.y - 40, t('fFree'), '#8fd0ea', 18, 1) } else if (H.t <= 0) H.st = 'back';
+    } else if (H.st === 'back') {
+      const dx = e.x - H.x, dy = e.y - H.y, dd = Math.hypot(dx, dy) || 1;
+      H.x += dx / dd * 620 * dt; H.y += dy / dd * 620 * dt; if (dd < 24) { H.st = 'idle'; e.cd = rnd(3.5, 5) }
+    }
+    return H.st === 'hooked' ? .35 : d < 220 ? .5 : 1;
+  }
+  return 1;
+}
+// Blade positions of the Harvester (shared with the renderer).
+export function harvesterBlades(e) {
+  const fx = Math.cos(e.a), fy = Math.sin(e.a), d = e.saw ? e.saw.d : 0, out = [];
+  for (const side of [-1, 1]) {
+    const bx = e.x + fx * (e.len / 2 + 16) - fy * side * e.wid * .42, by = e.y + fy * (e.len / 2 + 16) + fx * side * e.wid * .42;
+    out.push({ bx, by, x: bx + fx * d, y: by + fy * d, R: 17 });
+  }
+  return out;
+}
+
 function hitPlayer(d) {
   const P = G.P;
   if (P.inv > 0 || G.state !== 'play') return;
   d *= 1 - Math.min(.7, G.S.armor); P.hp -= d; P.inv = .55; G.shake = Math.max(G.shake, 8);
   txt(P.x, P.y - 20, '-' + fmt(d), '#ff6b5a', 18, .7);
-  if (G.drift.pts > 200) txt(P.x, P.y - 46, 'Combo wrecked', '#ff6b5a', 16, 1);
+  if (G.drift.pts > 200) txt(P.x, P.y - 46, t('fCombo'), '#ff6b5a', 16, 1);
   G.drift.pts = 0; G.drift.mult = 1;
   if (P.hp <= 0) { P.hp = 0; die() }
 }
@@ -268,7 +428,8 @@ export function update(dt) {
   const fx = Math.cos(P.a), fy = Math.sin(P.a);
   let fwd = P.vx * fx + P.vy * fy, lat = -P.vx * fy + P.vy * fx;
   P.stun = Math.max(0, (P.stun || 0) - dt);
-  const up = K('KeyW', 'ArrowUp') && P.stun <= 0, dn = K('KeyS', 'ArrowDown'), hb = K('Space'), lt = K('KeyA', 'ArrowLeft'), rt = K('KeyD', 'ArrowRight');
+  const gr = !P.air; // no throttle, brakes or grip while flying
+  const up = K('KeyW', 'ArrowUp') && P.stun <= 0 && gr, dn = K('KeyS', 'ArrowDown') && gr, hb = K('Space') && gr, lt = K('KeyA', 'ArrowLeft'), rt = K('KeyD', 'ArrowRight');
   P.boost = K('ShiftLeft', 'ShiftRight') && P.nitro > .02;
   const bm = P.boost ? 1.8 * S.nitroPow : 1, top = S.top * (P.boost ? 1.35 * S.nitroPow : 1);
   if (P.boost) { P.nitro = Math.max(0, P.nitro - dt * .45); puff(P.x - fx * P.len * .55, P.y - fy * P.len * .55, 2, { c: 0x7fd4ff, glow: true, a: P.a + Math.PI, sp: .25, s0: 90, s1: 180, l0: .12, l1: .25, z0: 3, z1: 5, z: 8 }) }
@@ -276,26 +437,37 @@ export function update(dt) {
   if (dn && fwd > -top * .4) fwd -= (fwd > 0 ? S.accel * 1.4 : S.accel * .6) * dt; // reverse is capped, bounces are not
   if (hb) fwd -= fwd * .55 * dt;
   if (fwd > top) fwd += (top - fwd) * Math.min(1, dt * 3);
-  fwd -= fwd * (up || dn ? .12 : .9) * dt;
-  lat *= Math.max(0, 1 - (hb ? S.grip * .16 : S.grip) * dt);
+  fwd -= fwd * (!gr ? .05 : up || dn ? .12 : .9) * dt;
+  if (gr) lat *= Math.max(0, 1 - (hb ? S.grip * .16 : S.grip) * dt);
   P.vx = fx * fwd - fy * lat; P.vy = fy * fwd + fx * lat;
   const sp = Math.hypot(P.vx, P.vy), steer = (rt ? 1 : 0) - (lt ? 1 : 0);
   P.steer += (steer - P.steer) * Math.min(1, dt * 10);
-  P.a += steer * S.turn * Math.min(1, sp / 80) * (fwd < -5 ? -1 : 1) * (hb ? 1.35 : 1) * dt;
+  P.a += steer * S.turn * Math.min(1, sp / 80) * (fwd < -5 ? -1 : 1) * (hb ? 1.35 : 1) * (gr ? 1 : .3) * dt;
+  const px0 = P.x, py0 = P.y;
   P.x += P.vx * dt; P.y += P.vy * dt;
+  rampStep(P, px0, py0, dt);
   collideStatic(P, P.r, .35);
   P.inv = Math.max(0, P.inv - dt);
   P.hp = Math.min(S.maxhp, P.hp + S.regen * dt);
   P.lat = lat; P.fwd = fwd; P.sp = sp; P.slipDeg = sp > 30 ? Math.round(Math.atan2(Math.abs(lat), Math.abs(fwd)) * 180 / Math.PI) : 0;
 
   /* drifting: skid marks, combo, heat (fire-rate boost), nitro refill */
-  const slip = Math.abs(lat), isDrift = slip > 36 && sp > 72;
+  const slip = Math.abs(lat), isDrift = gr && slip > 36 && sp > 72;
   const wl = [[P.x - fx * P.len * .32 - fy * P.wid * .42, P.y - fy * P.len * .32 + fx * P.wid * .42], [P.x - fx * P.len * .32 + fy * P.wid * .42, P.y - fy * P.len * .32 - fx * P.wid * .42]];
-  if ((isDrift || (hb && sp > 45)) && P.wl) {
-    g.strokeStyle = `rgba(40,28,18,${clamp(slip / 250, .14, .36)})`; g.lineWidth = 5;
+  if ((isDrift || (hb && sp > 45)) && P.wl && P.z < 1) {
+    // hot drifts burn an orange streak under the black rubber
+    if (isDrift && drift.heat > .2) {
+      g.strokeStyle = `rgba(255,120,40,${drift.heat * .22})`; g.lineWidth = 11;
+      for (let i = 0; i < 2; i++) { g.beginPath(); g.moveTo(P.wl[i][0], P.wl[i][1]); g.lineTo(wl[i][0], wl[i][1]); g.stroke() }
+    }
+    g.strokeStyle = `rgba(40,28,18,${clamp(slip / 250, .14, .4)})`; g.lineWidth = isDrift ? 6 : 5;
     for (let i = 0; i < 2; i++) { g.beginPath(); g.moveTo(P.wl[i][0], P.wl[i][1]); g.lineTo(wl[i][0], wl[i][1]); g.stroke() }
     G.groundDirty = true;
-    if (Math.random() < .45) { const w = wl[Math.random() * 2 | 0]; puff(w[0], w[1], 1, { c: 0xdccbad, s0: 5, s1: 30, l0: .5, l1: .9, z0: 3, z1: 5, grow: 9, drag: 1.5, z: 4, vz0: 8, vz1: 25 }) }
+    const back = Math.atan2(-P.vy, -P.vx), sparkC = drift.heat > .66 ? 0xff5a1f : drift.heat > .33 ? 0xff9a2a : 0xffd27a;
+    for (const w of wl) {
+      if (Math.random() < (isDrift ? .9 : .3)) puff(w[0], w[1], 1, { c: isDrift ? 0xf4f0e8 : 0xdccbad, s0: 5, s1: 40, l0: .6, l1: isDrift ? 1.5 : .9, z0: isDrift ? 5 : 3, z1: isDrift ? 9 : 5, grow: isDrift ? 18 : 9, drag: 1.5, z: 4, vz0: 8, vz1: 30, vx: -P.vx * .15, vy: -P.vy * .15 });
+      if (isDrift && Math.random() < .45 + drift.heat * .55) puff(w[0], w[1], 1, { c: sparkC, glow: true, k: 's', a: back, sp: .7, s0: 60, s1: 200, l0: .12, l1: .3, z: 3, vz0: 20, vz1: 90, grav: 400 });
+    }
   }
   P.wl = wl;
   if (isDrift) {
@@ -305,7 +477,7 @@ export function update(dt) {
     drift.heat = Math.min(1, drift.heat + dt * .6 * S.driftGain);
     P.nitro = Math.min(1, P.nitro + dt * .18 * S.driftGain * S.nitroFill);
     const lf = G.fires[G.fires.length - 1];
-    if (S.exhaust && (!lf || Math.hypot(lf.x - P.x, lf.y - P.y) > 22)) G.fires.push({ x: P.x - fx * P.len * .5, y: P.y - fy * P.len * .5, life: 1.4 + S.exhaust * .3, max: 1.4 + S.exhaust * .3, r: 22 + S.exhaust * 4 });
+    if (S.exhaust && (!lf || Math.hypot(lf.x - P.x, lf.y - P.y) > 16)) G.fires.push({ x: P.x - fx * P.len * .55, y: P.y - fy * P.len * .55, life: 1 + S.exhaust * .25, max: 1 + S.exhaust * .25, r: 11 + S.exhaust * 3, rot: rnd(0, TAU) });
   } else {
     drift.off += dt; drift.heat = Math.max(0, drift.heat - dt * .22);
     if (drift.on && drift.off > .45) bankDrift();
@@ -315,11 +487,12 @@ export function update(dt) {
   /* waves */
   G.waveT -= dt; G.spawnT -= dt;
   if (G.spawnT <= 0 && G.waveT > 2) {
-    G.spawnT = Math.max(.32, 1.6 - G.wave * .1) * rnd(.7, 1.3);
-    const n = 1 + Math.floor(G.wave / 3) + (Math.random() < .3 ? 1 : 0);
-    for (let i = 0; i < n && G.enemies.length + G.pend.length < 90; i++) {
+    // early laps are calm: one car every ~3 s and a low cap, ramping up from lap 4
+    G.spawnT = Math.max(.5, 3.2 - G.wave * .3) * rnd(.8, 1.2);
+    const n = 1 + Math.floor((G.wave - 1) / 3) + (G.wave >= 4 && Math.random() < .3 ? 1 : 0), cap = Math.min(60, 4 + G.wave * 3);
+    for (let i = 0; i < n && G.enemies.length + G.pend.length < cap; i++) {
       const r = Math.random();
-      queue(G.wave >= 3 && r < .1 + G.wave * .012 ? 'brute' : G.wave >= 2 && r < .38 ? 'spit' : 'rust');
+      queue(G.wave >= 4 && r < .08 + G.wave * .012 ? 'brute' : G.wave >= 3 && r < .33 ? 'spit' : 'rust');
     }
   }
   for (const s of G.pend) { s.t -= dt; if (s.t <= 0) { spawn(s.type, s.x, s.y); s.done = true } }
@@ -339,27 +512,32 @@ export function update(dt) {
         puff(e.x + Math.cos(a) * 22, e.y + Math.sin(a) * 22, 4, { c: 0xb8ff70, glow: true, a, sp: .4, s0: 60, s1: 160, l0: .1, l1: .25, z0: 3, z1: 5, z: 14 });
       }
     }
-    if (e.type === 'brute' || e.type === 'boss') {
+    if (e.elite) spd *= eliteMove(e, dt, d);
+    else if (e.type === 'brute') {
       if (e.charge > 0) { e.charge -= dt; spd *= 2.2; if (Math.random() < .5) puff(e.x, e.y, 1, { c: 0xc8a878, s0: 10, s1: 40, l0: .5, l1: .9, z0: 8, z1: 14, grow: 14, z: 4, vz0: 10, vz1: 30 }) }
-      else { e.cd -= dt; if (e.cd <= 0 && d < 520 && Math.abs(angDiff(Math.atan2(dy, dx), e.a)) < .5) { e.charge = e.type === 'boss' ? 1.6 : 1.1; e.cd = rnd(3, 5); txt(e.x, e.y - e.r, '!', '#ff6b5a', 26, .6) } }
+      else { e.cd -= dt; if (e.cd <= 0 && d < 520 && Math.abs(angDiff(Math.atan2(dy, dx), e.a)) < .5) { e.charge = 1.1; e.cd = rnd(3, 5); txt(e.x, e.y - e.r, '!', '#ff6b5a', 26, .6) } }
     }
-    e.a += clamp(angDiff(want, e.a), -e.turn * dt, e.turn * dt);
-    const k = Math.min(1, dt * 2.2);
-    e.vx += (Math.cos(e.a) * spd - e.vx) * k; e.vy += (Math.sin(e.a) * spd - e.vy) * k;
-    e.x += e.vx * dt; e.y += e.vy * dt; collideStatic(e, e.r, .3);
+    if (!e.air) {
+      e.a += clamp(angDiff(want, e.a), -e.turn * dt, e.turn * dt);
+      const k = Math.min(1, dt * 2.2);
+      e.vx += (Math.cos(e.a) * spd - e.vx) * k; e.vy += (Math.sin(e.a) * spd - e.vy) * k;
+    }
+    const ex0 = e.x, ey0 = e.y;
+    e.x += e.vx * dt; e.y += e.vy * dt; rampStep(e, ex0, ey0, dt); collideStatic(e, e.r, .3);
     e.flash = Math.max(0, e.flash - dt); e.hitcd -= dt; e.sawcd -= dt; e.burncd -= dt;
   }
   const E = G.enemies;
   for (let i = 0; i < E.length; i++) for (let j = i + 1; j < E.length; j++) {
     const a = E[i], b = E[j], dx = b.x - a.x, dy = b.y - a.y, m = a.r + b.r;
-    if (Math.abs(dx) > m || Math.abs(dy) > m) continue;
+    if (Math.abs(dx) > m || Math.abs(dy) > m || Math.abs(a.z - b.z) > 14) continue;
     const d = Math.hypot(dx, dy);
     if (d < m && d > 0) { const o = (m - d) / d, wa = b.mass / (a.mass + b.mass); a.x -= dx * o * wa; a.y -= dy * o * wa; b.x += dx * o * (1 - wa); b.y += dy * o * (1 - wa) }
   }
 
-  /* ramming */
+  /* ramming: both cars get hurt. Damage to you grows with impact speed and with
+     how heavy the other car is compared to yours; whoever drove into whom also counts. */
   for (const e of E) {
-    if (e.dead) continue;
+    if (e.dead || Math.abs(P.z - e.z) > 14) continue;
     const dx = e.x - P.x, dy = e.y - P.y, d = Math.hypot(dx, dy), m = P.r + e.r;
     if (d < m + 4 && S.spikes && e.hitcd <= 0) { e.hitcd = .3; hurt(e, 12 * S.spikes * S.dmg) }
     if (d < m && d > 0) {
@@ -367,14 +545,17 @@ export function update(dt) {
       P.x -= nx * ov * em / (pm + em); P.y -= ny * ov * em / (pm + em); e.x += nx * ov * pm / (pm + em); e.y += ny * ov * pm / (pm + em);
       const rel = (P.vx - e.vx) * nx + (P.vy - e.vy) * ny;
       if (rel > 0) {
+        const pv = P.vx * nx + P.vy * ny, ev = -(e.vx * nx + e.vy * ny);
         const j = 1.5 * rel / (1 / pm + 1 / em);
+        let self = 0;
         P.vx -= j / pm * nx; P.vy -= j / pm * ny; e.vx += j / em * nx; e.vy += j / em * ny;
         if (rel > 42) {
           hurt(e, rel * .25 * S.ram * pm * (P.boost ? 1.4 : 1));
+          self = rel * .05 * Math.sqrt(em / pm) * S.ramGuard;
           puff(P.x + nx * P.r, P.y + ny * P.r, 10 + rel / 25 | 0, { c: 0xffd27a, glow: true, k: 's', s0: 120, s1: 360, l0: .15, l1: .4, z: 10, vz0: 40, vz1: 200, grav: 500 });
           G.shake = Math.max(G.shake, rel / 30);
         }
-        if (!e.dead) hitPlayer(e.dmg * (rel > 125 ? .35 : 1));
+        const dd = self + (e.dead ? 0 : ev > pv ? e.dmg : e.dmg * .3); if (dd > 0) hitPlayer(dd);
       } else if (P.inv <= 0) hitPlayer(e.dmg * .6);
     }
   }
@@ -394,11 +575,11 @@ export function update(dt) {
   }
   if (W.mines) {
     CD.mines -= dt;
-    if (CD.mines <= 0 && sp > 25) { CD.mines = (2.4 - .3 * W.mines) / rateMul; G.mines.push({ x: P.x - fx * P.len * .6, y: P.y - fy * P.len * .6, arm: .5, t: 0 }); if (G.mines.length > 14) G.mines.shift() }
+    if (CD.mines <= 0 && sp > 25) { CD.mines = (4.6 - .5 * W.mines) / rateMul; G.mines.push({ x: P.x - fx * P.len * .6, y: P.y - fy * P.len * .6, arm: .5, t: 0 }); if (G.mines.length > 14) G.mines.shift() }
   }
   for (const m of G.mines) {
     m.arm -= dt; m.t += dt;
-    if (m.arm <= 0 && E.some(e => !e.dead && Math.hypot(e.x - m.x, e.y - m.y) < e.r + 26)) {
+    if (m.arm <= 0 && E.some(e => !e.dead && e.z < 10 && Math.hypot(e.x - m.x, e.y - m.y) < e.r + 26)) {
       m.dead = true; const R = 90 + W.mines * 14; boom(m.x, m.y, 30); G.shake = Math.max(G.shake, 7);
       for (const e of E) if (!e.dead && Math.hypot(e.x - m.x, e.y - m.y) < R + e.r) { hurt(e, (30 + W.mines * 20) * S.dmg); const a = Math.atan2(e.y - m.y, e.x - m.x); e.vx += Math.cos(a) * 400 / e.mass; e.vy += Math.sin(a) * 400 / e.mass }
     }
@@ -423,10 +604,11 @@ export function update(dt) {
     }
   }
   if (W.saw) {
-    const n = W.saw, R = P.r + 44;
-    for (let i = 0; i < n; i++) {
-      const a = G.time * 4.5 + i * TAU / n, sx = P.x + Math.cos(a) * R, sy = P.y + Math.sin(a) * R;
-      for (const e of E) if (!e.dead && e.sawcd <= 0 && Math.hypot(e.x - sx, e.y - sy) < e.r + 13) { e.sawcd = .3; hurt(e, (12 + n * 5) * S.dmg); puff(sx, sy, 5, { c: 0xfff0c0, glow: true, k: 's', s0: 150, s1: 350, l0: .1, l1: .25, z: 10, vz0: 30, vz1: 120, grav: 400 }) }
+    // blades sit on steel arms left and right of the car; they hit cars only, never tyres or bales
+    for (const b of sawPoints(P, W.saw)) for (const e of E) {
+      if (e.dead || e.sawcd > 0 || Math.abs(e.z - P.z) > 14 || Math.hypot(e.x - b.x, e.y - b.y) > e.r + b.R) continue;
+      e.sawcd = .3; hurt(e, WSTAT.saw(W.saw)[0] * S.dmg);
+      puff(b.x, b.y, 6, { c: 0xfff0c0, glow: true, k: 's', s0: 150, s1: 350, l0: .1, l1: .25, z: 10, vz0: 30, vz1: 120, grav: 400 });
     }
   }
   if (G.fires.length) for (const e of E) {
@@ -442,7 +624,7 @@ export function update(dt) {
   G.bullets = G.bullets.filter(b => b.life > 0);
   for (const b of G.ebul) {
     b.life -= dt; b.x += b.vx * dt; b.y += b.vy * dt;
-    if (Math.hypot(P.x - b.x, P.y - b.y) < P.r + 5) { hitPlayer(b.dmg); b.life = 0 }
+    if (P.z < 20 && Math.hypot(P.x - b.x, P.y - b.y) < P.r + 5) { hitPlayer(b.dmg); b.life = 0 }
     if (G.obs.some(o => Math.hypot(o.x - b.x, o.y - b.y) < o.r)) b.life = 0;
   }
   G.ebul = G.ebul.filter(b => b.life > 0);
@@ -461,4 +643,15 @@ export function update(dt) {
   G.cam.x += (P.x + P.vx * .3 - G.cam.x) * Math.min(1, dt * 5);
   G.cam.y += (P.y + P.vy * .3 - G.cam.y) * Math.min(1, dt * 5);
   G.cam.x = clamp(G.cam.x, 420, AW - 420); G.cam.y = clamp(G.cam.y, 300, AH - 300);
+}
+
+// Side-saw layout, shared with the 3D rig so the visible blades match the hitbox.
+export function sawLayout(l, len, wid) {
+  const R = 11 + l * 1.5;
+  return { R, reach: wid / 2 + 12 + R, fwd: l >= 4 ? [len * .28, -len * .22] : [len * .06] };
+}
+export function sawPoints(P, l) {
+  const { R, reach, fwd } = sawLayout(l, P.len, P.wid), fx = Math.cos(P.a), fy = Math.sin(P.a), out = [];
+  for (const side of [-1, 1]) for (const f of fwd) out.push({ x: P.x + fx * f - fy * reach * side, y: P.y + fy * f + fx * reach * side, R });
+  return out;
 }

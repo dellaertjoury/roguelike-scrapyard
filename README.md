@@ -4,6 +4,14 @@ A low-poly drift-and-wreck survival roguelike that runs in the browser.
 Pick a junker, survive timed waves of derby cars, and spend scrap in the garage between waves.
 Drifting heats your weapons (up to +80% fire rate), ramming at speed wrecks cars, and every fifth wave brings a boss.
 
+## What's in it
+
+- **Laps** of one minute. Every fifth lap brings an elite with its own special move: the Harvester shoots chained saw blades, Big Wheel leaps and slams, the Wrecker hooks you and reels you in (nitro breaks free).
+- **Garage blueprint**: six fixed slots on your car (roof, hood, front bumper, rear bumper, trunk, sides). Each slot holds one part, which you can level up or swap out. Every part is visible on the car. Five parts are for sale each visit, and you can lock the ones you want to keep.
+- **Ramps** to jump over the pack. Land on a car to crush it.
+- **Ramming** hurts both cars, depending on impact speed and weight.
+- **Languages**: English, Français, Deutsch, Español and West-Vlams.
+
 ## Controls
 
 | Key | Action |
@@ -40,8 +48,9 @@ index.html        page shell, HUD markup, styles, import map
 src/main.js       boot, input, frame loop
 src/game.js       simulation: driving, drift, enemies, weapons, waves, shop
 src/scene.js      three.js low-poly renderer
-src/ui.js         menus, garage, HUD, floating numbers
-src/data.js       cars, upgrades, weapons, enemy stats (tune numbers here)
+src/ui.js         loading screen, menus, garage blueprint, HUD, floating numbers
+src/data.js       cars, garage parts and slots, weapons, enemy and elite stats (tune numbers here)
+src/i18n.js       all text in every language
 src/assets.js     optional art loader
 assets/           optional art (see ART_PROMPTS.md)
 ```

@@ -1,7 +1,9 @@
 // Low-poly three.js renderer. Reads the simulation state (G) and draws it.
 // Sim (x, y) maps to world (x, z); y is up.
 import * as THREE from 'three';
-import { G, AW, AH, EDGE, TAU, ground, rnd, clamp } from './game.js';
+import { G, AW, AH, EDGE, TAU, ground, rnd, clamp, sawLayout, harvesterBlades } from './game.js';
+import { A } from './assets.js';
+import { SLOTS } from './data.js';
 import { ECOL } from './data.js';
 
 const host = document.getElementById('gl');
@@ -149,6 +151,21 @@ const crowdMesh = (() => {
 const obsGroup = new THREE.Group(); scene.add(obsGroup);
 let obsBuilt = -1;
 const tireM = lam(0x2a2826), tireRed = lam(0xe24a32), hayM = lam(0xe2bf62), hayTop = lam(0xedd283);
+// A wooden kicker: triangular profile extruded across its width, red-white side
+// boards, hazard-yellow edge rails and a white lip so you can read it from above.
+const woodM = lam(0xb98a55), rampSideM = lam(0xe24a32), railM = lam(0xffc23d), lipM = lam(0xf4efe4), plankM = lam(0x8f6438);
+function buildRamp(r) {
+  const g = new THREE.Group(), sh = new THREE.Shape();
+  sh.moveTo(0, 0); sh.lineTo(r.L, 0); sh.lineTo(r.L, r.H); sh.closePath();
+  const geo = new THREE.ExtrudeGeometry(sh, { depth: r.W, bevelEnabled: false }); geo.translate(0, 0, -r.W / 2);
+  g.add(mesh(geo, [rampSideM, woodM]));
+  const hyp = Math.hypot(r.L, r.H), ang = Math.atan2(r.H, r.L);
+  for (const z of [-r.W / 2 + 3, r.W / 2 - 3]) { const rail = mesh(new THREE.BoxGeometry(hyp, 2.5, 5), railM); rail.position.set(r.L / 2, r.H / 2 + 1.2, z); rail.rotation.z = ang; g.add(rail) }
+  for (let i = 1; i < 6; i++) { const pl = mesh(new THREE.BoxGeometry(2, .8, r.W - 12), plankM, false); const u = i / 6; pl.position.set(r.L * u, r.H * u + .5, 0); pl.rotation.z = ang; g.add(pl) }
+  const lip = mesh(new THREE.BoxGeometry(5, 2, r.W), lipM); lip.position.set(r.L - 2.5, r.H + .6, 0); g.add(lip);
+  g.position.set(r.x, 0, r.y); g.rotation.y = -r.d;
+  return g;
+}
 function buildObstacles() {
   obsGroup.clear();
   for (const o of G.obs) {
@@ -164,6 +181,7 @@ function buildObstacles() {
       const b = mesh(new THREE.CylinderGeometry(o.r, o.r, 28, 10), [hayM, hayTop, hayTop]); b.position.set(o.x, 14, o.y); b.rotation.y = rnd(0, 3); obsGroup.add(b);
     }
   }
+  for (const r of G.ramps) obsGroup.add(buildRamp(r));
   obsBuilt = G.obsVersion;
 }
 
@@ -177,7 +195,7 @@ export function buildCar({ len: L, wid: W, color, kind, shape }) {
   shape = shape || { cabL: .42, cabX: -.1, cabH: .36 };
   const root = new THREE.Group(), tilt = new THREE.Group(); root.add(tilt);
   const body = lam(color), roof = lam(new THREE.Color(color).multiplyScalar(.82));
-  const r = W * .22, bh = W * .4, by = r * .9 + bh / 2;
+  const r = kind === 'monster' ? W * .42 : W * .22, bh = W * .4, by = (kind === 'monster' ? r * 1.5 : r * .9) + bh / 2;
   const b = mesh(new THREE.BoxGeometry(L, bh, W), body); b.position.y = by; tilt.add(b);
   // hood slope: a thin wedge-ish top plate in body colour
   const hood = mesh(new THREE.BoxGeometry(L * .28, bh * .2, W * .86), body); hood.position.set(L * .3, by + bh * .55, 0); tilt.add(hood);
@@ -194,29 +212,40 @@ export function buildCar({ len: L, wid: W, color, kind, shape }) {
   }
   const wheels = [], front = [];
   for (const sx of [1, -1]) for (const sz of [1, -1]) {
-    const pivot = new THREE.Group(); pivot.position.set(sx * L * .3, r, sz * (W / 2 - 1));
-    const w = mesh(wheelG, tyreM); w.scale.set(r, W * .22, r); w.rotation.x = Math.PI / 2; pivot.add(w);
+    const pivot = new THREE.Group(); pivot.position.set(sx * L * .3, r, sz * (W / 2 - 1 + (kind === 'monster' ? r * .35 : 0)));
+    const w = mesh(wheelG, tyreM); w.scale.set(r, W * (kind === 'monster' ? .38 : .22), r); w.rotation.x = Math.PI / 2; pivot.add(w);
     const hub = mesh(wheelG, rimM, false); hub.scale.set(r * .5, W * .23, r * .5); hub.rotation.x = Math.PI / 2; pivot.add(hub);
     root.add(pivot); wheels.push(w); if (sx > 0) front.push(pivot);
   }
   let turret = null;
-  if (kind === 'player' || kind === 'spit') {
+  if (kind === 'spit') {
     turret = new THREE.Group(); turret.position.set(L * shape.cabX - cabL * .12, by + bh / 2 + cabH + 1.2, 0);
     const base = mesh(new THREE.CylinderGeometry(5.5, 6.5, 4, 8), lam(0x3a3c40)); base.position.y = 2; turret.add(base);
     const barrelM = kind === 'spit' ? new THREE.MeshBasicMaterial({ color: 0xa8f060 }) : lam(0x55585e);
-    for (const z of kind === 'player' ? [-2.2, 2.2] : [0]) { const br = mesh(new THREE.BoxGeometry(16, 2.6, 2.6), barrelM); br.position.set(9, 3.5, z); br.name = 'barrel'; turret.add(br) }
+    for (const z of [0]) { const br = mesh(new THREE.BoxGeometry(16, 2.6, 2.6), barrelM); br.position.set(9, 3.5, z); br.name = 'barrel'; turret.add(br) }
     tilt.add(turret);
   }
-  if (kind === 'brute' || kind === 'boss') {
+  if (kind === 'brute' || kind === 'harvester') {
     const bar = mesh(new THREE.BoxGeometry(5, bh * .9, W * 1.12), lam(0x9a9c9e)); bar.position.set(L / 2 + 4, by, 0); tilt.add(bar);
   }
-  if (kind === 'boss') {
+  if (kind === 'monster') { // lifted body on struts, light bar
+    for (const sx of [1, -1]) for (const sz of [1, -1]) { const st = mesh(new THREE.BoxGeometry(3, r * 1.2, 3), lam(0x3a3a3a)); st.position.set(sx * L * .3, r * 1.1, sz * W * .36); tilt.add(st) }
+    const lb = mesh(new THREE.BoxGeometry(4, 3, W * .9), lam(0x2a2a2a)); lb.position.set(L * .05, by + bh / 2 + cabH + 2, 0); tilt.add(lb);
+    for (let i = 0; i < 4; i++) { const l = new THREE.Mesh(new THREE.BoxGeometry(1, 2.4, 3), headM); l.position.set(L * .05 + 2.2, by + bh / 2 + cabH + 2, -W * .33 + i * W * .22); tilt.add(l) }
+  }
+  if (kind === 'tow') { // crane boom out the back with a hook
+    const boom = mesh(new THREE.BoxGeometry(L * .55, 4, 4), lam(0xf2c230)); boom.position.set(-L * .3, by + bh / 2 + 12, 0); boom.rotation.z = -.35; tilt.add(boom);
+    const post = mesh(new THREE.BoxGeometry(6, 14, 8), lam(0x3a3a3a)); post.position.set(-L * .12, by + bh / 2 + 7, 0); tilt.add(post);
+    for (const z of [-1, 1]) { const ab = mesh(new THREE.BoxGeometry(3, 3, W * .2), lam(0xff7a2a)); ab.position.set(-L * .12, by + bh / 2 + 15, z * W * .3); tilt.add(ab) }
+  }
+  if (kind === 'harvester') {
     const comb = mesh(new THREE.BoxGeometry(12, 14, W + 34), lam(0xe0b040)); comb.position.set(L / 2 + 14, 10, 0); tilt.add(comb);
     const toothG = new THREE.ConeGeometry(3, 14, 4).rotateZ(-Math.PI / 2), toothM = lam(0x6b6b6b);
     for (let i = 0; i < 9; i++) { const t = mesh(toothG, toothM); t.position.set(L / 2 + 26, 8, -W / 2 - 15 + i * (W + 30) / 8); tilt.add(t) }
     for (const z of [-1, 1]) { const ex = mesh(new THREE.CylinderGeometry(3, 3, 30, 6), lam(0x3a3a3a)); ex.position.set(-L * .3, by + 22, z * W * .3); tilt.add(ex) }
   }
-  return { root, tilt, body, roof, base: new THREE.Color(color), wheels, front, turret, r, kind };
+  const dims = { L, W, r, bh, by, top: by + bh / 2, cabL, cabX: L * shape.cabX, cabH, roofY: by + bh / 2 + cabH };
+  return { root, tilt, body, roof, base: new THREE.Color(color), wheels, front, turret, r, kind, dims };
 }
 
 /* enemy car pooling */
@@ -242,8 +271,168 @@ const streaks = pool(new THREE.BoxGeometry(1, 1, 1), new THREE.MeshBasicMaterial
 const scrapPool = pool(new THREE.CylinderGeometry(7, 7, 3, 6), lam(0xffffff), 400); scrapPool.castShadow = true;
 const minePool = pool(new THREE.CylinderGeometry(9, 10, 4, 8), lam(0x2e2e30), 20); minePool.castShadow = true;
 const sawG = (() => { const sh = new THREE.Shape(); for (let k = 0; k <= 16; k++) { const r = k % 2 ? 9 : 13, b = k / 16 * TAU; k ? sh.lineTo(Math.cos(b) * r, Math.sin(b) * r) : sh.moveTo(r, 0) } return new THREE.ExtrudeGeometry(sh, { depth: 2, bevelEnabled: false }).rotateX(-Math.PI / 2) })();
-const sawPool = pool(sawG, lam(0xd0d3d8), 6); sawPool.castShadow = true;
+const sawM = lam(0xd0d3d8), armM = lam(0x6b6e74), hubM = lam(0x2f3033);
+// ---------- visible garage parts ----------
+// Every installed part gets a model on its slot. Rebuilt when the build changes.
+const M = {
+  steel: lam(0x8d9096), dark: lam(0x2f3033), chrome: lam(0xc9ccd2), copper: lam(0xc8743a), red: lam(0xc0392b),
+  yellow: lam(0xf2c230), blue: lam(0x3fa4e0), olive: lam(0x6b6b3a), concrete: lam(0xa7a39a), green: lam(0x3f5f4f),
+  gun: lam(0x55585e), white: lam(0xf4efe4), glowBlue: new THREE.MeshBasicMaterial({ color: 0xbfe8ff }),
+  glowRed: new THREE.MeshBasicMaterial({ color: 0xff3a2a }), glowOrange: new THREE.MeshBasicMaterial({ color: 0xff8a2a })
+};
+const box = (w, h, d, m, x, y, z, g) => { const o = mesh(new THREE.BoxGeometry(w, h, d), m); o.position.set(x, y, z); g.add(o); return o };
+const cyl = (r1, r2, h, n, m, x, y, z, g, rot) => { const o = mesh(new THREE.CylinderGeometry(r1, r2, h, n), m); o.position.set(x, y, z); if (rot) o.rotation.set(...rot); g.add(o); return o };
+function partMesh(o, id, l, P) {
+  const g = new THREE.Group(), D = o.dims, { L, W, by, bh, top, cabL, cabX, roofY } = D, hx = L * .28, tx = -L * .33, Z = Math.PI / 2;
+  switch (id) {
+    case 'mg': { // roof turret, twin barrels from Lv 3
+      const tu = new THREE.Group(); tu.position.set(cabX - cabL * .12, roofY + 1.2, 0);
+      cyl(5.5, 6.5, 4, 8, M.dark, 0, 2, 0, tu);
+      for (const z of l >= 3 ? [-2.2, 2.2] : [0]) box(16 + l, 2.6, 2.6, M.gun, 9, 3.5, z, tu);
+      box(5, 3, 4, M.yellow, -4, 4.5, 0, tu);
+      g.add(tu); o.turret = tu; break;
+    }
+    case 'tesla': {
+      const x = cabX - cabL * .1; cyl(5, 6, 2.5, 8, M.dark, x, roofY + 1.2, 0, g);
+      const h = 8 + l * 2; cyl(2.2, 2.2, h, 8, M.copper, x, roofY + 2.5 + h / 2, 0, g);
+      for (let i = 0; i < 2 + l; i++) { const t = mesh(new THREE.TorusGeometry(3.6, .9, 5, 10), M.chrome); t.rotation.x = Z; t.position.set(x, roofY + 4 + i * (h - 3) / (1 + l), 0); g.add(t) }
+      const ball = mesh(new THREE.IcosahedronGeometry(3.2, 0), M.glowBlue, false); ball.position.set(x, roofY + 4 + h, 0); g.add(ball); break;
+    }
+    case 'magnet': {
+      const x = cabX - cabL * .25; box(2.4, 10, 2.4, M.yellow, x, roofY + 5, 0, g);
+      const arm = box(20, 2.4, 2.4, M.yellow, x + 8, roofY + 11, 0, g); arm.rotation.z = -.25;
+      box(1, 6, 1, M.dark, x + 17, roofY + 6, 0, g);
+      cyl(5 + l, 5 + l, 2.5, 10, M.red, x + 17, roofY + 2.5, 0, g); break;
+    }
+    case 'cage': {
+      const y = roofY + 2.2, x0 = cabX - cabL * .5, x1 = cabX + cabL * .5, t = 1.4 + l * .3;
+      for (const z of [-W * .43, W * .43]) { box(cabL * 1.08, t, t, M.dark, cabX, y, z, g); for (const x of [x0, x1]) box(t, 4, t, M.dark, x, y - 2, z, g) }
+      for (const x of [x0, cabX, x1]) box(t, t, W * .86, M.dark, x, y, 0, g);
+      if (l >= 2) { const d = box(cabL * 1.1, t, t, M.dark, cabX, y + .3, 0, g); d.rotation.y = .55 }
+      break;
+    }
+    case 'v8': {
+      box(7, 4 + l, 8, M.chrome, hx, top + 2 + l / 2, 0, g); box(6, 2.5, 6, M.dark, hx + 1, top + 5 + l, 0, g);
+      for (const z of [-W * .34, W * .34]) cyl(1.2, 1.2, L * .3, 6, M.chrome, hx - 2, top + 1, z, g, [0, 0, Z]); break;
+    }
+    case 'flame': {
+      cyl(3, 3, 10 + l, 8, M.red, hx - 3, top + 3, 0, g, [0, 0, Z]);
+      for (const z of [-W * .22, W * .22]) { cyl(1.4, 1.9, 9, 6, M.dark, L / 2 + 1, top + 1, z, g, [0, 0, Z]); const tip = mesh(new THREE.IcosahedronGeometry(1.4, 0), M.glowOrange, false); tip.position.set(L / 2 + 6, top + 1, z); g.add(tip) }
+      break;
+    }
+    case 'rounds': {
+      box(10, 4 + l, 9, M.olive, hx, top + 2 + l / 2, 0, g); box(10.4, 1.2, 9.4, M.yellow, hx, top + 2 + l * .8, 0, g);
+      for (let i = 0; i < 4; i++) box(1.2, 1.2, 3, M.copper, hx - 3 + i * 2, top + 4.6 + l, 2, g); break;
+    }
+    case 'cooler': {
+      box(9, 3, W * .7, M.dark, hx, top + 1.5, 0, g);
+      for (let i = 0; i < 4 + l; i++) box(.8, 3.6, W * .72, lam(0x6fa8c8), hx - 4 + i * 8 / (3 + l), top + 2, 0, g); break;
+    }
+    case 'plow': {
+      for (const s of [-1, 1]) {
+        const pl = box(3, bh * (1 + l * .15), W * .62, M.steel, L / 2 + 6, by, s * W * .26, g); pl.rotation.y = s * .42;
+        const st = box(3.2, 2, W * .5, M.yellow, L / 2 + 6.2, by + bh * .3, s * W * .26, g); st.rotation.y = s * .42;
+      }
+      break;
+    }
+    case 'spikes': {
+      const n = 4 + l * 2;
+      for (let i = 0; i < n; i++) cyl(0, 1.8, 7 + l, 5, M.chrome, L / 2 + 5, by, -W * .45 + i * W * .9 / (n - 1), g, [0, 0, -Z]);
+      box(2, bh * .5, W * .95, M.dark, L / 2 + 1.5, by, 0, g); break;
+    }
+    case 'bullbar': {
+      const t = 1.1 + l * .3;
+      for (const z of [-W * .3, W * .3]) cyl(t, t, bh * 1.4, 6, M.dark, L / 2 + 4, by + bh * .1, z, g);
+      for (const y of [by - bh * .3, by + bh * .45]) cyl(t, t, W * .78, 6, M.dark, L / 2 + 4, y, 0, g, [Z, 0, 0]);
+      break;
+    }
+    case 'mines': {
+      box(9, bh * .9, W * .62, M.yellow, -L / 2 - 3, by, 0, g);
+      for (const z of [-W * .2, 0, W * .2]) { const s2 = box(9.2, bh * .92, 2, M.dark, -L / 2 - 3, by, z, g); s2.rotation.x = .5 }
+      const lt = mesh(new THREE.BoxGeometry(2, 2, 2), M.glowRed, false); lt.position.set(-L / 2 - 3, by + bh * .5 + 1, 0); g.add(lt); break;
+    }
+    case 'exhaust': {
+      const zs = l >= 3 ? [-W * .36, -W * .14, W * .14, W * .36] : [-W * .28, W * .28]; o.pipeGlow = [];
+      for (const z of zs) {
+        cyl(1.8 + l * .4, 2.3 + l * .4, 12, 8, M.chrome, -L / 2 - 2, by - 1, z, g, [0, 0, Z]);
+        const gl = mesh(new THREE.IcosahedronGeometry(2.4 + l * .5, 0), M.glowOrange, false); gl.position.set(-L / 2 - 9, by - 1, z); gl.visible = false; g.add(gl); o.pipeGlow.push(gl);
+      }
+      break;
+    }
+    case 'spoiler': {
+      const h = 5 + l * 1.5; box(6 + l, 1.2, W * 1.08, M.dark, -L * .43, top + h, 0, g);
+      for (const z of [-W * .3, W * .3]) box(1.5, h, 1.5, M.dark, -L * .43, top + h / 2, z, g);
+      for (const z of [-W * .54, W * .54]) box(6 + l, 4, 1, o.body, -L * .43, top + h + 1, z, g);
+      break;
+    }
+    case 'nitro': {
+      for (let i = 0; i <= l; i++) { const x = tx + (i - l / 2) * 5.5; cyl(2.4, 2.4, W * .7, 8, M.blue, x, top + 2.6, 0, g, [Z, 0, 0]); cyl(1, 1, W * .76, 6, M.white, x, top + 2.6, 0, g, [Z, 0, 0]) }
+      break;
+    }
+    case 'ballast': box(10 + l * 2, 4 + l, W * .6, M.concrete, tx, top + 2 + l / 2, 0, g); break;
+    case 'toolbox': {
+      for (let i = 0; i < l; i++) { box(8, 4, 6, M.red, tx + (i - (l - 1) / 2) * 9, top + 2, 0, g); box(4, 1.2, 1.2, M.dark, tx + (i - (l - 1) / 2) * 9, top + 4.6, 0, g) }
+      break;
+    }
+    case 'scrapbin': {
+      box(11, 5, W * .62, M.green, tx, top + 2.5, 0, g);
+      for (let i = 0; i < 3 + l * 2; i++) { const b = box(2 + Math.random() * 3, 1.5, 2 + Math.random() * 3, lam(new THREE.Color(ECOL[i % ECOL.length])), tx + rnd(-4, 4), top + 5.5 + rnd(0, 1.5), rnd(-W * .22, W * .22), g); b.rotation.set(rnd(0, 1), rnd(0, 3), 0) }
+      break;
+    }
+    case 'saw': {
+      const { R, reach, fwd } = sawLayout(l, P.len, P.wid), y = by;
+      for (const side of [-1, 1]) for (const f of fwd) {
+        const len = reach - W / 2 + 2;
+        box(4, 3, len, M.gun, f, y, side * (W / 2 + len / 2 - 2), g);
+        const br = box(2, 2, len * .8, M.gun, f - 6, y - 1, side * (W / 2 + len * .4 - 2), g); br.rotation.y = side * .35;
+        cyl(3, 3, 6, 8, M.dark, f, y, side * reach, g);
+        const blade = mesh(sawG, sawM); blade.scale.set(R / 13, 1, R / 13); blade.position.set(f, y + 1, side * reach); g.add(blade); o.blades.push(blade);
+      }
+      break;
+    }
+    case 'plate': {
+      for (const s of [-1, 1]) { box(L * .56, bh * .85, 1.4 + l * .4, M.steel, -L * .02, by, s * (W / 2 + .8), g); for (const x of [-L * .25, 0, L * .22]) box(1.2, 1.2, 1, M.dark, x, by + bh * .3, s * (W / 2 + 1.6 + l * .2), g) }
+      break;
+    }
+    case 'skirts': {
+      o.skirtGlow = [];
+      for (const s of [-1, 1]) { box(L * .7, 2.4, 2, M.dark, 0, D.r * .9, s * (W / 2 + .6), g); const gl = mesh(new THREE.BoxGeometry(L * .66, .9, .7), new THREE.MeshBasicMaterial({ color: 0xff8a2a }), false); gl.position.set(0, D.r * .6, s * (W / 2 + 1.5)); g.add(gl); o.skirtGlow.push(gl) }
+      break;
+    }
+    case 'slicks': for (const w of o.wheels) w.scale.y = W * .22 * (1 + .28 * l); break;
+  }
+  return g;
+}
+function syncParts(o, P) {
+  const sig = SLOTS.map(s => G.build[s] ? G.build[s].id + G.build[s].lvl : '-').join('|') + P.car.id;
+  if (o.partSig !== sig) {
+    if (o.parts) o.tilt.remove(o.parts);
+    o.turret = null; o.blades = []; o.pipeGlow = null; o.skirtGlow = null;
+    for (const w of o.wheels) w.scale.y = o.dims.W * .22;
+    const g = new THREE.Group();
+    for (const s of SLOTS) { const b = G.build[s]; if (b) g.add(partMesh(o, b.id, b.lvl, P)) }
+    o.tilt.add(g); o.parts = g; o.partSig = sig;
+  }
+  for (const b of o.blades) b.rotation.y += .5;
+  const hot = G.drift.on, heat = G.drift.heat, hc = heat > .66 ? 0xff4a1a : heat > .33 ? 0xff8a2a : 0xffc04a;
+  if (o.pipeGlow) for (const gl of o.pipeGlow) { gl.visible = hot; gl.scale.setScalar(.8 + Math.random() * .6) }
+  if (o.skirtGlow) for (const gl of o.skirtGlow) gl.material.color.setHex(hot ? hc : 0x5a3a20);
+}
 
+// soft additive glow discs and thin rings, for spawn markers, telegraphs, fire and blast radii
+const glowTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const x = c.getContext('2d'), g = x.createRadialGradient(64, 64, 0, 64, 64, 64);
+  g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(.35, 'rgba(255,255,255,.55)'); g.addColorStop(1, 'rgba(255,255,255,0)'); x.fillStyle = g; x.fillRect(0, 0, 128, 128);
+  return new THREE.CanvasTexture(c) })();
+const addMat = map => new THREE.MeshBasicMaterial({ map, transparent: true, depthWrite: false, blending: THREE.AdditiveBlending });
+const soft = pool(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), addMat(glowTex), 500);
+const rings = pool(new THREE.RingGeometry(.88, 1, 48).rotateX(-Math.PI / 2), addMat(null), 120);
+let fireDecal = null; // optional painted flame sprite (assets/fx/fire-trail.png)
+export function initFx() {
+  if (A.fx.fire && !fireDecal) { const tx = new THREE.Texture(A.fx.fire); tx.needsUpdate = true; tx.colorSpace = THREE.SRGBColorSpace;
+    fireDecal = pool(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), addMat(tx), 300) } // additive: paint the flame on pure black
+}
+const eliteSaws = pool(sawG, sawM, 8); eliteSaws.castShadow = true;
+let eliteSawN = 0;
 function put(m, i, x, y, z, sx, sy, sz, ry = 0, rx = 0, hexc) {
   dummy.position.set(x, y, z); dummy.rotation.set(rx, ry, 0); dummy.scale.set(sx, sy, sz); dummy.updateMatrix();
   m.setMatrixAt(i, dummy.matrix); if (hexc !== undefined) m.setColorAt(i, tmpC.setHex(hexc));
@@ -282,10 +471,10 @@ function animateCrowd(dt) {
   crowdMesh.instanceMatrix.needsUpdate = true;
 }
 
-function poseCar(o, x, y, a, lat, accel, sp, steer, dt) {
-  o.root.position.set(x, 0, y); o.root.rotation.y = -a;
+function poseCar(o, x, y, a, lat, accel, sp, steer, dt, z = 0, pitch = 0) {
+  o.root.position.set(x, z, y); o.root.rotation.y = -a;
   o.tilt.rotation.x += (clamp(-lat / 900, -.1, .1) - o.tilt.rotation.x) * Math.min(1, dt * 8);
-  o.tilt.rotation.z += (clamp(-accel / 4000, -.05, .05) - o.tilt.rotation.z) * Math.min(1, dt * 6);
+  o.tilt.rotation.z += (clamp(-accel / 4000, -.05, .05) + pitch - o.tilt.rotation.z) * Math.min(1, dt * 10);
   for (const f of o.front) f.rotation.y = -steer * .45;
   for (const w of o.wheels) w.rotation.y += sp * dt / o.r;
 }
@@ -302,7 +491,8 @@ export function render(dt) {
     if (playerCarId !== P.car.id) { if (player) scene.remove(player.root); player = buildCar({ ...P.car, kind: 'player' }); scene.add(player.root); playerCarId = P.car.id }
     const alive = ['play', 'clear', 'shop', 'pause'].includes(G.state);
     player.root.visible = alive && !(P.inv > 0 && Math.sin(G.time * 40) > 0);
-    poseCar(player, P.x, P.y, P.a, P.lat, (P.fwd - lastFwd) / Math.max(dt, .001), P.fwd, P.steer, dt); lastFwd = P.fwd;
+    poseCar(player, P.x, P.y, P.a, P.air ? 0 : P.lat, P.air ? 0 : (P.fwd - lastFwd) / Math.max(dt, .001), P.fwd, P.steer, dt, P.z, P.pitch); lastFwd = P.fwd;
+    syncParts(player, P);
     if (player.turret) player.turret.rotation.y = -(P.gunA - P.a);
     player.turret && (player.turret.visible = G.W.mg > 0);
     const dmg = 1 - P.hp / G.S.maxhp;
@@ -314,7 +504,7 @@ export function render(dt) {
   for (const e of G.enemies) {
     let o = active.get(e); if (!o) { o = acquire(e); active.set(e, o) }
     seen.add(e);
-    poseCar(o, e.x, e.y, e.a, 0, 0, Math.hypot(e.vx, e.vy), 0, dt);
+    poseCar(o, e.x, e.y, e.a, 0, 0, Math.hypot(e.vx, e.vy), 0, dt, e.z, e.pitch);
     o.body.color.copy(o.base).lerp(DARK, (1 - e.hp / e.max) * .55);
     o.body.emissive.setScalar(e.flash > 0 ? .9 : 0);
     if (o.turret) o.turret.rotation.y = -(Math.atan2(P.y - e.y, P.x - e.x) - e.a);
@@ -330,9 +520,41 @@ export function render(dt) {
     if (p.glow) { if (ng < 1200) put(glows, ng++, p.x, p.z, p.y, s, s, s, p.rot, p.rot * 1.3, p.c) }
     else if (nb < 1200) put(blobs, nb++, p.x, p.z, p.y, s, s, s, p.rot, p.rot * 1.3, p.c);
   }
+  // exhaust fire trail: a painted flame sprite if provided, otherwise a soft orange glow with a small flicker
+  let nsoft = 0, nring = 0, nfire = 0;
   for (const f of G.fires) {
-    const t = f.life / f.max, fl = 1 + Math.sin(G.time * 22 + f.x) * .12;
-    if (ng < 1198) { put(glows, ng++, f.x, 2, f.y, f.r * t * fl, f.r * .4 * t, f.r * t * fl, f.x, 0, 0xff6a24); put(glows, ng++, f.x, 4, f.y, f.r * .55 * t, f.r * .5 * t, f.r * .55 * t, f.y, 0, 0xffc040) }
+    const t = f.life / f.max, fl = 1 + Math.sin(G.time * 22 + f.x) * .1, k = Math.min(1, t * 1.6);
+    if (fireDecal) { if (nfire < 300) put(fireDecal, nfire++, f.x, .7, f.y, f.r * 2.4 * k, 1, f.r * 2.4 * k, f.rot) }
+    else if (nsoft < 498) {
+      put(soft, nsoft++, f.x, .7, f.y, f.r * 2.6 * k * fl, 1, f.r * 2.6 * k * fl, 0, 0, t > .5 ? 0x8a3a10 : 0x5a2208);
+      if (ng < 1200 && Math.random() < .35) put(glows, ng++, f.x + rnd(-4, 4), 2 + (1 - t) * 6, f.y + rnd(-4, 4), 1.6 * k, 2.4 * k, 1.6 * k, G.time * 3, 0, 0xffa040);
+    }
+  }
+  // mines: subtle dashed blast radius once armed
+  for (const m of G.mines) {
+    if (m.arm > 0) continue; const R = 90 + G.W.mines * 14, n = 20;
+    for (let k = 0; k < n && ns < 1600; k++) { const a0 = k / n * TAU + G.time * .3, a1 = a0 + TAU / n * .5; streak(ns++, m.x + Math.cos(a0) * R, m.y + Math.sin(a0) * R, .8, m.x + Math.cos(a1) * R, m.y + Math.sin(a1) * R, .8, 1.3, 0xc8402a) }
+  }
+  // elite moves
+  for (const e of G.enemies) {
+    if (e.type === 'harvester') {
+      for (const b of harvesterBlades(e)) {
+        if (e.saw && e.saw.d > 2 && ns < 1600) streak(ns++, b.bx, b.by, 10, b.x, b.y, 10, 1.8, 0x3a3c40);
+        put(eliteSaws, eliteSawN++, b.x, 10 + (e.z || 0), b.y, 17 / 13, 1, 17 / 13, G.time * 25);
+      }
+      if (e.saw && e.saw.st === 'wind' && nring < 120) { const fx = Math.cos(e.a), fy = Math.sin(e.a); for (const side of [-1, 1]) if (ns < 1600) { const bx = e.x + fx * e.len / 2 - fy * side * e.wid * .42, by = e.y + fy * e.len / 2 + fx * side * e.wid * .42; streak(ns++, bx, by, 1, bx + fx * 316, by + fy * 316, 1, 3, 0xff3a2a) } }
+    }
+    if (e.type === 'monster' && e.slam && e.air) {
+      const p = .8 + .2 * Math.sin(G.time * 16);
+      if (nring < 120) put(rings, nring++, e.slam.x, 1, e.slam.y, 150 * p, 1, 150 * p, 0, 0, 0xff3a2a);
+      if (nsoft < 500) put(soft, nsoft++, e.slam.x, .9, e.slam.y, 320, 1, 320, 0, 0, 0x5a0d06);
+    }
+    if (e.type === 'tow') {
+      const H = e.hook, fx = Math.cos(e.a), fy = Math.sin(e.a), tx = e.x - fx * e.len * .55, ty = e.y - fy * e.len * .55;
+      const hx = H && H.st !== 'idle' ? H.x : tx, hy = H && H.st !== 'idle' ? H.y : ty, hz = H && H.st !== 'idle' ? 12 : 22;
+      if (ns < 1600) streak(ns++, tx, ty, 36, hx, hy, hz, 1.5, 0x3a3c40);
+      if (nb < 1200) put(blobs, nb++, hx, hz, hy, 4.5, 4.5, 4.5, G.time * 4, 0, 0x55585e);
+    }
   }
   for (const b of G.ebul) if (ng < 1200) put(glows, ng++, b.x, 14, b.y, 5.5, 5.5, 5.5, G.time * 5, G.time * 4, 0xb8ff70);
   for (const m of G.mines) if (ng < 1200) put(glows, ng++, m.x, 5.5, m.y, 2.6, 2.6, 2.6, 0, 0, m.arm > 0 ? 0x888888 : (Math.sin(m.t * 10) > 0 ? 0xff3a2a : 0x6a1a10));
@@ -344,22 +566,25 @@ export function render(dt) {
       streak(ns++, px, py, 18, nx, ny, 18, 2.6, 0xbfe8ff); px = nx; py = ny;
     }
   }
+  // spawn markers: red X, a ring that tightens as the car is about to appear, and a red glow
   for (const s of G.pend) {
-    const pulse = .7 + .3 * Math.abs(Math.sin(G.time * 12)), r = (s.type === 'boss' ? 38 : 15) * (1.3 - .3 * (1 - s.t / s.max)) * pulse;
-    if (ns < 1598) { streak(ns++, s.x - r, s.y - r, 1, s.x + r, s.y + r, 1, 3.5, 0xff4a30); streak(ns++, s.x + r, s.y - r, 1, s.x - r, s.y + r, 1, 3.5, 0xff4a30) }
+    const pulse = .75 + .25 * Math.abs(Math.sin(G.time * 10)), base = s.elite ? 38 : 16, r = base * pulse, k = s.t / s.max;
+    if (ns < 1598) { streak(ns++, s.x - r, s.y - r, 1, s.x + r, s.y + r, 1, 4, 0xff4a30); streak(ns++, s.x + r, s.y - r, 1, s.x - r, s.y + r, 1, 4, 0xff4a30) }
+    if (nring < 119) { put(rings, nring++, s.x, 1.1, s.y, base * (1.6 + k * 1.4), 1, base * (1.6 + k * 1.4), 0, 0, 0xff3a2a); put(rings, nring++, s.x, 1.1, s.y, base * 1.5, 1, base * 1.5, 0, 0, 0x7a160c) }
+    if (nsoft < 500) put(soft, nsoft++, s.x, 1, s.y, base * 5.5 * pulse, 1, base * 5.5 * pulse, 0, 0, 0x7a1408);
   }
-  finish(blobs, nb); finish(glows, ng); finish(streaks, ns);
+  // underglow while drifting, from yellow to red as the heat builds
+  if (P && G.drift.on && ng < 1200 && !P.air) {
+    const h = G.drift.heat, c = h > .66 ? 0xff4a1a : h > .33 ? 0xff8a2a : 0xffc04a, pulse = 1 + Math.sin(G.time * 18) * .08;
+    put(glows, ng++, P.x, .8 + P.z, P.y, P.len * .62 * pulse, .3, P.wid * .95 * pulse, -P.a, 0, c);
+  }
+  finish(blobs, nb); finish(glows, ng); finish(streaks, ns); finish(soft, nsoft); finish(rings, nring); finish(eliteSaws, eliteSawN); eliteSawN = 0;
+  if (fireDecal) finish(fireDecal, nfire);
 
   let nsc = 0;
   for (const s of G.scraps) if (nsc < 400) put(scrapPool, nsc++, s.x, 4 + Math.sin(G.time * 4 + s.x) * 1.5, s.y, 1, 1, 1, G.time * 3 + s.x, .5, s.v > 1 ? 0xffc23d : 0xb9bcc0);
   finish(scrapPool, nsc);
   let nm = 0; for (const m of G.mines) put(minePool, nm++, m.x, 2, m.y, 1, 1, 1); finish(minePool, nm);
-  let nw = 0;
-  if (P && G.W && G.W.saw && ['play', 'clear', 'shop', 'pause'].includes(G.state)) {
-    const n = G.W.saw, R = P.r + 44;
-    for (let i = 0; i < n; i++) { const a = G.time * 4.5 + i * TAU / n; put(sawPool, nw++, P.x + Math.cos(a) * R, 10, P.y + Math.sin(a) * R, 1, 1, 1, G.time * 20) }
-  }
-  finish(sawPool, nw);
 
   renderer.render(scene, camera);
 }
@@ -384,7 +609,7 @@ export function attract(dt) {
   const ca = demoT * .05;
   placeCamera(AW / 2 + Math.cos(ca) * 120, AH / 2 + Math.sin(ca) * 80, 0);
   let nb = 0; for (const p of G.parts) { const s = p.size * Math.min(1, p.life / p.max * 2.5); put(blobs, nb++, p.x, p.z, p.y, s, s, s, p.rot, p.rot, p.c) }
-  finish(blobs, nb); finish(glows, 0); finish(streaks, 0); finish(scrapPool, 0); finish(minePool, 0); finish(sawPool, 0);
+  finish(blobs, nb); finish(glows, 0); finish(streaks, 0); finish(scrapPool, 0); finish(minePool, 0); finish(soft, 0); finish(rings, 0); finish(eliteSaws, 0); if (fireDecal) finish(fireDecal, 0);
   renderer.render(scene, camera);
 }
 export function hideDemo() { for (const o of demo) o.root.visible = false; G.parts = [] }

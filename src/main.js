@@ -1,26 +1,35 @@
-// Entry point: loads optional art, wires input, runs the frame loop.
+// Entry point: loading screen, optional art, language, input and the frame loop.
 import { G, start, update, makeGround, makeObs, setDirt } from './game.js';
 import { CARS } from './data.js';
-import * as SC from './scene.js';
+import { detectLang, setLang } from './i18n.js';
 import * as UI from './ui.js';
 import { A, loadAssets } from './assets.js';
 
-await loadAssets();
-if (document.fonts) await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]);
-setDirt(A.dirt);
-makeGround(); makeObs();
+setLang(detectLang());
+UI.loadingText();
+UI.loading(.08); // the 3D engine has arrived by the time this runs
 
+const t0 = performance.now();
+await loadAssets(p => UI.loading(.1 + p * .7));
+if (document.fonts) await Promise.race([document.fonts.ready, new Promise(r => setTimeout(r, 1500))]);
+const SC = await import('./scene.js');
+UI.loading(.9);
+setDirt(A.dirt); SC.initFx();
+makeGround(); makeObs();
 const portraits = SC.portraits(CARS);
 UI.buildMenu(portraits);
+UI.loading(1);
 UI.wire(
   i => { SC.hideDemo(); start(i) },
-  () => { G.state = 'menu'; G.enemies = []; G.P = null; makeGround(); makeObs(); UI.buildMenu(portraits); UI.show('menu') }
+  () => { G.state = 'menu'; G.enemies = []; G.P = null; makeGround(); makeObs(); UI.buildMenu(); UI.show('menu') },
+  () => { makeGround() } // repaint the arena title in the new language
 );
 G.on.play = () => UI.show(null);
 G.on.shop = UI.openShop;
 G.on.over = UI.showOver;
 UI.show('menu');
-document.getElementById('loading').remove();
+// keep the loading screen up for at least a moment so it never just flickers
+setTimeout(UI.hideLoading, Math.max(0, 1400 - (performance.now() - t0)));
 
 /* input */
 const GAMEKEYS = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight', 'Space', 'ShiftLeft', 'ShiftRight', 'KeyW', 'KeyA', 'KeyS', 'KeyD'];
