@@ -5,25 +5,25 @@ export const CARS = [
   {
     id: 'hatch', color: '#f2c230', num: 7, len: 44, wid: 24,
     shape: { cabL: .5, cabX: -.08, cabH: .42 },
-    st: { maxhp: 70, top: 210, accel: 290, grip: 6.2, turn: 3.4, mass: .8, ram: .8 },
+    st: { maxhp: 70, top: 285, accel: 290, grip: 6.2, turn: 3.4, mass: .8, ram: .8 },
     build: { turret: ['mg', 1] }, bars: [90, 88, 30, 30]
   },
   {
     id: 'muscle', color: '#e8553a', num: 23, len: 50, wid: 26,
     shape: { cabL: .36, cabX: -.14, cabH: .34 },
-    st: { maxhp: 100, top: 190, accel: 255, grip: 4.8, turn: 2.9, mass: 1.2, ram: 1, driftGain: 1.35 },
+    st: { maxhp: 100, top: 255, accel: 255, grip: 4.8, turn: 2.9, mass: 1.2, ram: 1, driftGain: 1.35 },
     build: { turret: ['mg', 1] }, bars: [75, 60, 55, 55]
   },
   {
     id: 'hearse', color: '#56606e', num: 66, len: 60, wid: 28,
     shape: { cabL: .62, cabX: -.12, cabH: .44 },
-    st: { maxhp: 150, top: 160, accel: 205, grip: 4.3, turn: 2.6, mass: 2, ram: 1.6, armor: .04 },
+    st: { maxhp: 150, top: 215, accel: 205, grip: 4.3, turn: 2.6, mass: 2, ram: 1.6, armor: .04 },
     build: { turret: ['mg', 1], rear: ['mines', 1], front: ['bullbar', 1] }, bars: [45, 45, 90, 95]
   }
 ];
 
 export const BASE = { tank: 30, pumpChance: .45,
-  maxhp: 100, top: 190, accel: 255, grip: 4.8, turn: 3.0, mass: 1, ram: 1, armor: 0, dmg: 1, rate: 1,
+  maxhp: 100, top: 255, accel: 255, grip: 4.8, turn: 3.0, mass: 1, ram: 1, armor: 0, dmg: 1, rate: 1,
   magnet: 110, regen: 0, driftGain: 1, exhaust: 0, spikes: 0, nitroPow: 1, nitroFill: 1, luck: 0, ramGuard: 1
 };
 

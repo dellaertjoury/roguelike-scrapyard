@@ -99,7 +99,17 @@ const KEEP = () => [
   { x: AW / 2, y: AH / 2, r: 230 }             // centre bowl
 ];
 const inCraneLane = (x, y, m = 0) => Math.abs(Math.hypot(x - CRANE.x, y - CRANE.y) - 900) < 85 + m;
-const kept = (x, y, r) => KEEP().some(k => Math.hypot(k.x - x, k.y - y) < k.r + r) || inCraneLane(x, y, r);
+// where the pit intro hands the car over (pitIntro ends here, pointing east-north-east) and the line it then drives:
+// nothing may sit within 90 of the first 600 u of that line, so holding throttle at GO never hits scenery
+// At hand-over the car still slides north while its nose points ENE, so with throttle held it curves anywhere between
+// those two: keep the whole wedge between them clear (plus a margin around both edge lines).
+const HAND = { x: GATE.x + 70, y: AH - 213, a0: -1.62, a1: -.12, len: 680, r: 90 };
+const onHandLine = (x, y, r) => {
+  const dx = x - HAND.x, dy = y - HAND.y, d = Math.hypot(dx, dy), ang = Math.atan2(dy, dx);
+  if (d < HAND.len + r && ang > HAND.a0 && ang < HAND.a1) return true;
+  return [HAND.a0, HAND.a1].some(a => { const c = Math.cos(a), s = Math.sin(a), u = clamp(dx * c + dy * s, 0, HAND.len); return Math.hypot(dx - c * u, dy - s * u) < HAND.r + r });
+};
+const kept = (x, y, r) => KEEP().some(k => Math.hypot(k.x - x, k.y - y) < k.r + r) || inCraneLane(x, y, r) || onHandLine(x, y, r);
 export function makeObs() {
   const obs = [], pads = [], ramps = [];
   // landmark radio tower: right-hand corners are farthest from the pit (bottom-left) and the crane (top-left)
@@ -122,7 +132,7 @@ export function makeObs() {
     const d = (Math.random() < .7 ? (Math.random() < .5 ? 0 : Math.PI) : rnd(0, TAU)) + rnd(-.45, .45);
     const L = 150, W = 130, H = 30, x = rnd(300, AW - 300), y = rnd(260, AH - 260);
     const c = Math.cos(d), s = Math.sin(d), cx = x + c * L / 2, cy = y + s * L / 2, lx = x + c * (L + 170), ly = y + s * (L + 170);
-    if (kept(cx, cy, 90) || kept(lx, ly, 60) || inCraneLane(x, y, 40)) continue;
+    if (kept(cx, cy, 90) || kept(lx, ly, 60) || inCraneLane(x, y, 40) || onHandLine(x, y, 80) || onHandLine(x + c * L, y + s * L, 80)) continue;
     if (wallDist(x + c * L, y + s * L, c, s) < RUNWAY) continue; // room to fly and land
     if (wallDist(x, y, -c, -s) < 300) continue;                  // room for a run-up
     if (Math.min(wallDist(cx, cy, -s, c), wallDist(cx, cy, s, -c)) < 160) continue; // not hugging a side wall
@@ -160,7 +170,7 @@ export function makeObs() {
   const cones = []; n = 0;
   while (cones.length < 4 && n++ < 300) {
     const x = rnd(260, AW - 260), y = rnd(260, AH - 260), a = rnd(0, TAU), k = 3 + (Math.random() * 3 | 0);
-    if (obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 120) || ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < 220) || pads.some(p => Math.hypot(p.x - x, p.y - y) < PUMP_R + 60) || Math.hypot(x - GATE.x, y - GATE.y1) < 200 || inCraneLane(x, y)) continue;
+    if (obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 120) || ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < 220) || pads.some(p => Math.hypot(p.x - x, p.y - y) < PUMP_R + 60) || Math.hypot(x - GATE.x, y - GATE.y1) < 200 || inCraneLane(x, y) || onHandLine(x, y, 40) || onHandLine(x + Math.cos(a) * 46 * (k - 1), y + Math.sin(a) * 46 * (k - 1), 40)) continue;
     for (let i = 0; i < k && cones.length < 4; i++) cones.push({ hx: x + Math.cos(a) * i * 46, hy: y + Math.sin(a) * i * 46 });
   }
   G.cones = cones; resetCones();
@@ -202,13 +212,13 @@ export function start(i) {
   G.P.hp = G.S.maxhp;
   G.CD = { mg: 0, mg2: 0, mines: 0, tesla: 0, flame: 0 };
   for (const k of ['enemies', 'bullets', 'ebul', 'mines', 'fires', 'scraps', 'parts', 'texts', 'pend', 'zaps']) G[k] = [];
-  Object.assign(G, { wave: 0, scrap: 0, score: 0, wrecks: 0, bestDrift: 0, offer: [] });
+  Object.assign(G, { wave: 0, scrap: 0, score: 0, wrecks: 0, bestDrift: 0, offer: [], retry: false });
   Object.assign(G.drift, { on: false, pts: 0, mult: 1, heat: 0, off: 0 });
   G.towerPos = null; makeGround(); G.cam.x = G.P.x; G.cam.y = G.P.y;
   nextWave();
 }
 export function nextWave() {
-  G.wave++; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = Math.random() < G.S.pumpChance ? PUMP_FIRST : Infinity; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = []; makeObs(); // new field layout every lap (ramps only on some laps); pumps only show up some laps (S.pumpChance)
+  if (!G.retry) G.wave++; G.retry = false; G.hoseCd = 0; G.filling = false; G.driftScrap = 0; G.fuel = G.tank; G.pump = null; G.pumpNext = null; G.pumpT = Math.random() < G.S.pumpChance ? PUMP_FIRST : Infinity; G.cans = []; G.spawnT = 1.2; G.state = 'play'; G.startT = START_T; G.enemies = []; G.pend = []; G.ebul = []; makeObs(); // new field layout every lap (ramps only on some laps); pumps only show up some laps (S.pumpChance)
   G.crane = { st: 'idle', t: rnd(16, 26), side: G.crane ? G.crane.side : 0, a: CRANE.rest[G.crane ? G.crane.side : 0], R: 900, hit: new Set() };
   Object.assign(G.P, { x: GATE.x, y: GATE.y0, a: -Math.PI / 2, vx: 0, vy: 0, z: 0, vz: 0, air: false, intro: true, iy: GATE.y0, ix: GATE.x, iwl: null, stun: 0 }); G.gateV = 1; G.cam.x = GATE.x; G.cam.y = AH + 420;
   const elite = G.wave % 5 === 0 ? ELITES[(G.wave / 5 - 1) % ELITES.length] : null;
@@ -274,12 +284,14 @@ function kill(e, scored) {
   } // cars still alive at the end of a lap just explode: no scrap for them
 }
 // pause menu → garage: the lap ends right here, like running dry (cars still alive pay nothing)
-export function quitLap() { if (G.state !== 'pause' && G.state !== 'play') return; G.state = 'play'; endWave(); G.banner = { s: ['lapQuit'], sub: ['garageOpen'], id: Math.random() } }
-function endWave() {
+// No heal and the lap doesn't count: 'Nog e toertje' replays the same lap number (elite laps included).
+export function quitLap() { if (G.state !== 'pause' && G.state !== 'play') return; G.state = 'play'; G.retry = true; endWave(true); G.banner = { s: ['lapQuit'], sub: ['garageOpen'], id: Math.random() } }
+function endWave(quit) {
   for (const e of G.enemies) kill(e, false);
   G.enemies = []; G.pend = []; G.ebul = [];
-  for (const s of G.scraps) G.scrap += s.v * SCRAP_VAL; G.scraps = [];
-  G.P.hp = Math.min(G.S.maxhp, G.P.hp + G.S.maxhp * .2);
+  // scrap still on the ground only counts if it's within reach of your magnet (twice its range); the rest is lost
+  const P0 = G.P; for (const s of G.scraps) if (Math.hypot(s.x - P0.x, s.y - P0.y) < G.S.magnet * 2) G.scrap += s.v * SCRAP_VAL; G.scraps = [];
+  if (!quit) G.P.hp = Math.min(G.S.maxhp, G.P.hp + G.S.maxhp * .2);
   bankDrift(); G.state = 'clear'; G.clearT = 2.8; // let the 'out of fuel' sign hang a while before the garage
   G.banner = { s: ['outOfFuel'], sub: ['garageOpen'], id: Math.random() };
 }
@@ -304,14 +316,14 @@ function bankDrift() {
 // is used up, then it closes and another opens 15 s later. Fuel keeps burning while you fill, so a pump
 // is worth exactly its reserve (+30 s of lap) and there is no way to freeze the lap clock.
 // paint per enemy type, after the portraits: olive wreckers, teal spitters, mustard brutes (a few shades each)
-const SPEED_K = { rust: .69, spit: .62, thief: .73, brute: .6 }; // share of the player's top speed
+const SPEED_K = { rust: .51, spit: .46, thief: .54, brute: .44 }; // of the (now honest) top speed: same absolute speeds as before the H1 fix // share of the player's top speed
 const TYPE_COL = { rust: ['#7f8f3a', '#6f8034', '#8d9a4a'], spit: ['#3f8a8f', '#367a80', '#4b9499'], brute: ['#e0a92a', '#d49a22'] };
 export const START_T = 3; // 3-2-1 countdown: no fuel burn, spawns, throttle or guns until GO
 // a pump holds 30 L (= 30 s of lap) and pours it straight in while you stand on the pad: 6 L/s, so ~5 s to drain
 // fuel thieves: hook a hose within HOSE_R, drain HOSE_RATE L/s up to THIEF_STEAL, the hose snaps past HOSE_BREAK
 export const HOSE_R = 130, HOSE_BREAK = 210, HOSE_RATE = 3, CAN_LIFE = 3;
 function dropHose(e, snapped) {
-  const P = G.P; e.hose = false; e.flee = 3;
+  const P = G.P; e.hose = false; e.flee = 3; e.done = true; G.hoseCd = 3.5; // one theft per thief, and a breather before the next one hooks on
   if (e.siph > .05) { e.stolen = (e.stolen || 0) + e.siph; txt(P.x, P.y - 40, t('fStolen', { l: fmtL(e.siph) }), '#ff6b5a', 18, 1) }
   if (snapped) puff((e.x + P.x) / 2, (e.y + P.y) / 2, 6, { c: 0x9fe070, glow: true, s0: 40, s1: 140, l0: .3, l1: .6, z0: 2, z1: 4, z: 10, vz0: 20, vz1: 60 });
   e.siph = 0;
@@ -454,8 +466,9 @@ function collideStatic(o, r, bounce) {
     const dx = o.x - b.x, dy = o.y - b.y, d = Math.hypot(dx, dy), m = r + b.r;
     if (d < m) {
       const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = b.x + nx * m; o.y = b.y + ny * m;
-      o.hitObs = G.time;
+      o.hitObs = G.time; const vIn = -(o.vx * nx + o.vy * ny);
       bounceOff(o, nx, ny, bounce, b.k !== 'hay', o.x - nx * r, o.y - ny * r);
+      if (b.k === 'pallet' && o === G.P && vIn > 45) palletCrash(o.x - nx * r, o.y - ny * r);
     }
   }
   const pu = G.pump; // the pump itself is a small solid post
@@ -761,6 +774,15 @@ function bodyCircles(e) {
   const k = e.len * .62; return [[0, 0, e.r], [Math.cos(e.a) * k, Math.sin(e.a) * k, 30]];
 }
 
+// pallet piles are springy (you bounce off like tyres) but splinter: each crash is a crash (combo gone) and costs 1 hull
+function palletCrash(x, y) {
+  const P = G.P; if (G.state !== 'play' || G.time < (P.palT || 0)) return;
+  P.palT = G.time + .6; P.hp -= 1; txt(P.x, P.y - 20, '-1', '#ff6b5a', 18, .7);
+  if (G.drift.pts > 200) txt(P.x, P.y - 46, t('fCombo'), '#ff6b5a', 16, 1);
+  G.drift.pts = 0; G.drift.mult = 1; G.drift.time = 0;
+  puff(x, y, 8, { c: 0xb07a44, s0: 60, s1: 220, l0: .4, l1: .8, z0: 2, z1: 5, z: 12, vz0: 80, vz1: 220, grav: 600 });
+  if (P.hp <= 0) { P.hp = 0; die() }
+}
 function hitPlayer(d) {
   const P = G.P;
   if (P.inv > 0 || G.state !== 'play') return;
@@ -802,10 +824,11 @@ export function update(dt) {
   const gr = !P.air; // no throttle, brakes or grip while flying
   const up = K('KeyW', 'ArrowUp') && P.stun <= 0 && gr && live, dn = K('KeyS', 'ArrowDown') && gr, hb = K('Space') && gr, lt = K('KeyA', 'ArrowLeft'), rt = K('KeyD', 'ArrowRight');
   P.boost = K('ShiftLeft', 'ShiftRight') && P.nitro > .02 && live;
-  const bm = P.boost ? 1.8 * S.nitroPow : 1, top = S.top * (P.boost ? 1.35 * S.nitroPow : 1);
+  const bm = P.boost ? 1.8 * S.nitroPow : 1, top = S.top * (P.boost ? 1.5 * S.nitroPow : 1);
   if (P.boost) { P.nitro = Math.max(0, P.nitro - dt * .45); puff(P.x - fx * P.len * .55, P.y - fy * P.len * .55, 2, { c: 0x7fd4ff, glow: true, a: P.a + Math.PI, sp: .25, s0: 90, s1: 180, l0: .12, l1: .25, z0: 3, z1: 5, z: 8 }) }
-  if (up) fwd += S.accel * bm * dt;
-  if (dn && fwd > -top * .4) fwd -= (fwd > 0 ? S.accel * 1.4 : S.accel * .6) * dt; // reverse is capped, bounces are not
+  // throttle only pushes up to top speed (it used to add on top of the soft cap, so cars cruised ~35% above S.top)
+  if (up && fwd < top) fwd = Math.min(top, fwd + S.accel * bm * dt);
+  if (dn && fwd > -S.top * .3) fwd -= (fwd > 0 ? S.accel * 1.4 : S.accel * .6) * dt; // reverse is capped, bounces are not
   if (hb) fwd -= fwd * .55 * dt;
   if (fwd > top) fwd += (top - fwd) * Math.min(1, dt * 3);
   fwd -= fwd * (!gr ? .05 : up || dn ? .12 : .9) * dt;
@@ -863,7 +886,7 @@ export function update(dt) {
   const rateMul = S.rate * (1 + drift.heat * .8);
 
   /* waves */
-  if (live) { fuelStep(dt); G.spawnT -= dt }
+  if (live) { fuelStep(dt); G.spawnT -= dt; G.hoseCd = Math.max(0, (G.hoseCd || 0) - dt) }
   if (live && G.spawnT <= 0 && G.fuel > 2) {
     // slower enemies, but more of them: a car every ~2.5 s from lap 1, bigger groups and a higher cap as laps go up
     G.spawnT = Math.max(.42, 3.6 - G.wave * .34) * rnd(.8, 1.2); // calm first laps, then busier
@@ -912,7 +935,7 @@ export function update(dt) {
           if (d < 80) spd *= .35; // hang back on the hose instead of ramming
           if (e.siph >= THIEF_STEAL - .01) dropHose(e, false);
         }
-      } else if (d < HOSE_R && P.z < 10 && G.fuel > 0 && G.enemies.filter(o => o.hose).length < 2) { e.hose = true; e.siph = 0; e.hoseT = 0 }
+      } else if (!e.done && G.hoseCd <= 0 && d < HOSE_R && P.z < 10 && G.fuel > 0 && G.enemies.filter(o => o.hose).length < 2) { e.hose = true; e.siph = 0; e.hoseT = 0 }
     }
     if (e.type === 'spit') {
       if (d < 220) want += Math.PI * .3; // gunners hang back a little, but keep you in range
@@ -967,7 +990,7 @@ export function update(dt) {
         P.vx -= j / pm * nx; P.vy -= j / pm * ny; e.vx += j / em * nx; e.vy += j / em * ny;
         if (rel > 42) {
           hurt(e, rel * .25 * S.ram * pm * (P.boost ? 1.4 : 1));
-          self = rel * .05 * Math.sqrt(em / pm) * S.ramGuard;
+          self = rel * .035 * Math.sqrt(em / pm) * S.ramGuard; // was .05: rams that wreck a car cost you less
           puff(P.x + nx * P.r, P.y + ny * P.r, 10 + rel / 25 | 0, { c: 0xffd27a, glow: true, k: 's', s0: 120, s1: 360, l0: .15, l1: .4, z: 10, vz0: 40, vz1: 200, grav: 500 });
           G.shake = Math.max(G.shake, rel / 30);
         }

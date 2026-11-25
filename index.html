@@ -271,7 +271,7 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 /* blueprint views: drawing + markers in SVG, label chips laid over it in % so they track the drawing */
 .bpview{position:relative;margin-top:6px;z-index:1}.bpview:hover,.bpview:focus-within{z-index:4}.chip:hover,.chip:focus{z-index:6}.bpview+.bpview{margin-top:14px;padding-top:12px;border-top:1px dashed rgba(143,208,234,.3)}
 .vlbl{font:800 11px Rubik,sans-serif;letter-spacing:.18em;text-transform:uppercase;color:rgba(143,208,234,.75)}
-.bpstage{position:relative;width:min(100%,calc((100vh - 330px) * 600 / 490));min-width:min(100%,380px);margin:0 auto}.bpstage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
+.bpstage{position:relative;width:min(100%,calc((100vh - 380px) * 600 / 490));min-width:min(100%,380px);margin:0 auto}.bpstage svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible}
 .car-o path,.car-o circle{fill:rgba(143,208,234,.08);stroke:var(--bp);stroke-width:2}.car-o .dent{fill:none;stroke-width:1.5;opacity:.8}.car-o .patch{fill:rgba(143,208,234,.18);stroke-dasharray:3 2}.car-o .rivet{fill:var(--bp);stroke:none}.car-o .spoiler{fill:rgba(255,194,61,.18);stroke:var(--haz)}
 .ld{stroke:rgba(143,208,234,.45);stroke-width:1.5;stroke-dasharray:4 4}.ld.on{stroke:var(--bp);stroke-dasharray:none}
 .chip{position:absolute;display:flex;align-items:center;gap:8px;width:max-content;max-width:52%;padding:6px 10px 6px 6px;border-radius:10px;background:rgba(16,28,40,.92);border:1.5px solid rgba(143,208,234,.35);white-space:nowrap;transform:translate(0,-50%);outline:none}
@@ -346,6 +346,33 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 /* garage on short screens: tighter cards (2-line descriptions), so the whole garage fits without scrolling */
 @media(max-height:860px) and (min-width:901px){#shop{padding-top:16px;gap:10px}#shop h2{font-size:26px}#cards{gap:6px}.card{padding:7px 10px;gap:10px;grid-template-columns:44px minmax(0,1fr) auto}.card .ico{width:44px;height:44px}
   .card .d{font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.card .nm{font-size:16px}.gfoot{padding-top:10px}}
+/* blueprint as a framed sepia study on parchment (dark frame, white mat, stained paper, ink lines, hatching) */
+.bp{--ink2:#4b3220;--red2:#8a2b1a;border-radius:3px;padding:24px 24px 18px;border:10px solid #1d1b1a;
+  background-color:#e7d9b9;background-image:radial-gradient(ellipse at 18% 28%,rgba(150,105,55,.2),transparent 42%),radial-gradient(ellipse at 82% 74%,rgba(140,95,45,.22),transparent 46%),radial-gradient(circle at 60% 15%,rgba(170,130,80,.14),transparent 30%),radial-gradient(ellipse at center,transparent 52%,rgba(95,62,30,.38));
+  background-size:auto;box-shadow:inset 0 0 0 11px #f2ede3,inset 0 0 0 12px rgba(0,0,0,.12),0 12px 30px rgba(0,0,0,.55)}
+.bp .bplbl{color:var(--ink2);font:italic 600 13px Georgia,'Times New Roman',serif;letter-spacing:.14em}
+.bp .vlbl{font:italic 600 13px Georgia,'Times New Roman',serif;letter-spacing:.06em;text-transform:none;color:#5a3d22}
+.bp .bpview+.bpview{border-top:0;margin-top:4px;padding-top:0}
+.bptitle{display:table;margin:2px auto 0;padding:3px 16px;border:1px solid var(--ink2);background:rgba(250,244,230,.55);font:600 14px Georgia,'Times New Roman',serif;color:#2a1c10;position:relative;z-index:2}
+.bp pattern line{stroke:#4b3220;stroke-width:.7;opacity:.75}
+.bp .car-o path,.bp .car-o circle,.bp .car-o rect{fill:rgba(75,50,32,.035);stroke:var(--ink2);stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.bp .car-o line{stroke:var(--ink2);stroke-width:1.2;stroke-dasharray:none}
+.bp .car-o.ghost{opacity:.32}.bp .car-o.ghost .hatch,.bp .car-o.ghost .tyre{fill:none}
+.bp .side .car-o .hatch{fill:url(#hside);stroke:none}.bp .top .car-o .hatch{fill:url(#htop);stroke:none}
+.bp .side .car-o .tyre{fill:url(#xside)}.bp .top .car-o .tyre{fill:url(#xtop)}
+.bp .car-o .dent{fill:none;stroke-width:1.3}.bp .car-o .patch{fill:rgba(75,50,32,.08);stroke-dasharray:3 2}.bp .car-o .rivet{fill:var(--ink2);stroke:none}
+.bp .car-o .spoiler{fill:rgba(138,43,26,.12);stroke:var(--red2)}
+.bp .cons line,.bp .cons circle,.bp .cons path{fill:none;stroke:rgba(75,50,32,.22);stroke-width:.8}
+.bp .nt{fill:none;stroke:rgba(75,50,32,.42);stroke-width:.8;stroke-linecap:round}
+.bp line.ld{stroke:rgba(75,50,32,.5);stroke-width:1.2;stroke-dasharray:4 3}.bp line.ld.on{stroke:var(--red2);stroke-dasharray:none;stroke-width:1.4}
+.bp .mk circle{fill:#f3ead3;stroke:var(--ink2);stroke-width:1.6}.bp .mk.on circle{fill:var(--red2);stroke:#f6efe0;stroke-width:2}.bp .mk.hl circle{stroke:#e8a92a;stroke-width:3.5}
+.bp .chip{background:rgba(247,240,224,.96);border:1.5px solid rgba(75,50,32,.45);box-shadow:1px 2px 0 rgba(75,50,32,.22)}
+.bp .chip.on{border-color:var(--ink2)}.bp .chip.hl{border-color:#e8a92a;box-shadow:0 0 0 3px rgba(232,169,42,.35)}
+.bp .chip .sn{color:#8a5a2a}.bp .chip .pn{color:#2a1c10}.bp .chip .pn.empty{color:#8b7a62}.bp .chip .lv{color:var(--red2)}
+.bp .ico.xs.empty{border-color:rgba(75,50,32,.45)}
+.bp .chip .tip{background:#f7f0e0;border-color:var(--ink2);box-shadow:0 10px 24px rgba(0,0,0,.4)}.bp .chip .tip b{color:#2a1c10}.bp .chip .tip span{color:#4b3a2a}
+@media(max-height:860px){.bp{padding:14px 16px 10px;border-width:8px}.bptitle{font-size:12px;padding:2px 12px}.bp .vlbl{font-size:12px}}
+@media(max-height:800px) and (min-width:1001px){#lockHint{display:none}}
 </style>
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
@@ -410,7 +437,7 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
         <div id="cards"></div>
         <p class="hint" id="lockHint"></p>
       </section>
-      <section class="col bp"><div class="lbl" data-i18n="blueprint" style="color:var(--bp)">Blueprint</div><div id="blueprint"></div></section>
+      <section class="col bp"><div class="lbl bplbl" data-i18n="blueprint">Blueprint</div><div id="blueprint"></div></section>
       <section class="panel" id="build"></section>
     </div>
     <div class="gfoot row"><button class="btn" id="go" data-i18n="next">Next lap</button><button class="btn alt" id="reroll">Reroll</button><button class="btn alt" id="repair">Repair</button></div>

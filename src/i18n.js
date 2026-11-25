@@ -17,7 +17,7 @@ const T = {
     wrecks: '{n} kassé', drift: 'Slieren', driftPill: 'SLIEREN', kmh: 'KM/U', boss: 'De Pikdorser',
     holdOut: "Ou 't {s} seconden vul", bossIn: 'Pietje Pek komt eroan!', lapClear: 'Toertje gedoan!', garageOpen: 'De garasje es open',
     fDrift: 'Slieren {p}', fScrap: '+{s} schroot', fCombo: 'Slieren kapot', fAir: 'Vliegn {t}s', fCrush: 'Platgereen!',
-    garage: 'Garasje · toertje {n} overleefd', scrapAmt: '{n} schroot', next: 'Nog e toertje!', reroll: 'Ander brol · {c}',
+    garage: 'Garasje · toertje {n} overleefd', garageRetry: 'Garasje · toertje {n} afgebroken', scrapAmt: '{n} schroot', next: 'Nog e toertje!', reroll: 'Ander brol · {c}',
     lock: 'Vastzetn', locked: 'Vastgezet', isNew: 'Nieuw', lvl: 'Lv {a} → {b}', owned: '{n} keer derin', fitted: 'Derin', price: '{p} schroot',
     myParts: 'Jen stukken', noParts: 'Nog niks derin.', lockHint: 'Vastgezette stukken bluven liggen tot de volgende keer.',
     st: ['Karkasse', 'Topsnelheid', 'Grip', 'Pantser', 'Rammen', "Zeer bij 't rammen", 'Schade', 'Rap skietn', 'Were plakken', 'Magneet'],

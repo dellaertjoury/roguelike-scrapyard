@@ -80,32 +80,60 @@ const lockSvg = on => `<svg viewBox="0 0 24 24" width="15" height="15" aria-hidd
    Each slot has a marker on the drawing, a leader line and a label chip next to it; installed parts can be
    hovered (or focused) for a card with what they do at their current level. */
 const VW = 600;
-// slots in drawing coordinates (front of the car on the LEFT, the back with its spoiler on the RIGHT):
-// [marker x, marker y, label x, label y, label side]
+// Drawn like an old pencil/ink study on parchment: sepia lines traced twice (a sketchy ghost line), hatching on the
+// lower panels and tyres, faint construction lines and compass arcs, and scribbled notes in the empty corners.
+// Front of the car on the LEFT, the back with its bolted-on spoiler on the RIGHT, in both views. Still scrappy:
+// crooked door, riveted patch, dent, bent bumpers, one wheel cover that doesn't sit right.
+// slots in drawing coordinates: [marker x, marker y, label x, label y, label side]
 const BPV = {
-  top: { h: 240, slots: { front: [162, 115, 130, 22, 'c'], rear: [438, 115, 470, 22, 'c'], trunk: [395, 115, 300, 218, 'c'] } },
-  side: { h: 250, slots: { turret: [282, 46, 190, 22, 'r'], roof: [338, 62, 305, 22, 'c'], turret2: [418, 100, 600, 22, 'r'], hood: [182, 120, 130, 228, 'c'], sides: [300, 168, 370, 228, 'c'] } }
+  side: { h: 250, slots: { turret: [300, 46, 190, 22, 'r'], roof: [350, 56, 305, 22, 'c'], turret2: [446, 98, 600, 22, 'r'], hood: [168, 110, 130, 228, 'c'], sides: [300, 146, 370, 228, 'c'] } },
+  top: { h: 240, slots: { front: [140, 120, 120, 22, 'c'], rear: [462, 120, 480, 22, 'c'], trunk: [420, 120, 300, 222, 'c'] } }
 };
-// the top view is drawn front-right and mirrored, the side view is drawn front-left; both end with the spoiler on the right; deliberately a bit
-// scrappy: a crooked door, a riveted patch, a dented panel, a bent bumper and a spoiler bolted on at an angle
-const MIRROR = s => `<g transform="translate(${VW},0) scale(-1,1)">${s}</g>`;
+const YEAR = { hatch: 1987, muscle: 1972, hearse: 1979 };
+// tiny deterministic random so the sketch doesn't change on every re-render
+const srand = seed => () => (seed = (seed * 16807) % 2147483647) / 2147483647;
+// scribbled 'handwriting': rows of small irregular loops
+function notes(x, y, w, rows, seed) {
+  const r = srand(seed); let d = '';
+  for (let k = 0; k < rows; k++) {
+    const yy = y + k * 9, len = w * (.55 + r() * .45); let xx = x;
+    d += `M${xx.toFixed(1)} ${yy}`;
+    while (xx < x + len) { const s = 2 + r() * 3; xx += s; d += ` q${(s / 2).toFixed(1)} ${(-(1.5 + r() * 3)).toFixed(1)} ${s.toFixed(1)} 0`; if (r() < .12) { xx += 4; d += ` m4 0` } }
+  }
+  return `<path class="nt" d="${d}"/>`;
+}
+const DEFS = id => `<defs><pattern id="h${id}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><line x1="0" y1="0" x2="0" y2="5"/></pattern>
+  <pattern id="x${id}" width="5" height="5" patternUnits="userSpaceOnUse" patternTransform="rotate(40)"><line x1="0" y1="0" x2="0" y2="5"/><line x1="0" y1="0" x2="5" y2="0"/></pattern></defs>`;
+const sketch = s => `<g class="car-o">${s}</g><g class="car-o ghost" transform="translate(1.3 .8) rotate(.25 300 120)">${s}</g>`;
+const wheel = (x, y, r, off = 0) => `<circle class="tyre" cx="${x}" cy="${y}" r="${r}"/><circle cx="${x + off}" cy="${y}" r="${r * .62}"/><circle cx="${x + off}" cy="${y}" r="${r * .16}"/>` +
+  [0, 72, 144, 216, 288].map(a => { const c = Math.cos(a * Math.PI / 180), s = Math.sin(a * Math.PI / 180); return `<line class="sp" x1="${(x + off + c * r * .18).toFixed(1)}" y1="${(y + s * r * .18).toFixed(1)}" x2="${(x + off + c * r * .58).toFixed(1)}" y2="${(y + s * r * .58).toFixed(1)}"/>` }).join('');
 const BP_DRAW = {
-  top: MIRROR(`<g class="car-o"><rect x="196" y="52" width="40" height="16" rx="5"/><rect x="364" y="52" width="40" height="16" rx="5"/><rect x="196" y="162" width="40" height="16" rx="5" transform="rotate(-4 216 170)"/><rect x="364" y="162" width="40" height="16" rx="5"/>
-    <path d="M190 64 L410 64 Q440 66 440 92 L440 140 Q438 166 410 166 L190 166 Q160 166 160 138 L160 92 Q162 64 190 64 Z"/>
-    <path d="M250 78 L346 80 Q356 80 356 90 L354 142 Q354 152 344 152 L252 150 Q242 150 242 140 L244 88 Q244 78 250 78 Z"/>
-    <line x1="236" y1="68" x2="242" y2="162"/><line x1="360" y1="70" x2="356" y2="160"/>
-    <path class="dent" d="M392 82 l8 6 l-5 7 l9 5 l-6 8"/><rect class="patch" x="372" y="128" width="30" height="22" transform="rotate(8 387 139)"/>
-    <circle class="rivet" cx="377" cy="133" r="1.8"/><circle class="rivet" cx="397" cy="136" r="1.8"/><circle class="rivet" cx="375" cy="146" r="1.8"/><circle class="rivet" cx="395" cy="149" r="1.8"/>
-    <rect x="442" y="72" width="10" height="86" rx="3" transform="rotate(5 447 115)"/>
-    <rect class="spoiler" x="126" y="58" width="16" height="114" rx="3" transform="rotate(-3 134 115)"/><line x1="142" y1="80" x2="160" y2="84"/><line x1="142" y1="150" x2="160" y2="146"/></g>`),
-  side: `<g class="car-o"><path d="M140 150 L140 118 Q142 104 158 102 L232 98 L270 60 Q276 54 286 54 L356 54 Q366 54 372 62 L396 98 L448 104 Q460 106 460 120 L460 150 Z"/>
-    <path d="M282 100 L284 64 M348 62 L352 100" /><path d="M286 100 L346 102 L348 146 L288 144 Z" transform="rotate(-3 316 122)"/><line x1="232" y1="98" x2="396" y2="98"/>
-    <path class="dent" d="M410 104 l6 8 l-7 5 l8 6"/><rect class="patch" x="354" y="106" width="30" height="22" transform="rotate(-6 369 117)"/>
-    <circle class="rivet" cx="359" cy="111" r="1.8"/><circle class="rivet" cx="379" cy="109" r="1.8"/><circle class="rivet" cx="361" cy="125" r="1.8"/><circle class="rivet" cx="381" cy="123" r="1.8"/>
-    <circle cx="200" cy="152" r="26"/><circle cx="400" cy="152" r="26"/><circle cx="200" cy="152" r="10"/><circle cx="400" cy="152" r="10"/>
-    <rect x="176" y="158" width="250" height="8" rx="3" transform="rotate(1 300 162)"/>
-    <path class="spoiler" d="M422 74 L482 78 L480 88 L420 84 Z"/><line x1="450" y1="86" x2="446" y2="104"/><line x1="430" y1="84" x2="428" y2="100"/>
-    <path d="M460 140 L480 142 L480 148 L460 147"/></g>`
+  side: id => DEFS(id) + `<g class="cons"><line x1="20" y1="178" x2="580" y2="178"/><line x1="190" y1="20" x2="190" y2="240"/><line x1="410" y1="20" x2="410" y2="240"/>
+    <circle cx="190" cy="152" r="62"/><path d="M300 30 A150 150 0 0 1 450 180"/><line x1="112" y1="200" x2="500" y2="200"/><path d="M112 196 L112 204 M500 196 L500 204"/></g>` +
+    notes(470, 186, 112, 6, 7 + id.length) + notes(24, 66, 80, 4, 31) +
+    sketch(`<path d="M118 150 L116 128 Q118 116 134 113 L214 106 L262 60 Q266 56 274 56 L366 56 Q374 56 378 62 L420 102 L470 106 Q482 108 482 122 L482 150 L436 150 A26 26 0 0 0 384 150 L216 150 A26 26 0 0 0 164 150 Z"/>
+    <path class="hatch" d="M134 130 L470 126 L480 148 L436 148 A26 26 0 0 0 384 148 L216 148 A26 26 0 0 0 164 148 L120 148 Z"/>
+    <path d="M272 64 L316 64 L316 100 L232 102 Z"/><path d="M324 64 L362 64 Q368 64 372 70 L398 100 L324 100 Z"/><path class="hatch" d="M276 68 L312 68 L312 96 L246 98 Z"/>
+    <path d="M226 104 L232 147 M320 102 L323 148" transform="rotate(-2.5 275 125)"/><path d="M396 102 L398 147"/><path d="M296 116 l12 0 M376 116 l12 -1"/>
+    <path d="M134 118 L470 113"/><path d="M150 146 L452 145"/><path d="M238 100 l-8 -6 l-4 6 z"/>
+    <rect x="120" y="117" width="12" height="8" rx="2"/><rect x="472" y="111" width="8" height="10" rx="1"/>
+    <path d="M118 128 L106 131 L106 147 L120 146"/><path d="M482 136 L500 141 L499 148 L482 146"/><path d="M462 154 L478 154 L478 158 L462 158 Z"/>
+    ${wheel(190, 152, 26)}${wheel(410, 152, 26, 2.5)}
+    <path class="dent" d="M444 112 l6 7 l-6 4 l7 6"/><rect class="patch" x="344" y="114" width="28" height="18" transform="rotate(-6 358 123)"/>
+    <circle class="rivet" cx="348" cy="118" r="1.6"/><circle class="rivet" cx="367" cy="116" r="1.6"/><circle class="rivet" cx="350" cy="129" r="1.6"/><circle class="rivet" cx="369" cy="127" r="1.6"/>
+    <path class="spoiler" d="M428 80 L490 84 L488 94 L426 90 Z"/><path d="M448 90 L446 104 M472 92 L471 106"/>`),
+  top: id => DEFS(id) + `<g class="cons"><line x1="20" y1="120" x2="580" y2="120"/><line x1="200" y1="30" x2="200" y2="210"/><line x1="400" y1="30" x2="400" y2="210"/><circle cx="300" cy="120" r="104"/></g>` +
+    notes(24, 168, 120, 6, 53) + notes(478, 168, 100, 5, 89) +
+    sketch(`<rect class="tyre" x="178" y="50" width="44" height="13" rx="4"/><rect class="tyre" x="378" y="50" width="44" height="13" rx="4"/><rect class="tyre" x="178" y="177" width="44" height="13" rx="4" transform="rotate(-4 200 183)"/><rect class="tyre" x="378" y="177" width="44" height="13" rx="4"/>
+    <path d="M178 62 L428 60 Q456 62 458 92 L458 148 Q456 178 428 180 L178 178 Q146 176 144 146 L144 94 Q146 64 178 62 Z"/>
+    <path d="M250 70 L276 76 L276 164 L250 170 Q244 120 250 70 Z"/><path class="hatch" d="M254 76 L272 80 L272 160 L254 164 Q249 120 254 76 Z"/>
+    <path d="M282 74 L366 74 Q372 74 372 80 L372 160 Q372 166 366 166 L282 166 Q276 166 276 160 L276 80 Q276 74 282 74 Z"/>
+    <path d="M372 78 L392 84 L392 156 L372 162"/><path d="M160 92 L246 88 M160 148 L246 152"/><path d="M168 74 L168 166" />
+    <path d="M300 62 L302 178" transform="rotate(1.5 300 120)"/><path d="M340 62 L340 178"/><path d="M256 60 l-6 -8 l8 -1 z M256 180 l-6 8 l8 1 z"/>
+    <path d="M144 100 L134 98 L134 142 L144 140"/><path d="M458 98 L468 100 L467 140 L458 143"/>
+    <path class="dent" d="M196 80 l7 5 l-4 6 l8 4"/><rect class="patch" x="404" y="134" width="24" height="18" transform="rotate(7 416 143)"/>
+    <circle class="rivet" cx="408" cy="138" r="1.6"/><circle class="rivet" cx="424" cy="141" r="1.6"/><circle class="rivet" cx="406" cy="149" r="1.6"/><circle class="rivet" cx="422" cy="152" r="1.6"/>
+    <rect class="spoiler" x="476" y="64" width="14" height="112" rx="2" transform="rotate(-3 483 120)"/><path d="M468 86 L476 86 M468 154 L476 154"/>`)
 };
 const partDescAt = (id, l) => { const d = PART[id]; return d.w ? L().w[d.w][1](l, ...WSTAT[d.w](l)) : L().parts[id][1] };
 function bpView(view) {
@@ -117,11 +145,11 @@ function bpView(view) {
     chips.push(`<div class="chip ${al}${on}${view === 'side' && cy < 60 ? ' up' : ''}" data-slot="${slot}" style="left:${cx / VW * 100}%;top:${cy / V.h * 100}%" tabindex="${b ? 0 : -1}">
       ${b ? icon(b.id, 'ico xs') : '<span class="ico xs empty"></span>'}<span class="sl"><span class="sn">${esc(L().slots[slot])}</span><span class="pn${b ? '' : ' empty'}">${b ? esc(partName(b.id)) : esc(t('empty'))}</span></span>${b ? `<span class="lv">Lv ${b.lvl}</span>` : ''}${tip}</div>`);
   }
-  return `<div class="bpview ${view}"><div class="vlbl">${esc(L().bpViews[view])}</div><div class="bpstage" style="aspect-ratio:${VW}/${V.h}"><svg viewBox="0 0 ${VW} ${V.h}" aria-hidden="true">${BP_DRAW[view]}${marks.join('')}</svg>${chips.join('')}</div></div>`;
+  return `<div class="bpview ${view}"><div class="vlbl">${esc(L().bpViews[view])}</div><div class="bpstage" style="aspect-ratio:${VW}/${V.h}"><svg viewBox="0 0 ${VW} ${V.h}" aria-hidden="true">${BP_DRAW[view](view)}${marks.join('')}</svg>${chips.join('')}</div></div>`;
 }
-function renderBlueprint() { $('blueprint').innerHTML = bpView('side') + bpView('top') }
+function renderBlueprint() { const id = G.P.car.id; $('blueprint').innerHTML = bpView('side') + `<div class="bptitle">${esc(L().cars[id][0])} (${YEAR[id] || 1984})</div>` + bpView('top') }
 export function renderShop() {
-  set($('shopTitle'), t('garage', { n: G.wave }));
+  set($('shopTitle'), t(G.retry ? 'garageRetry' : 'garage', { n: G.wave }));
   set($('shopScrap'), t('scrapAmt', { n: fmt(G.scrap) }));
   $('cards').innerHTML = G.offer.map((it, i) => {
     const d = PART[it.id], p = price(it), col = TAGC[d.tag], poor = p > G.scrap, l = lvlOf(it), cur = G.build[d.slot];
