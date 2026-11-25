@@ -23,6 +23,7 @@ export async function loadAssets(onProgress = () => { }) {
     img('assets/ground-dirt.jpg').then(i => A.dirt = i),
     img('assets/loading-bg.jpg').then(i => A.menuBg = i), // the menu uses the loading screen's art
     img('assets/garage-bg.jpg').then(i => A.garageBg = i),
+    img('assets/garage-bg-back.jpg').then(i => A.garageBgBack = i), // the other side of the garage (back view)
     img('assets/fx/fire-trail.png').then(i => { if (i) A.fx.fire = i }),
     img('assets/obstacles/hay-side.jpg').then(i => { if (i) A.obs.side = i }),
     img('assets/obstacles/hay-top.png').then(i => { if (i) A.obs.top = i }),

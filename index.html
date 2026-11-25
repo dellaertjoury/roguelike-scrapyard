@@ -391,6 +391,19 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 .slotgrid .chip .tip{top:auto;bottom:calc(100% + 8px)}
 @media(max-width:1200px){.slotgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-height:800px){.slotgrid{gap:6px;margin-top:8px}.slotgrid .chip{padding:4px 8px 4px 4px}}
+/* garage backdrop layers: switching to the back view slides this side out and the other side in (with the 3D swoop) */
+#shop .gbg{position:absolute;inset:0;width:auto;z-index:0;overflow:hidden;pointer-events:none}
+#shop>*:not(.gbg){position:relative;z-index:1}
+.gbg i{position:absolute;inset:-3%;background:center/cover no-repeat;--flip:1;transition:transform 1.2s cubic-bezier(.65,0,.35,1),opacity 1.2s ease-in-out}
+#gbgF{transform:none;opacity:1}#gbgB{transform:translateX(22%) scale(1.15) scaleX(var(--flip));opacity:0}
+.gbg.back #gbgF{transform:translateX(-22%) scale(1.15);opacity:0}.gbg.back #gbgB{transform:scaleX(var(--flip));opacity:1}
+.gbg b{position:absolute;inset:0;background:radial-gradient(ellipse 75% 70% at 50% 45%,rgba(20,21,25,.38),rgba(20,21,25,.78)),linear-gradient(transparent 70%,rgba(20,21,25,.7))}
+.gbg.dim b{background:linear-gradient(rgba(20,21,25,.86),rgba(20,21,25,.94))}
+@media(prefers-reduced-motion:reduce){.gbg i{transition:opacity .4s}}
+/* centre column: name, slot grid, then the car standing forward on the floor down to the button bar */
+.slotgrid{margin:6px 0 0}.slotgrid .chip .tip{top:calc(100% + 8px);bottom:auto}
+.bp3d canvas{inset:-4% -10% 0;width:120%;height:104%;pointer-events:none}
+.bptitle{position:relative;left:auto;top:auto}
 </style>
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
@@ -444,6 +457,7 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
   </div>
 
   <div class="ov hide" id="shop">
+    <div class="gbg" id="gbg" aria-hidden="true"><i id="gbgF"></i><i id="gbgB"></i><b></b></div>
     <div class="shophead"><h2 id="shopTitle">Garage</h2><span class="scrapct" id="shopScrap">0</span></div>
     <div class="garage">
       <section class="col">

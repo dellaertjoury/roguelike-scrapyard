@@ -21,7 +21,7 @@ no text, no logos, no brand badges.
 
 | Already in the game | Still missing (prompts below) |
 |---|---|
-| Logo, loading/menu art, arena dirt, pack banners, garage backdrop | |
+| Logo, loading/menu art, arena dirt, pack banners, garage backdrop | `garage-bg-back.jpg` (other side of the garage; until then the backdrop is mirrored) |
 | Menu renders of all 7 cars (`cars/`, cut out automatically) | Icons `radar`, `tank`, and a proper `mg2` (it is a copy of `mg` now) |
 | Skins for Zwerfotto, Roestbak, Lijkotto | Skins for the 4 enemy types, 3 bosses and 4 pack cars |
 | 22 part icons, HUD icons, fuel gauge + needle, pump icon, jerrycan | Gauge-cluster faces (`cluster-speedo`, `cluster-nitro`) |
@@ -44,6 +44,20 @@ chain, a half-stripped rusty car on a lift at the left. A rolled-up garage door 
 and floodlights outside. Warm hanging work lamps make pools of yellow light, the rest is in cool blue-grey shadow.
 The centre is a darker, calm stretch of oil-stained concrete floor with faded yellow hazard lines, because a 3D car
 turntable and interface panels sit on top. No people, no cars in the foreground, wide 16:9.
+```
+
+```text
+=== assets/garage-bg-back.jpg · 2560×1440 (16:9) · the OTHER side of the same garage (back view of the car) ===
+STYLE + The same cluttered scrapyard workshop at night as garage-bg.jpg, but seen from the opposite end: the camera
+has turned around 180 degrees and looks at the wall that was behind the viewer. Same eye-level camera height, same
+warm hanging work lamps and blue-grey shadows, same oil-stained concrete floor with faded yellow hazard bay lines
+running towards the viewer, so the two images feel like one room. On this side: the big rolled-up garage door is now
+at the LEFT edge, showing the dusky junkyard and floodlights outside; the yellow hydraulic car lift with its
+hazard-striped posts is at the RIGHT edge. The back wall has a dirty office window with a dim desk lamp behind it, a
+workbench with a vice and a grinder, a rack of scrap bumpers and doors, a tall shelf with jerrycans and spray cans, a
+parts washer, a calendar-free notice board with blank papers, coiled air hoses and an old arcade-style vending machine.
+The centre of the floor is open and calm (a car stands there in the game). No people, no cars in the foreground,
+no text, no logos, wide 16:9.
 ```
 
 ## 2. Part icons (garage cards and slot chips)
