@@ -383,7 +383,6 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 .showroom{min-width:0;display:flex;flex-direction:column;align-self:stretch;min-height:0}
 .bp3d{position:relative;width:100%;flex:1 1 auto;min-height:220px;overflow:visible} /* no frame: the car stands on the garage floor of the backdrop */
 .bp3d canvas{position:absolute;inset:-6% -8% -4%;width:116%;height:110%;display:block}
-.viewbtn{position:absolute;left:50%;bottom:6px;transform:translateX(-50%);z-index:2;min-height:38px;padding:6px 16px;font-size:14px;background:rgba(30,31,36,.82);backdrop-filter:blur(4px)}
 .bptitle{position:absolute;left:4px;top:0;display:block;margin:0;padding:0;border:0;background:none;z-index:1;font:800 clamp(16px,1.6vw,22px) Rubik,sans-serif;color:#efe3c8;text-shadow:0 2px 6px rgba(0,0,0,.6);pointer-events:none}
 .bpprev{position:absolute;right:14px;top:14px;font:800 12px Rubik,sans-serif;letter-spacing:.06em;color:#1d1b1a;background:#ffc23d;border-radius:8px;padding:4px 9px;pointer-events:none}.bpprev:empty{display:none}
 .slotgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:10px}
@@ -391,15 +390,12 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 .slotgrid .chip .tip{top:auto;bottom:calc(100% + 8px)}
 @media(max-width:1200px){.slotgrid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-height:800px){.slotgrid{gap:6px;margin-top:8px}.slotgrid .chip{padding:4px 8px 4px 4px}}
-/* garage backdrop layers: switching to the back view slides this side out and the other side in (with the 3D swoop) */
+/* garage backdrop (its own layer so the dimming sits between it and the panels) */
 #shop .gbg{position:absolute;inset:0;width:auto;z-index:0;overflow:hidden;pointer-events:none}
 #shop>*:not(.gbg){position:relative;z-index:1}
-.gbg i{position:absolute;inset:-3%;background:center/cover no-repeat;--flip:1;transition:transform 1.2s cubic-bezier(.65,0,.35,1),opacity 1.2s ease-in-out}
-#gbgF{transform:none;opacity:1}#gbgB{transform:translateX(22%) scale(1.15) scaleX(var(--flip));opacity:0}
-.gbg.back #gbgF{transform:translateX(-22%) scale(1.15);opacity:0}.gbg.back #gbgB{transform:scaleX(var(--flip));opacity:1}
+.gbg i{position:absolute;inset:0;background:center/cover no-repeat}
 .gbg b{position:absolute;inset:0;background:radial-gradient(ellipse 75% 70% at 50% 45%,rgba(20,21,25,.38),rgba(20,21,25,.78)),linear-gradient(transparent 70%,rgba(20,21,25,.7))}
 .gbg.dim b{background:linear-gradient(rgba(20,21,25,.86),rgba(20,21,25,.94))}
-@media(prefers-reduced-motion:reduce){.gbg i{transition:opacity .4s}}
 /* centre column: name, slot grid, then the car standing forward on the floor down to the button bar */
 .slotgrid{margin:6px 0 0}.slotgrid .chip .tip{top:calc(100% + 8px);bottom:auto}
 .bp3d canvas{inset:-4% -10% 0;width:120%;height:104%;pointer-events:none}
@@ -457,7 +453,7 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
   </div>
 
   <div class="ov hide" id="shop">
-    <div class="gbg" id="gbg" aria-hidden="true"><i id="gbgF"></i><i id="gbgB"></i><b></b></div>
+    <div class="gbg" id="gbg" aria-hidden="true"><i id="gbgF"></i><b></b></div>
     <div class="shophead"><h2 id="shopTitle">Garage</h2><span class="scrapct" id="shopScrap">0</span></div>
     <div class="garage">
       <section class="col">

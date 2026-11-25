@@ -48,7 +48,7 @@ const T = {
     bpViews: { side: "Zijaanzicht", top: "Bovenaanzicht" }, slots: {"turret": "Koepel (vaste)", "turret2": "Tweede koepel", "roof": "Dak", "hood": "Motorkap", "front": "Voorbarsjok", "rear": "Achterbarsjok", "trunk": "Koffer", "sides": "Zijkanten"},
     packs: {"britland": ["Britland", "De Mini Cooper en den Engelsen taxi. Thee drinken mag.", ["Mini Cooper", "Londense taxi"]], "f1": ["Da rappe wè", "Ne Formule 1 en de Safety Car. Stief rap, stief broos.", ["Formule 1", "Safety Car"]]},
     forSale: "Te koop",
-    blueprint: "Je otto", viewBack: "Bekijk de bachtekant", viewFront: "Bekijk de veurkant", previewing: "Proberen: {x} (Lv {n})",
+    blueprint: "Je otto", previewing: "Proberen: {x} (Lv {n})",
     empty: "Leeg",
     replaces: "Vervangt {x}",
     upTo: "Nor Lv {n}",

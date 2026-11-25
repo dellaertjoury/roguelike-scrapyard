@@ -1130,14 +1130,11 @@ export function portraits(cars) {
   return out;
 }
 
-/* ---------- garage turntable ----------
+/* ---------- garage car ----------
    A live 3D preview of your car in the garage, built with the same buildCar/partMesh as in the game, so every fitted
    part (and its level) shows. It sits on a slowly turning platform under a work lamp; drag to spin it. Hovering a
    part for sale previews it fitted (at the level you'd get), and the hovered slot gets a yellow outline. */
 let gp = null;
-const GARAGE_AZ = [-.62, Math.PI - .62]; // front-left corner, and the diagonally opposite rear-right corner
-// switching corners is a 1.2 s swoop: the camera arcs round the car, rising and pulling back mid-way
-export function garageBack(on) { if (!gp) return; const w = GARAGE_AZ[on ? 1 : 0]; if (gp.want !== w) { gp.from = gp.az; gp.want = w; gp.t = 0 } }
 export function garageView(canvas) {
   if (gp && gp.canvas === canvas) return gp;
   const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
@@ -1152,9 +1149,8 @@ export function garageView(canvas) {
   const pivot = new THREE.Group(); plat.add(pivot);
   const cam = new THREE.PerspectiveCamera(26, 1.6, 1, 2000);
   const box = new THREE.Box3Helper(new THREE.Box3(), 0xffc23d); box.visible = false; sc.add(box);
-  // two fixed camera corners: front three-quarter (nose to the right, like the menu art) and the opposite corner
-  // for the back; the camera swings between them
-  gp = { canvas, r, sc, cam, plat, pivot, box, car: null, sig: '', az: GARAGE_AZ[0], want: GARAGE_AZ[0], from: GARAGE_AZ[0], t: 1, hl: null, w: 0, h: 0 };
+  // the car slowly spins on the spot in the middle of the garage floor
+  gp = { canvas, r, sc, cam, plat, pivot, box, car: null, sig: '', rot: .6, hl: null, w: 0, h: 0 };
   return gp;
 }
 // build = { slot: { id, lvl } }; rebuilt only when it changes
@@ -1177,12 +1173,9 @@ export function garageFrame(dt) {
   const { canvas, r, cam } = gp, w = canvas.clientWidth, h = canvas.clientHeight;
   if (!w || !h) return;
   if (w !== gp.w || h !== gp.h) { gp.w = w; gp.h = h; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
-  gp.t = Math.min(1, gp.t + dt / 1.2);
-  const k = gp.t < .5 ? 4 * gp.t ** 3 : 1 - (-2 * gp.t + 2) ** 3 / 2, arc = Math.sin(Math.PI * gp.t); // ease in-out, and a bump mid-swoop
-  gp.az = gp.from + (gp.want - gp.from) * k;
-  // the car stands forward on the floor (low in the frame), seen from about eye level like the backdrop
-  const dist = 228 / Math.min(1, cam.aspect / 1.3) * (1 + .18 * arc), sway = Math.sin(performance.now() / 2600) * .025;
-  cam.position.set(Math.cos(gp.az + sway) * dist, dist * (.27 + .2 * arc), Math.sin(gp.az + sway) * dist); cam.lookAt(0, 36 - 10 * arc, 0);
+  gp.rot += dt * .45; gp.pivot.rotation.y = gp.rot; // slow spin, about one turn every 14 s
+  const dist = 228 / Math.min(1, cam.aspect / 1.3);
+  cam.position.set(0, dist * .27, dist); cam.lookAt(0, 36, 0); // eye level, aimed above the car so it stands low on the floor
   if (gp.car) for (const b of gp.car.blades || []) b.rotation.y += dt * 8;
   const parts = gp.hl && gp.car ? gp.car.partsG.children.filter(c => c.userData.slot === gp.hl) : [];
   if (parts.length) { gp.box.box.makeEmpty(); for (const p of parts) gp.box.box.expandByObject(p); gp.box.box.expandByScalar(1.5); gp.box.visible = !gp.box.box.isEmpty(); gp.box.material.opacity = .6 + .4 * Math.sin(performance.now() / 160) } else gp.box.visible = false;
