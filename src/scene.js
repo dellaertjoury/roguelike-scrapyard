@@ -1147,7 +1147,7 @@ export function garageView(canvas) {
   const disc = new THREE.Mesh(new THREE.CylinderGeometry(66, 66, 1, 40), lam(0x3c3f45)); disc.position.y = -.5; disc.receiveShadow = true; plat.add(disc);
   const inner = new THREE.Mesh(new THREE.RingGeometry(52, 54, 40).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x55585e })); inner.position.y = .05; plat.add(inner);
   for (let i = 0; i < 12; i++) { const a = i / 12 * TAU, b = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 1, 6), lam(0x8a8d93)); b.position.set(Math.cos(a) * 60, .3, Math.sin(a) * 60); plat.add(b) }
-  const floor = new THREE.Mesh(new THREE.CircleGeometry(220, 32).rotateX(-Math.PI / 2), new THREE.MeshLambertMaterial({ color: 0x24252a })); floor.position.y = -7; floor.receiveShadow = true; sc.add(floor);
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(220, 32).rotateX(-Math.PI / 2), new THREE.ShadowMaterial({ opacity: .45 })); // see-through: only the shadow, the garage art shows behind floor.position.y = -7; floor.receiveShadow = true; sc.add(floor);
   const pivot = new THREE.Group(); plat.add(pivot);
   const cam = new THREE.PerspectiveCamera(26, 1.6, 1, 2000);
   const box = new THREE.Box3Helper(new THREE.Box3(), 0xffc23d); box.visible = false; sc.add(box);

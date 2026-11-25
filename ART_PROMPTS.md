@@ -21,7 +21,7 @@ no text, no logos, no brand badges.
 
 | Already in the game | Still missing (prompts below) |
 |---|---|
-| Logo, loading/menu art, arena dirt, pack banners | `garage-bg.jpg` (garage backdrop behind the 3D turntable) |
+| Logo, loading/menu art, arena dirt, pack banners, garage backdrop | |
 | Menu renders of all 7 cars (`cars/`, cut out automatically) | Icons `radar`, `tank`, and a proper `mg2` (it is a copy of `mg` now) |
 | Skins for Zwerfotto, Roestbak, Lijkotto | Skins for the 4 enemy types, 3 bosses and 4 pack cars |
 | 22 part icons, HUD icons, fuel gauge + needle, pump icon, jerrycan | Gauge-cluster faces (`cluster-speedo`, `cluster-nitro`) |

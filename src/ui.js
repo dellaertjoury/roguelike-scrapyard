@@ -203,7 +203,8 @@ export function renderShop() {
 export function openShop() {
   // painted garage art if there is one, else the arena art, dimmed so the cards stay readable
   const bg = A.garageBg || A.menuBg;
-  if (bg) $('shop').style.backgroundImage = `linear-gradient(rgba(20,21,25,${A.garageBg ? '.72' : '.86'}),rgba(20,21,25,.94)),url(${bg.src})`;
+  // the garage art stays visible (lighter in the middle, darker at the edges and under the button bar)
+  if (bg) $('shop').style.backgroundImage = A.garageBg ? `radial-gradient(ellipse 75% 70% at 50% 45%,rgba(20,21,25,.38),rgba(20,21,25,.78)),linear-gradient(transparent 70%,rgba(20,21,25,.7)),url(${bg.src})` : `linear-gradient(rgba(20,21,25,.86),rgba(20,21,25,.94)),url(${bg.src})`;
   renderShop(); show('shop');
 }
 
