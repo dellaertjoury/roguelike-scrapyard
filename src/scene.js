@@ -446,7 +446,12 @@ const wheelG = keep(new THREE.CylinderGeometry(1, 1, 1, 8));
 const skinTex = {};
 function skinFor(key) {
   const sk = A.skins && A.skins[key]; if (!sk) return null;
-  if (!skinTex[key]) { const tx = img => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; t.needsUpdate = true; t.userData.keep = true; return t }; skinTex[key] = { top: tx(sk.top), side: tx(sk.side) } }
+  if (!skinTex[key]) {
+    const tx = img => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; t.needsUpdate = true; t.userData.keep = true; return t };
+    // average paint colour of the roof image (opaque pixels only), darkened, for the end faces of the body block
+    let avg = null; try { const c = document.createElement('canvas'); c.width = c.height = 16; const g = c.getContext('2d'); g.drawImage(sk.top, 0, 0, 16, 16); const d = g.getImageData(0, 0, 16, 16).data; let r = 0, gg = 0, b = 0, n = 0; for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 200) { r += d[i]; gg += d[i + 1]; b += d[i + 2]; n++ } if (n) avg = new THREE.Color(r / n / 255, gg / n / 255, b / n / 255).convertSRGBToLinear().multiplyScalar(.55) } catch (e) { }
+    skinTex[key] = { top: tx(sk.top), side: tx(sk.side), avg };
+  }
   return skinTex[key];
 }
 export function buildCar({ id, len: L, wid: W, color, kind, shape }) {
@@ -466,7 +471,7 @@ export function buildCar({ id, len: L, wid: W, color, kind, shape }) {
     bh = H * .55; cabH = H - bh; by = bot + bh / 2;
     const sideM = new THREE.MeshLambertMaterial({ map: sk.side, alphaTest: .45 }); sideM.color = body.color; sideM.emissive = body.emissive;
     body.alphaTest = .45; body.needsUpdate = true;
-    const endM = lam(0x3a3835);
+    const endM = lam(sk.avg || 0x3a3835); // nose and tail faces in the car's own (darkened) paint, not a black block
     const b = new THREE.Mesh(new THREE.BoxGeometry(L, H, W), [endM, endM, body, endM, sideM, sideM]); b.position.y = by - bh / 2 + H / 2; b.castShadow = b.receiveShadow = true; b.userData.skin = true; tilt.add(b);
   } else {
     const b = mesh(new THREE.BoxGeometry(L, bh, W), body); b.position.y = by; tilt.add(b);
@@ -774,7 +779,7 @@ export function initFx() {
     canSprites = Array.from({ length: 30 }, () => { const sp = new THREE.Sprite(mt); sp.scale.set(40, 40, 1); sp.visible = false; scene.add(sp); return sp });
   }
   if (A.fx.pad && !padDecal) { const tx = new THREE.Texture(A.fx.pad); tx.needsUpdate = true; tx.colorSpace = THREE.SRGBColorSpace;
-    padDecal = new THREE.Mesh(new THREE.PlaneGeometry(PUMP_R * 2.3, PUMP_R * 2.3).rotateX(-Math.PI / 2), new THREE.MeshLambertMaterial({ map: tx, transparent: true, depthWrite: false })); padDecal.position.y = .9; padDecal.receiveShadow = true; pumpG.add(padDecal); pumpG.getObjectByName('pad').visible = false }
+    padDecal = new THREE.Mesh(new THREE.PlaneGeometry(PUMP_R * 2.15, PUMP_R * 2.15).rotateX(-Math.PI / 2), new THREE.MeshLambertMaterial({ map: tx, transparent: true, depthWrite: false })); padDecal.position.y = .9; padDecal.receiveShadow = true; pumpG.add(padDecal); pumpG.getObjectByName('pad').visible = false }
   if (A.fx.fire && !fireDecal) { const tx = new THREE.Texture(A.fx.fire); tx.needsUpdate = true; tx.colorSpace = THREE.SRGBColorSpace;
     fireDecal = pool(new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2), addMat(tx), 300) } // additive: paint the flame on pure black
 }
@@ -1130,32 +1135,25 @@ export function portraits(cars) {
    part (and its level) shows. It sits on a slowly turning platform under a work lamp; drag to spin it. Hovering a
    part for sale previews it fitted (at the level you'd get), and the hovered slot gets a yellow outline. */
 let gp = null;
+const GARAGE_AZ = [-.62, Math.PI + .62];
+export function garageBack(on) { if (gp) gp.want = GARAGE_AZ[on ? 1 : 0] }
 export function garageView(canvas) {
   if (gp && gp.canvas === canvas) return gp;
   const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
   r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
   const sc = new THREE.Scene();
-  sc.add(new THREE.HemisphereLight(0xdfe8ff, 0x3a3028, 1.5));
-  const key = new THREE.DirectionalLight(0xfff0d6, 2.8); key.position.set(-50, 140, 70); key.castShadow = true;
+  sc.add(new THREE.HemisphereLight(0xffe2b8, 0x3a3028, 1.4));
+  const key = new THREE.DirectionalLight(0xffd9a0, 2.9); key.position.set(-50, 140, 70); key.castShadow = true;
   Object.assign(key.shadow.camera, { left: -80, right: 80, top: 80, bottom: -80 }); key.shadow.mapSize.set(1024, 1024); sc.add(key);
   const rim = new THREE.DirectionalLight(0x9fc8ff, 1.2); rim.position.set(80, 50, -90); sc.add(rim);
-  // the platform: dark steel disc with a hazard-striped rim and bolt heads
-  const hz = stripeTex(512, 32, (c, w, h) => { for (let i = 0; i < w / 16; i++) { c.fillStyle = i % 2 ? '#1d1b1a' : '#ffc23d'; c.beginPath(); c.moveTo(i * 16, 0); c.lineTo(i * 16 + 16, 0); c.lineTo(i * 16 + 4, h); c.lineTo(i * 16 - 12, h); c.fill() } });
-  hz.wrapS = THREE.RepeatWrapping; hz.repeat.set(3, 1);
-  const plat = new THREE.Group(); sc.add(plat);
-  const side = new THREE.Mesh(new THREE.CylinderGeometry(66, 68, 7, 40, 1, true), new THREE.MeshLambertMaterial({ map: hz })); side.position.y = -3.5; plat.add(side);
-  const disc = new THREE.Mesh(new THREE.CylinderGeometry(66, 66, 1, 40), lam(0x3c3f45)); disc.position.y = -.5; disc.receiveShadow = true; plat.add(disc);
-  const inner = new THREE.Mesh(new THREE.RingGeometry(52, 54, 40).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x55585e })); inner.position.y = .05; plat.add(inner);
-  for (let i = 0; i < 12; i++) { const a = i / 12 * TAU, b = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 1, 6), lam(0x8a8d93)); b.position.set(Math.cos(a) * 60, .3, Math.sin(a) * 60); plat.add(b) }
-  const floor = new THREE.Mesh(new THREE.CircleGeometry(220, 32).rotateX(-Math.PI / 2), new THREE.ShadowMaterial({ opacity: .45 })); // see-through: only the shadow, the garage art shows behind floor.position.y = -7; floor.receiveShadow = true; sc.add(floor);
+  const plat = new THREE.Group(); sc.add(plat); // the car stands right on the painted garage floor (no platform)
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(220, 32).rotateX(-Math.PI / 2), new THREE.ShadowMaterial({ opacity: .55 })); floor.position.y = .05; floor.receiveShadow = true; sc.add(floor); // see-through: only the shadow, the garage art shows behind
   const pivot = new THREE.Group(); plat.add(pivot);
   const cam = new THREE.PerspectiveCamera(26, 1.6, 1, 2000);
   const box = new THREE.Box3Helper(new THREE.Box3(), 0xffc23d); box.visible = false; sc.add(box);
-  gp = { canvas, r, sc, cam, plat, pivot, box, car: null, sig: '', rot: .7, vel: 0, drag: null, hl: null, w: 0, h: 0 };
-  canvas.addEventListener('pointerdown', e => { gp.drag = { x: e.clientX, t: performance.now() }; gp.vel = 0; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing' });
-  canvas.addEventListener('pointermove', e => { if (!gp.drag) return; const dx = e.clientX - gp.drag.x; gp.drag.x = e.clientX; gp.rot += dx * .012; gp.vel = dx * .012 });
-  const up = () => { gp.drag = null; canvas.style.cursor = '' };
-  canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
+  // two fixed camera corners: front three-quarter (nose to the right, like the menu art) and the opposite corner
+  // for the back; the camera swings between them
+  gp = { canvas, r, sc, cam, plat, pivot, box, car: null, sig: '', az: GARAGE_AZ[0], want: GARAGE_AZ[0], hl: null, w: 0, h: 0 };
   return gp;
 }
 // build = { slot: { id, lvl } }; rebuilt only when it changes
@@ -1178,9 +1176,9 @@ export function garageFrame(dt) {
   const { canvas, r, cam } = gp, w = canvas.clientWidth, h = canvas.clientHeight;
   if (!w || !h) return;
   if (w !== gp.w || h !== gp.h) { gp.w = w; gp.h = h; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
-  if (!gp.drag) { gp.rot += gp.vel; gp.vel *= .93; if (Math.abs(gp.vel) < .003) gp.rot += dt * .3 }
-  gp.plat.rotation.y = gp.rot;
-  const dist = 205 / Math.min(1, cam.aspect / 1.3); cam.position.set(0, dist * .42, dist); cam.lookAt(0, 9, 0);
+  gp.az += (gp.want - gp.az) * Math.min(1, dt * 4.5); // eased swing between the two corners
+  const dist = 245 / Math.min(1, cam.aspect / 1.3), sway = Math.sin(performance.now() / 2600) * .025; // a slow breathing drift so it feels alive
+  cam.position.set(Math.cos(gp.az + sway) * dist, dist * .36, Math.sin(gp.az + sway) * dist); cam.lookAt(0, 24, 0); // aim above the car so it sits low in the frame, on the floor
   if (gp.car) for (const b of gp.car.blades || []) b.rotation.y += dt * 8;
   const parts = gp.hl && gp.car ? gp.car.partsG.children.filter(c => c.userData.slot === gp.hl) : [];
   if (parts.length) { gp.box.box.makeEmpty(); for (const p of parts) gp.box.box.expandByObject(p); gp.box.box.expandByScalar(1.5); gp.box.visible = !gp.box.box.isEmpty(); gp.box.material.opacity = .6 + .4 * Math.sin(performance.now() / 160) } else gp.box.visible = false;

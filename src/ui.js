@@ -1,7 +1,7 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
 import { G, CRANE, START_T, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, targetLvl, tierOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
 import { CARS, PART, SLOTS, ALL_SLOTS, TAGC, PACKS, WSTAT } from './data.js';
-import { garageView, garageSet, garageFrame } from './scene.js';
+import { garageView, garageSet, garageFrame, garageBack } from './scene.js';
 import { t, L } from './i18n.js';
 import { A } from './assets.js';
 
@@ -151,7 +151,8 @@ function bpView(view) {
 // The garage shows your car as a live 3D model on a turntable (scene.js garageView) instead of the old drawings:
 // every fitted part is on it, a slot grid underneath lists what's where (hover for details), and hovering a part
 // for sale previews it fitted on the car with its slot outlined.
-let gHover = null, gLoop = false;
+let gHover = null, gLoop = false, gBack = false;
+const BACK_SLOTS = ['rear', 'trunk', 'turret2'], FRONT_SLOTS = ['front', 'hood'];
 function slotChip(slot) {
   const b = G.build[slot], on = b ? ' on' : '';
   const tip = b ? `<span class="tip"><b>${esc(partName(b.id))} · Lv ${b.lvl}/${PART[b.id].max}</b><span>${esc(partDescAt(b.id, b.lvl))}</span><i style="color:${TAGC[PART[b.id].tag]}">${esc(L().tags[PART[b.id].tag])}</i></span>` : '';
@@ -160,11 +161,12 @@ function slotChip(slot) {
 function renderBlueprint() {
   const id = G.P.car.id;
   if (!$('bpCanvas')) {
-    $('blueprint').innerHTML = `<div class="bp3d"><canvas id="bpCanvas" aria-label="3D"></canvas><div class="bptitle" id="bpTitle"></div><div class="bphint" id="bpHint"></div><div class="bpprev" id="bpPrev"></div></div><div class="slotgrid" id="slotGrid"></div>`;
+    $('blueprint').innerHTML = `<div class="bp3d"><canvas id="bpCanvas" aria-label="3D"></canvas><div class="bptitle" id="bpTitle"></div><button class="btn alt viewbtn" id="bpView" type="button"></button><div class="bpprev" id="bpPrev"></div></div><div class="slotgrid" id="slotGrid"></div>`;
     $('slotGrid').addEventListener('pointerover', ev => { const c = ev.target.closest('.chip'); gHover = c && G.build[c.dataset.slot] ? { slot: c.dataset.slot } : null });
     $('slotGrid').addEventListener('pointerleave', () => { gHover = null });
+    $('bpView').onclick = () => { gBack = !gBack };
   }
-  set($('bpTitle'), `${L().cars[id][0]} (${YEAR[id] || 1984})`); set($('bpHint'), t('dragRotate'));
+  set($('bpTitle'), `${L().cars[id][0]} (${YEAR[id] || 1984})`); 
   $('slotGrid').innerHTML = ALL_SLOTS.map(slotChip).join('');
   garageView($('bpCanvas'));
   if (!gLoop) { gLoop = true; let last = performance.now(); const tick = now => {
@@ -172,6 +174,9 @@ function renderBlueprint() {
     const build = { ...G.build }; let hl = gHover && gHover.slot, prev = '';
     if (gHover && gHover.item) { const it = gHover.item, d = PART[it.id]; build[d.slot] = { id: it.id, lvl: targetLvl(it) }; hl = d.slot; prev = t('previewing', { x: nameOf(it), n: targetLvl(it) }) }
     set($('bpPrev'), prev);
+    // look from the back for parts on the back of the car, from the front for front parts, else where you chose
+    const back = hl && BACK_SLOTS.includes(hl) ? true : hl && FRONT_SLOTS.includes(hl) ? false : gBack;
+    garageBack(back); set($('bpView'), back ? t('viewFront') : t('viewBack'));
     garageSet(build, hl); garageFrame(Math.min(.05, (now - last) / 1000)); last = now; requestAnimationFrame(tick) };
     requestAnimationFrame(tick) }
 }
