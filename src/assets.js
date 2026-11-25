@@ -29,7 +29,8 @@ export async function loadAssets(onProgress = () => { }) {
     img('assets/fx/pump-pad.png').then(i => { if (i) A.fx.pad = i }),
     // painted car skins: both halves must exist for a skin to be used
     ...PIT_ART.map(k => img(`assets/pit/${k}.${k === 'gate' ? 'png' : 'jpg'}`).then(i => { if (i) A.pit[k] = i })),
-    ...SKINS.map(k => Promise.all([img(`assets/skins/${k}-top.png`), img(`assets/skins/${k}-side.png`)]).then(([a, b]) => { if (a && b) A.skins[k] = { top: a, side: b } })),
+    // optional extra views (other flank, nose, tail): with all three the car is painted on every face, wheels included
+    ...SKINS.map(k => Promise.all(['top', 'side', 'sideL', 'front', 'back'].map(v => img(`assets/skins/${k}-${v}.png`))).then(([a, b, c, d, e]) => { if (a && b) A.skins[k] = { top: a, side: b, sideL: c, front: d, back: e } })),
     // assets/elites/*.png are reference portraits for the 3D enemy models, not loaded in game
     ...PACKS.map(p => img(`assets/packs/${p.id}.jpg`).then(i => { if (i) A.packs[p.id] = i.src })),
     img('assets/logo-vls.png').then(i => { if (i) A.logos.vls = i.src }),

@@ -450,7 +450,29 @@ function skinFor(key) {
     const tx = img => { const t = new THREE.Texture(img); t.colorSpace = THREE.SRGBColorSpace; t.anisotropy = 4; t.needsUpdate = true; t.userData.keep = true; return t };
     // average paint colour of the roof image (opaque pixels only), darkened, for the end faces of the body block
     let avg = null; try { const c = document.createElement('canvas'); c.width = c.height = 16; const g = c.getContext('2d'); g.drawImage(sk.top, 0, 0, 16, 16); const d = g.getImageData(0, 0, 16, 16).data; let r = 0, gg = 0, b = 0, n = 0; for (let i = 0; i < d.length; i += 4) if (d[i + 3] > 200) { r += d[i]; gg += d[i + 1]; b += d[i + 2]; n++ } if (n) avg = new THREE.Color(r / n / 255, gg / n / 255, b / n / 255).convertSRGBToLinear().multiplyScalar(.8) } catch (e) { }
-    skinTex[key] = { top: tx(sk.top), side: tx(sk.side), avg };
+    const full = !!(sk.sideL && sk.front && sk.back);
+    const T = { top: tx(sk.top), side: tx(sk.side), avg, full };
+    if (full) {
+      T.sideL = tx(sk.sideL); T.front = tx(sk.front); T.back = tx(sk.back);
+      // measure the side view: where the cabin is (columns whose top reaches the roof) and how high the bonnet/boot line is
+      let g = { c0: .3, c1: .75, hb: .55 };
+      try {
+        const cw = 128, ch = Math.round(cw * sk.side.height / sk.side.width), c = document.createElement('canvas'); c.width = cw; c.height = ch;
+        const x = c.getContext('2d'); x.drawImage(sk.side, 0, 0, cw, ch); const d = x.getImageData(0, 0, cw, ch).data, tops = [];
+        for (let i = 0; i < cw; i++) { let t = ch; for (let j = 0; j < ch; j++) if (d[(j * cw + i) * 4 + 3] > 128) { t = j; break } tops.push(t / ch) }
+        // the cabin is the longest unbroken run of roof-high columns (a roll bar or spoiler on the boot is not cabin)
+        let best = [0, 0], st = -1; tops.concat([1]).forEach((t, i) => { if (t < .14) { if (st < 0) st = i } else if (st >= 0) { if (i - st > best[1] - best[0]) best = [st, i]; st = -1 } });
+        const low = tops.filter(t => t >= .14 && t < .8).sort((a, b) => a - b);
+        if (best[1] - best[0] > 8 && low.length) g = { c0: best[0] / cw, c1: best[1] / cw, hb: 1 - low[Math.floor(low.length * .3)] };
+      } catch (e) { }
+      // the same images cut into a lower body (up to the bonnet line) and a narrower cabin on top
+      const sub = (t, rx, ox, ry, oy) => { const n = t.clone(); n.repeat.set(rx, ry); n.offset.set(ox, oy); n.needsUpdate = true; n.userData.keep = true; return n };
+      const cl = g.c1 - g.c0, up = 1 - g.hb;
+      T.geo = g;
+      T.low = { front: sub(T.front, 1, 0, g.hb, 0), back: sub(T.back, 1, 0, g.hb, 0), side: sub(T.side, 1, 0, g.hb, 0), sideL: sub(T.sideL, 1, 0, g.hb, 0) };
+      T.cab = { front: sub(T.front, .86, .07, up, g.hb), back: sub(T.back, .86, .07, up, g.hb), top: sub(T.top, cl, g.c0, .86, .07), side: sub(T.side, cl, g.c0, up, g.hb), sideL: sub(T.sideL, cl, 1 - g.c1, up, g.hb) };
+    }
+    skinTex[key] = T;
   }
   return skinTex[key];
 }
@@ -466,13 +488,25 @@ export function buildCar({ id, len: L, wid: W, color, kind, shape }) {
     // one full-height block (body + cabin): the top image covers its roof, the side image both flanks (with windows,
     // cut-out arches show the wheels). Width follows the painting's proportions, within reason.
     W = clamp(L / (sk.top.image.width / sk.top.image.height), W * .98, W * 1.12); // keep cars chunky
-    // height follows the side painting's proportions (was ~30% taller and looked boxy); hood line and roof move with it
-    const bot = by - bh / 2, H = clamp(L * sk.side.image.height / sk.side.image.width, W * .45, W * .62);
+    // height follows the side painting's proportions; a full skin (wheels painted in) stands on the ground,
+    // an older one (empty wheel arches) starts at axle height above the 3D wheels
+    const bot = sk.full ? 0 : by - bh / 2, H = sk.full ? L * sk.side.image.height / sk.side.image.width : clamp(L * sk.side.image.height / sk.side.image.width, W * .45, W * .62);
     bh = H * .55; cabH = H - bh; by = bot + bh / 2;
     const sideM = new THREE.MeshLambertMaterial({ map: sk.side, alphaTest: .45 }); sideM.color = body.color; sideM.emissive = body.emissive;
     body.alphaTest = .45; body.needsUpdate = true;
     const endM = lam(sk.avg || 0x3a3835); // nose and tail faces in the car's own (darkened) paint, not a black block
-    const b = new THREE.Mesh(new THREE.BoxGeometry(L, H, W), [endM, endM, body, endM, sideM, sideM]); b.position.y = by - bh / 2 + H / 2; b.castShadow = b.receiveShadow = true; b.userData.skin = true; tilt.add(b);
+    const face = t => { const m = new THREE.MeshLambertMaterial({ map: t, alphaTest: .45 }); m.color = body.color; m.emissive = body.emissive; return m };
+    // BoxGeometry faces: +x nose, -x tail, top, bottom, +z flank (nose right), -z flank (nose left)
+    if (sk.full) { // lower body + cabin, both cut from the painted views (see skinFor)
+      const g = sk.geo, hb = H * g.hb, cl = L * (g.c1 - g.c0), cx = -L / 2 + L * (g.c0 + g.c1) / 2, w2 = W * .86;
+      const lo = new THREE.Mesh(new THREE.BoxGeometry(L, hb, W), [face(sk.low.front), face(sk.low.back), body, endM, face(sk.low.side), face(sk.low.sideL)]);
+      lo.position.y = hb / 2; lo.castShadow = lo.receiveShadow = true; lo.userData.skin = true; tilt.add(lo);
+      const cb = new THREE.Mesh(new THREE.BoxGeometry(cl, H - hb, w2), [face(sk.cab.front), face(sk.cab.back), face(sk.cab.top), endM, face(sk.cab.side), face(sk.cab.sideL)]);
+      cb.position.set(cx, hb + (H - hb) / 2, 0); cb.castShadow = cb.receiveShadow = true; cb.userData.skin = true; tilt.add(cb);
+      bh = hb; cabH = H - hb; by = hb / 2;
+    }
+    const mats = [endM, endM, body, endM, sideM, sideM];
+    if (!sk.full) { const b = new THREE.Mesh(new THREE.BoxGeometry(L, H, W), mats); b.position.y = by - bh / 2 + H / 2; b.castShadow = b.receiveShadow = true; b.userData.skin = true; tilt.add(b) }
   } else {
     const b = mesh(new THREE.BoxGeometry(L, bh, W), body); b.position.y = by; tilt.add(b);
     // hood slope: a thin wedge-ish top plate in body colour
@@ -496,6 +530,7 @@ export function buildCar({ id, len: L, wid: W, color, kind, shape }) {
     const pivot = new THREE.Group(); pivot.position.set(sx * L * .3, r, sz * (W / 2 - 1 + (kind === 'monster' ? r * .35 : 0)));
     const w = mesh(wheelG, tyreM); w.scale.set(r, W * (kind === 'monster' ? .38 : .22), r); w.rotation.x = Math.PI / 2; pivot.add(w);
     const hub = mesh(wheelG, rimM, false); hub.scale.set(r * .5, W * .23, r * .5); hub.rotation.x = Math.PI / 2; pivot.add(hub);
+    if (sk && sk.full) pivot.visible = false; // the wheels are painted on the skin
     root.add(pivot); wheels.push(w); if (sx > 0) front.push(pivot);
   }
   // enemy looks follow the portraits in assets/elites: one beat-up 80s sedan, rusty roof rack,
