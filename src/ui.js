@@ -337,7 +337,7 @@ export function hud() {
   $('heatBar').style.width = (drift.heat * 100) + '%';
   set($('heatTxt'), drift.heat > .05 ? `+${Math.round(drift.heat * 80)}% ${t('fireRate')}` : '');
   clusterHud(P);
-  const cs = $('craneSign'), cw = G.crane && G.crane.st === 'warn' && G.crane.t > CRANE.warn - 2 && G.state === 'play'; // the sign shows for the first 2 s of the warning
+  const cs = $('craneSign'), cw = G.crane && G.crane.st === 'warn' && G.state === 'play'; // pulses through the whole 3 s warning
   cs.classList.toggle('on', !!cw);
   $('vign').classList.toggle('on', !!G.siphon && G.state === 'play');
   // countdown: a round road sign 3-2-1, then a green GO disc
@@ -398,7 +398,7 @@ export function texts(project) {
       if (p.ok) {
         ptag.style.display = 'block'; ptag.style.transform = `translate(${p.x}px,${p.y}px) translate(-50%,-100%)`;
         ptag.classList.toggle('on', !!G.filling); ptag.classList.toggle('dry', !!(pu && pu.empty)); ptag.classList.toggle('soon', !!nx);
-        set(ptag.firstChild, nx ? t('pumpSoon', { s: Math.max(1, Math.ceil(G.pumpT)) }) : pu.empty ? t('pumpDry') : G.filling || pu.got > .5 ? t('pumpGot', { l: Math.round(pu.got) }) : `${Math.ceil(pu.res)} L`);
+        set(ptag.firstChild, nx ? t('pumpSoon', { s: Math.max(1, Math.ceil(G.pumpT)) }) : pu.broken ? t('pumpWreck') : pu.empty ? t('pumpDry') : G.filling || pu.got > .5 ? t('pumpGot', { l: Math.round(pu.got) }) : `${Math.ceil(pu.res)} L`);
         ptag.querySelector('u').style.width = (pu ? pu.res / PUMP_RESERVE * 100 : 100) + '%';
       }
     }

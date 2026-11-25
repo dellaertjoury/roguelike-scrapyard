@@ -979,7 +979,7 @@ export function render(dt) {
     const fv = G._fillVis, gl = pumpG.getObjectByName('globe'); gl.rotation.y += dt * (1.6 + fv * 3.4);
     const pulse = .5 + .5 * Math.sin(G.time * 6), bm = pumpG.getObjectByName('globeBall').material;
     if (pu.empty) bm.color.setHex(0xff3a2a); else { bm.color.setHex(0x7fe08a).lerp(tmpC.setHex(0x4fb4ff), fv); bm.color.multiplyScalar(1 + fv * pulse * .35) }
-    if (nsoft < 499) { const r = 52 + fv * (18 + pulse * 16); put(soft, nsoft++, pu.x, 58, pu.y, r, 1, r, 0, 0, pu.empty ? 0x5a0a04 : fv > .5 ? 0x0a3a6a : 0x0a4a1c) } // halo
+    if (nsoft < 499 && !pu.broken) { const r = 52 + fv * (18 + pulse * 16); put(soft, nsoft++, pu.x, 58, pu.y, r, 1, r, 0, 0, pu.empty ? 0x5a0a04 : fv > .5 ? 0x0a3a6a : 0x0a4a1c) } // halo
   }
   // the next pump's spot: a pulsing green ring and glow before it opens
   const nx = G.pumpNext;
@@ -989,7 +989,27 @@ export function render(dt) {
     put(rings, nring++, nx.x, 1.4, nx.y, PUMP_R * k, 1, PUMP_R * k, 0, 0, 0x1f6a44);
     if (nsoft < 500) put(soft, nsoft++, nx.x, 1.2, nx.y, PUMP_R * 2.2 * pulse, 1, PUMP_R * 2.2 * pulse, 0, 0, 0x0e3a22);
   }
-  if (pu && pu.empty) { // dry pump: grey ring, red blinking screen
+  // wrecked pump (blown up): the cabinet lies toppled and scorched on a black blast mark, the globe is gone,
+  // and lumps of scrap lie burning around it (the flames and smoke are particles from pumpStep)
+  {
+    const mdl = pumpG.getObjectByName('model'), br = !!(pu && pu.broken);
+    if (mdl.userData.br !== br) {
+      mdl.userData.br = br;
+      mdl.traverse(m => { if (!m.isMesh || !m.material.color) return; if (m.userData.c0 == null) m.userData.c0 = m.material.color.getHex(); m.material.color.setHex(m.userData.c0); if (br) m.material.color.multiplyScalar(.32) });
+      mdl.rotation.set(br ? .25 : 0, br ? .7 : 0, br ? 1.32 : 0); mdl.position.set(br ? 16 : 0, br ? 5 : 0, 0);
+      const gl = pumpG.getObjectByName('globe'); if (gl) gl.visible = !br;
+    }
+    if (br) {
+      if (nsoft < 499) put(soft, nsoft++, pu.x, 1.1, pu.y, PUMP_R * 1.5, 1, PUMP_R * 1.5, 0, 0, 0x140e0a);
+      for (const d of pu.debris || []) if (nb < 1196) {
+        put(blobs, nb++, d.x, 3 * d.s, d.y, 9 * d.s, 4 * d.s, 6 * d.s, d.a, .3, d.k === 0 ? 0x3a3532 : d.k === 1 ? 0x6a3a22 : 0x55585e);
+        put(blobs, nb++, d.x + 5, 2.5 * d.s, d.y - 3, 5 * d.s, 3 * d.s, 7 * d.s, d.a + 1, -.4, 0x2a2624);
+        if (ng < 1200) put(glows, ng++, d.x, 7 + Math.sin(G.time * 13 + d.a * 5) * 2, d.y, 5.5 * d.s, 7 * d.s, 5.5 * d.s, 0, 0, Math.sin(G.time * 17 + d.a * 9) > 0 ? 0xff8a2a : 0xffc23d);
+      }
+    }
+  }
+  if (pu && pu.broken) pumpG.position.set(pu.x, 0, pu.y);
+  else if (pu && pu.empty) { // dry pump: grey ring, red blinking screen
     pumpG.position.set(pu.x, 0, pu.y);
     if (nring < 118) put(rings, nring++, pu.x, 1.4, pu.y, PUMP_R, 1, PUMP_R, 0, 0, 0x6a6560);
     pumpG.getObjectByName('screen').material.color.setHex(Math.sin(G.time * 8) > 0 ? 0xff3a2a : 0x401010);
@@ -1071,7 +1091,7 @@ export function attract(dt) {
     o.root.visible = true; poseCar(o, x, y, head, 280, 0, 280, -.6, dt);
     if (Math.random() < .35) G.parts.push({ x: x - Math.cos(head) * 16, y: y - Math.sin(head) * 16, z: 4, vx: rnd(-20, 20), vy: rnd(-20, 20), vz: rnd(5, 20), life: .9, max: .9, size: rnd(3, 5), c: 0xdccbad, glow: false, grow: 9, drag: 1.5, k: 'b', grav: 0, rot: rnd(0, 6) });
   });
-  for (const p of G.parts) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; p.size += p.grow * dt }
+  for (const p of G.parts) { p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; p.size = Math.max(.5, p.size + p.grow * dt) }
   G.parts = G.parts.filter(p => p.life > 0);
   const ca = demoT * .05;
   placeCamera(AW / 2 + Math.cos(ca) * 120, AH / 2 + Math.sin(ca) * 80, 0);

@@ -124,16 +124,7 @@ html,body{margin:0;height:100%;background:#9fcf7e;color:var(--ink);font:16px/1.4
 #driftMtr.bank{animation:bank .5s ease-out}
 @keyframes bank{0%{transform:translateY(-50%) scale(1.12);box-shadow:0 0 0 3px #7fdcaa,0 0 30px rgba(127,220,170,.8)}100%{transform:translateY(-50%) scale(1)}}
 /* red pulse on the screen edges while a thief's hose drains your tank */
-#craneSign{position:absolute;left:50%;top:84px;width:min(380px,82vw);padding:8px;border-radius:18px;transform:translate(-50%,-30px) rotate(-2deg);opacity:0;pointer-events:none;text-align:center;
   background:#1d1b1a;box-shadow:0 0 0 5px #ffc23d,0 0 0 8px #1d1b1a,0 16px 32px rgba(0,0,0,.5);transition:opacity .2s,transform .25s}
-#craneSign.on{opacity:1;transform:translate(-50%,0) rotate(-2deg);animation:signShake .45s ease-in-out infinite}
-#craneSign.art{background:center/100% 100% no-repeat var(--art);box-shadow:none}#craneSign.art>*{visibility:hidden}
-#craneSign .cs-head{font:900 clamp(46px,8vw,74px)/1 Rubik,Impact,sans-serif;letter-spacing:.06em;color:#ffc23d;padding:4px 0 8px;-webkit-text-stroke:.6px #ffc23d}
-#craneSign .cs-body{background:#ffc23d;border-radius:4px 4px 12px 12px;padding:12px 14px 14px;color:#1d1b1a}
-#craneSign b{display:block;font:900 clamp(22px,3.6vw,30px)/1.1 Rubik,Impact,sans-serif;text-transform:uppercase;letter-spacing:.03em;-webkit-text-stroke:.4px #1d1b1a}
-#craneSign .cs-pic{display:block;width:78%;margin:10px auto 8px}
-#craneSign .cs-swing{transform-origin:148px 12px;animation:swingB .9s ease-in-out infinite alternate}
-#craneSign span{display:block;font:900 clamp(22px,3.6vw,30px)/1.1 Rubik,Impact,sans-serif;text-transform:uppercase;letter-spacing:.03em;-webkit-text-stroke:.4px #1d1b1a}
 @keyframes signShake{0%,100%{transform:translate(-50%,0) rotate(-2deg)}50%{transform:translate(-50%,2px) rotate(1.5deg)}}
 @keyframes swingB{from{transform:rotate(-28deg)}to{transform:rotate(28deg)}}
 @media(prefers-reduced-motion:reduce){#craneSign.on,#craneSign .cs-swing{animation:none}}
@@ -373,6 +364,20 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
 .bp .chip .tip{background:#f7f0e0;border-color:var(--ink2);box-shadow:0 10px 24px rgba(0,0,0,.4)}.bp .chip .tip b{color:#2a1c10}.bp .chip .tip span{color:#4b3a2a}
 @media(max-height:860px){.bp{padding:14px 16px 10px;border-width:8px}.bptitle{font-size:12px;padding:2px 12px}.bp .vlbl{font-size:12px}}
 @media(max-height:800px) and (min-width:1001px){#lockHint{display:none}}
+/* wrecking-ball warning: a see-through red HUD frame (cut corners, chevrons, hazard bands) high on the screen that
+   fades in and out slowly for the whole warning, so it never hides your car */
+#craneSign{position:absolute;left:50%;top:clamp(74px,12vh,120px);width:min(560px,88vw);transform:translateX(-50%);padding:12px 40px 14px;text-align:center;pointer-events:none;opacity:0;visibility:hidden;color:#ff4a3a;
+  background:linear-gradient(rgba(140,10,8,.26),rgba(60,4,4,.3));box-shadow:inset 0 0 0 2px rgba(255,58,42,.85),inset 0 0 26px rgba(255,40,30,.45);
+  clip-path:polygon(20px 0,calc(100% - 20px) 0,100% 20px,100% calc(100% - 20px),calc(100% - 20px) 100%,20px 100%,0 calc(100% - 20px),0 20px)}
+#craneSign::before,#craneSign::after{content:"";position:absolute;left:24px;right:24px;height:7px;background:repeating-linear-gradient(-45deg,rgba(255,58,42,.8) 0 9px,transparent 9px 18px)}
+#craneSign::before{top:6px}#craneSign::after{bottom:6px}
+#craneSign.on{visibility:visible;animation:csFlash 1.2s ease-in-out infinite alternate}
+#craneSign .cs-head{display:flex;justify-content:center;align-items:center;gap:18px;margin-top:6px;font:900 clamp(30px,4.6vw,46px)/1 Rubik,Impact,sans-serif;letter-spacing:.24em;text-shadow:0 0 14px rgba(255,50,30,.9)}
+#craneSign .cs-head i{font-style:normal;font-size:.42em;letter-spacing:-.05em;opacity:.85}
+#craneSign .cs-body b{display:block;margin:6px 0 4px;font:800 clamp(13px,1.7vw,18px)/1.2 Rubik,sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#ffb0a6;text-shadow:0 0 8px rgba(255,50,30,.7)}
+#craneSign .cs-body span{display:none}
+@keyframes csFlash{from{opacity:.18}to{opacity:.88}}
+@media(prefers-reduced-motion:reduce){#craneSign.on{animation:none;opacity:.75}}
 </style>
 <script type="importmap">
 { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
@@ -400,11 +405,7 @@ kbd{font:700 12px Inter,sans-serif;background:rgba(255,255,255,.12);border-radiu
     <div id="driftMtr" aria-label="Drift"><div class="lbl" data-ui="drift"><span data-i18n="drift">Drift</span></div><div class="mul" id="driftMul">×1.0</div><div class="bars"><div class="clock"><i id="driftClock"></i></div><div class="tube"><i id="driftFill"></i><b style="bottom:25%"></b><b style="bottom:50%"></b><b style="bottom:75%"></b></div></div><div class="pts" id="driftNum">0</div></div>
     <div id="vign"></div>
     <!-- wrecking-ball warning: a battered DANGER road sign that drops in during the crane warning -->
-    <div id="craneSign" aria-live="assertive"><div class="cs-head" id="csTop">GEVAAR</div><div class="cs-body"><b id="csBig">SLOOPHAMER PASSEERT IERE</b>
-      <svg class="cs-pic" viewBox="0 0 200 110" aria-hidden="true"><g fill="#1d1b1a"><rect x="4" y="96" width="192" height="8"/><rect x="18" y="30" width="10" height="66"/><polygon points="14,96 32,96 28,84 18,84"/><polygon points="23,30 150,8 152,14 25,38"/>
-        <line x1="148" y1="12" x2="148" y2="58" stroke="#1d1b1a" stroke-width="3"/><g class="cs-swing"><circle cx="148" cy="70" r="14"/></g>
-        <path d="M96 80h34l8 10h6v6h-56v-6h4z"/><circle cx="104" cy="96" r="6"/><circle cx="132" cy="96" r="6"/><path d="M104 80l6-8h16l6 8z" fill="#ffc23d" stroke="#1d1b1a" stroke-width="3"/></g></svg>
-      <span id="csSub"></span></div></div>
+    <div id="craneSign" aria-live="assertive"><div class="cs-head"><i aria-hidden="true">◀◀◀</i><span id="csTop">GEVAAR</span><i aria-hidden="true">▶▶▶</i></div><div class="cs-body"><b id="csBig">Sloophamer passeert iere</b><span id="csSub"></span></div></div>
     <div id="count" aria-live="polite"></div>
     <div id="banner"><b></b><span></span></div>
     <div id="touch" aria-hidden="true">

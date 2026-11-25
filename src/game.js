@@ -355,7 +355,7 @@ function pumpSpot() {
 function openPump() {
   const P = G.P, sp = G.pumpNext || pumpSpot(); G.pumpNext = null;
   if (!sp) { G.pumpT = 2; return } // no room right now, try again shortly
-  G.pump = { x: sp.x, y: sp.y, res: PUMP_RESERVE, got: 0, empty: false, id: Math.random() }; txt(P.x, P.y - 60, t('pumpOpen'), '#7fdcaa', 22, 1.6);
+  G.pump = { x: sp.x, y: sp.y, res: PUMP_RESERVE, got: 0, empty: false, hp: PUMP_HP, id: Math.random() }; txt(P.x, P.y - 60, t('pumpOpen'), '#7fdcaa', 22, 1.6);
 }
 function fuelStep(dt) {
   const P = G.P, pu = G.pump;
@@ -468,11 +468,11 @@ function collideStatic(o, r, bounce) {
       const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = b.x + nx * m; o.y = b.y + ny * m;
       o.hitObs = G.time; const vIn = -(o.vx * nx + o.vy * ny);
       bounceOff(o, nx, ny, bounce, b.k !== 'hay', o.x - nx * r, o.y - ny * r);
-      if (b.k === 'pallet' && o === G.P && vIn > 45) palletCrash(o.x - nx * r, o.y - ny * r);
+      if (o === G.P && (b.k === 'pallet' || b.k === 'tower')) impactCrash(b, vIn, o.x - nx * r, o.y - ny * r);
     }
   }
   const pu = G.pump; // the pump itself is a small solid post
-  if (pu && o.z < 26) { const dx = o.x - pu.x, dy = o.y - pu.y, d = Math.hypot(dx, dy), m = r + PUMP_POST; if (d < m) { const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = pu.x + nx * m; o.y = pu.y + ny * m; const vn = o.vx * nx + o.vy * ny; if (vn < 0) { o.vx -= 1.3 * vn * nx; o.vy -= 1.3 * vn * ny } } }
+  if (pu && o.z < 26) { const dx = o.x - pu.x, dy = o.y - pu.y, d = Math.hypot(dx, dy), m = r + (pu.broken ? PUMP_POST * .7 : PUMP_POST); if (d < m) { const nx = d > 0 ? dx / d : 1, ny = d > 0 ? dy / d : 0; o.x = pu.x + nx * m; o.y = pu.y + ny * m; const vn = o.vx * nx + o.vy * ny; if (vn < 0) { o.vx -= 1.3 * vn * nx; o.vy -= 1.3 * vn * ny; pumpHit(-vn, o) } } }
   const lo = EDGE + r;
   if (o.x < lo) { o.x = lo; bounceOff(o, 1, 0, bounce, true, EDGE, o.y) }
   if (o.x > AW - lo) { o.x = AW - lo; bounceOff(o, -1, 0, bounce, true, AW - EDGE, o.y) }
@@ -491,9 +491,16 @@ function coneStep(dt) {
       c.spin = (Math.random() < .5 ? -1 : 1) * (6 + sp / 40); c.tipV = 6 + sp / 50; c.x = o.x + dx / d * (o.r + 9); c.y = o.y + dy / d * (o.r + 9);
     }
     if (c.vx || c.vy || c.vz || c.z > 0) {
-      c.x += c.vx * dt; c.y += c.vy * dt; c.z += c.vz * dt; c.vz -= 900 * dt; c.h += c.spin * dt;
+      c.x += c.vx * dt; c.y += c.vy * dt;
+      // ramps: a cone that hits the steep back or side bounces off; on the slope it slides up and flies off the lip
+      let g = 0; const ra = rampAt(c.x, c.y);
+      if (ra) {
+        if (ra.h > c.z + 8) rampPushOut(c, ra.r, true);
+        else { g = ra.h; if (c.z <= g + .5) c.vz = Math.max(c.vz, (c.vx * ra.r.c + c.vy * ra.r.s) * ra.r.H / ra.r.L) }
+      }
+      c.z += c.vz * dt; c.vz -= 900 * dt; c.h += c.spin * dt;
       c.tip = Math.min(Math.PI / 2, c.tip + c.tipV * dt);
-      if (c.z <= 0) { c.z = 0; c.vz = c.vz < -80 ? -c.vz * .35 : 0; const f = Math.max(0, 1 - 3.2 * dt); c.vx *= f; c.vy *= f; c.spin *= f; if (Math.hypot(c.vx, c.vy) < 4 && !c.vz) { c.vx = c.vy = 0; c.spin = 0 } }
+      if (c.z <= g) { c.z = g; c.vz = c.vz < -80 ? -c.vz * .35 : 0; const f = Math.max(0, 1 - 3.2 * dt); c.vx *= f; c.vy *= f; c.spin *= f; if (Math.hypot(c.vx, c.vy) < 4 && !c.vz) { c.vx = c.vy = 0; c.spin = 0 } }
       for (const b of G.obs) { // bounce off tyre piles and bales
         if (c.z > (b.h || 26)) continue;
         const dx = c.x - b.x, dy = c.y - b.y, d = Math.hypot(dx, dy), m = b.r + 6;
@@ -774,14 +781,58 @@ function bodyCircles(e) {
   const k = e.len * .62; return [[0, 0, e.r], [Math.cos(e.a) * k, Math.sin(e.a) * k, 30]];
 }
 
-// pallet piles are springy (you bounce off like tyres) but splinter: each crash is a crash (combo gone) and costs 1 hull
-function palletCrash(x, y) {
-  const P = G.P; if (G.state !== 'play' || G.time < (P.palT || 0)) return;
-  P.palT = G.time + .6; P.hp -= 1; txt(P.x, P.y - 20, '-1', '#ff6b5a', 18, .7);
+// Crashing into hard scenery costs hull by impact speed (the speed straight into it):
+//   slow (< 110) · normal · fast (nitro, or faster than your top speed)
+//   pallet piles 0 · 1 · 2 (springy, you bounce off)    radio tower 1 · 3 · 5
+// Any crash that costs hull also breaks your drift combo.
+const IMPACT = { pallet: [0, 1, 2], tower: [1, 3, 5] };
+function impactCrash(b, vIn, x, y) {
+  const P = G.P; if (G.state !== 'play' || vIn < 35 || G.time < (P.palT || 0)) return;
+  const fast = vIn > G.S.top * 1.04 || (P.boost && vIn > 160), cls = vIn < 110 ? 0 : fast ? 2 : 1, dmg = IMPACT[b.k][cls];
+  P.palT = G.time + .5;
+  if (b.k === 'pallet') puff(x, y, 4 + cls * 5, { c: 0xb07a44, s0: 60, s1: 220, l0: .4, l1: .8, z0: 2, z1: 5, z: 12, vz0: 80, vz1: 220, grav: 600 });
+  else { puff(x, y, 6 + cls * 5, { c: 0xffe08c, glow: true, k: 's', s0: 120, s1: 380, l0: .15, l1: .4, z: 14, vz0: 40, vz1: 220, grav: 500 }); G.shake = Math.max(G.shake, 6 + cls * 5) }
+  if (!dmg) return;
+  P.hp -= dmg; txt(P.x, P.y - 20, '-' + dmg, '#ff6b5a', 16 + dmg * 2, .8);
   if (G.drift.pts > 200) txt(P.x, P.y - 46, t('fCombo'), '#ff6b5a', 16, 1);
-  G.drift.pts = 0; G.drift.mult = 1; G.drift.time = 0;
-  puff(x, y, 8, { c: 0xb07a44, s0: 60, s1: 220, l0: .4, l1: .8, z0: 2, z1: 5, z: 12, vz0: 80, vz1: 220, grav: 600 });
+  G.drift.pts = 0; G.drift.mult = 1;
   if (P.hp <= 0) { P.hp = 0; die() }
+}
+/* Gas pump health: every car that slams into it dents it (impact speed over 50). Under 60% it smokes, under 30% it
+   burns, at 0 it explodes: everything within PUMP_BLAST is thrown away and hurt (more the closer it is), the fuel is
+   gone, and a wrecked pump with burning scrap stays on the pad for the rest of the lap. */
+export const PUMP_HP = 100, PUMP_BLAST = 300;
+function pumpHit(vIn, o) {
+  const pu = G.pump; if (!pu || pu.broken || vIn < 50 || G.state !== 'play') return;
+  if (G.time < (o.pumpT || 0)) return; o.pumpT = G.time + .3;
+  pu.hp -= (vIn - 50) * .32 * (o === G.P ? 1 : .8);
+  puff(pu.x, pu.y, 6, { c: 0xffe08c, glow: true, k: 's', s0: 100, s1: 300, l0: .15, l1: .35, z: 20, vz0: 40, vz1: 180, grav: 500 });
+  if (pu.hp <= 0) pumpBoom();
+}
+function pumpBoom() {
+  const pu = G.pump, P = G.P; pu.hp = 0; pu.broken = true; pu.empty = true; pu.res = 0; G.filling = false;
+  boom(pu.x, pu.y, 60); boom(pu.x + rnd(-30, 30), pu.y + rnd(-30, 30), 40); G.shake = Math.max(G.shake, 26);
+  puff(pu.x, pu.y, 14, { c: 0x4a4440, s0: 40, s1: 220, l0: .8, l1: 1.4, z0: 5, z1: 10, grow: 8, drag: 2.5, z: 20, vz0: 40, vz1: 120 });
+  const throwIt = (o, k) => { const dx = o.x - pu.x, dy = o.y - pu.y, d = Math.hypot(dx, dy) || 1; o.vx += dx / d * (220 + 480 * k); o.vy += dy / d * (220 + 480 * k) };
+  for (const e of G.enemies) { if (e.dead) continue; const d = Math.hypot(e.x - pu.x, e.y - pu.y); if (d < PUMP_BLAST) { const k = 1 - d / PUMP_BLAST; throwIt(e, k); hurt(e, 30 + 60 * k) } }
+  const d = Math.hypot(P.x - pu.x, P.y - pu.y);
+  if (d < PUMP_BLAST) { const k = 1 - d / PUMP_BLAST; throwIt(P, k); P.slideT = .6; P.inv = 0; hitPlayer(Math.round(8 + 22 * k)) }
+  // burning scrap around the wreck
+  pu.debris = Array.from({ length: 7 }, (_, i) => { const a = i / 7 * TAU + rnd(-.3, .3), r = rnd(40, PUMP_R * .8); return { x: pu.x + Math.cos(a) * r, y: pu.y + Math.sin(a) * r, a: rnd(0, TAU), s: rnd(.7, 1.3), k: i % 3 } });
+  txt(pu.x, pu.y - 50, t('pumpBoom'), '#ff6b5a', 24, 1.6);
+}
+function pumpStep(dt) {
+  const pu = G.pump; if (!pu) return;
+  if (pu.hp == null) pu.hp = PUMP_HP;
+  pu.fx = (pu.fx || 0) - dt; if (pu.fx > 0) return; pu.fx = .08;
+  if (pu.broken) { // burning scrap: flames and a column of black smoke
+    for (const s of pu.debris) if (Math.random() < .7) puff(s.x, s.y, 1, { c: Math.random() < .5 ? 0xff8a2a : 0xffc23d, glow: true, s0: 5, s1: 20, l0: .4, l1: .8, z0: 6, z1: 12, grow: -6, drag: 2, z: 4, vz0: 50, vz1: 110 });
+    if (Math.random() < .35) puff(pu.x + rnd(-20, 20), pu.y + rnd(-20, 20), 1, { c: 0x3a3532, s0: 5, s1: 20, l0: .9, l1: 1.5, z0: 3, z1: 6, grow: 5, drag: 1, z: 24, vz0: 50, vz1: 90 });
+  } else if (pu.hp < PUMP_HP * .6) { // dented: grey smoke, then fire licking out of it
+    const hot = pu.hp < PUMP_HP * .3;
+    puff(pu.x + rnd(-8, 8), pu.y + rnd(-8, 8), 1, { c: hot ? 0x4a4440 : 0x8a847c, s0: 5, s1: 20, l0: .8, l1: 1.4, z0: 3, z1: 6, grow: 5, drag: 1, z: 40, vz0: 40, vz1: 80 });
+    if (hot) puff(pu.x + rnd(-10, 10), pu.y + rnd(-10, 10), 2, { c: Math.random() < .5 ? 0xff8a2a : 0xffc23d, glow: true, s0: 5, s1: 25, l0: .35, l1: .7, z0: 6, z1: 11, grow: -5, drag: 2, z: 26, vz0: 60, vz1: 130 });
+  }
 }
 function hitPlayer(d) {
   const P = G.P;
@@ -798,7 +849,7 @@ export function update(dt) {
   for (const p of G.parts) {
     p.life -= dt; p.x += p.vx * dt; p.y += p.vy * dt; p.z += p.vz * dt; p.vz -= p.grav * dt;
     if (p.z < 1) { p.z = 1; p.vz *= -.3; p.vx *= .6; p.vy *= .6 }
-    const f = Math.max(0, 1 - p.drag * dt); p.vx *= f; p.vy *= f; p.size += p.grow * dt; p.rot += dt * 3;
+    const f = Math.max(0, 1 - p.drag * dt); p.vx *= f; p.vy *= f; p.size = Math.max(.5, p.size + p.grow * dt); p.rot += dt * 3;
   }
   G.parts = G.parts.filter(p => p.life > 0);
   for (const t of G.texts) t.life -= dt; G.texts = G.texts.filter(t => t.life > 0);
@@ -886,6 +937,7 @@ export function update(dt) {
   const rateMul = S.rate * (1 + drift.heat * .8);
 
   /* waves */
+  pumpStep(dt);
   if (live) { fuelStep(dt); G.spawnT -= dt; G.hoseCd = Math.max(0, (G.hoseCd || 0) - dt) }
   if (live && G.spawnT <= 0 && G.fuel > 2) {
     // slower enemies, but more of them: a car every ~2.5 s from lap 1, bigger groups and a higher cap as laps go up
@@ -942,7 +994,7 @@ export function update(dt) {
       e.cd -= dt;
       if (e.cd <= 0 && d < 600) {
         // same round as your MG (700 u/s), red, fired about once a second with a little spread; each hit is lighter to match
-        e.cd = rnd(.7, 1.1); const a = Math.atan2(dy, dx) + rnd(-.07, .07);
+        e.cd = rnd(1.5, 2.2); const a = Math.atan2(dy, dx) + rnd(-.07, .07); // was .7–1.1 s: too much lead in the air
         G.ebul.push({ x: e.x + Math.cos(a) * 20, y: e.y + Math.sin(a) * 20, vx: Math.cos(a) * 470 + e.vx * .3, vy: Math.sin(a) * 470 + e.vy * .3, life: 1.4, dmg: e.dmg * .55 });
         puff(e.x + Math.cos(a) * 22, e.y + Math.sin(a) * 22, 4, { c: 0xff5a40, glow: true, a, sp: .4, s0: 60, s1: 160, l0: .1, l1: .25, z0: 3, z1: 5, z: 14 });
       }
