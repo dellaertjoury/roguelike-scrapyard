@@ -21,10 +21,10 @@ no text, no logos, no brand badges.
 
 | Already in the game | Still missing (prompts below) |
 |---|---|
-| Logo, loading/menu art, arena dirt, pack banners, garage backdrop | `garage-bg-back.jpg` (other side of the garage; until then the backdrop is mirrored) |
-| Menu renders of all 7 cars (`cars/`, cut out automatically) | Icons `radar`, `tank`, and a proper `mg2` (it is a copy of `mg` now) |
+| Logo, loading/menu art, arena dirt, pack banners, both garage backdrops | |
+| Menu renders of all 7 cars (`cars/`, cut out automatically) | |
 | Skins for Zwerfotto, Roestbak, Lijkotto | Skins for the 4 enemy types, 3 bosses and 4 pack cars |
-| 22 part icons, HUD icons, fuel gauge + needle, pump icon, jerrycan | Gauge-cluster faces (`cluster-speedo`, `cluster-nitro`) |
+| All 25 part icons, HUD icons, fuel gauge + needle, pump icon, pump pad, jerrycan | Gauge-cluster faces (`cluster-speedo`, `cluster-nitro`) |
 | Hay bales, pump pad decal, fire trail | Pit entry art (`pit/gate.png`, `pit/driveway.jpg`) |
 | Reference portraits of every enemy (`elites/`) | Showcase renders of the enemy cars (for a future "wanted" board) |
 
@@ -67,15 +67,15 @@ on a plain flat light-grey background (removed afterwards). Same lighting for th
 missing; the rest are already in the game, listed so you can regenerate the full set in one consistent style.
 
 ```text
-=== assets/icons/radar.png · MISSING ===
+=== assets/icons/radar.png · done ===
 STYLE + Game item icon: a small rusty radar dish antenna on a stubby mast with a riveted base plate, a hazard-yellow
 rim on the dish and a tiny blinking green light, a jerrycan symbol painted on the base
 
-=== assets/icons/tank.png · MISSING ===
+=== assets/icons/tank.png · done ===
 STYLE + Game item icon: a dented spare fuel tank (long red steel jerry tank) strapped down with two worn leather
 belts on a riveted bracket, brass filler cap, a yellow "+10 L" style dash pattern painted on the side (no readable text)
 
-=== assets/icons/mg2.png · MISSING (now a copy of mg) ===
+=== assets/icons/mg2.png · done ===
 STYLE + Game item icon: a compact second machine-gun turret for a car boot: short twin barrels, a low round armoured
 base with bolts, an ammo box with a hazard-yellow stripe on the back, a little rusty, smaller and lower than a roof turret
 
