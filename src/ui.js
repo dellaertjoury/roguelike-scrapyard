@@ -1,6 +1,7 @@
 // DOM side: loading screen, language picker, menus, garage, game over, HUD, floating numbers.
 import { G, CRANE, START_T, OPTS, saveOpts, quitLap, PUMP_RESERVE, price, lvlOf, targetLvl, tierOf, nameOf, descOf, buy, reroll, toggleLock, nextWave, fmt, fmtL, repair, repairCost } from './game.js';
-import { CARS, PART, SLOTS, TAGC, PACKS, WSTAT } from './data.js';
+import { CARS, PART, SLOTS, ALL_SLOTS, TAGC, PACKS, WSTAT } from './data.js';
+import { garageView, garageSet, garageFrame } from './scene.js';
 import { t, L } from './i18n.js';
 import { A } from './assets.js';
 
@@ -147,7 +148,33 @@ function bpView(view) {
   }
   return `<div class="bpview ${view}"><div class="vlbl">${esc(L().bpViews[view])}</div><div class="bpstage" style="aspect-ratio:${VW}/${V.h}"><svg viewBox="0 0 ${VW} ${V.h}" aria-hidden="true">${BP_DRAW[view](view)}${marks.join('')}</svg>${chips.join('')}</div></div>`;
 }
-function renderBlueprint() { const id = G.P.car.id; $('blueprint').innerHTML = bpView('side') + `<div class="bptitle">${esc(L().cars[id][0])} (${YEAR[id] || 1984})</div>` + bpView('top') }
+// The garage shows your car as a live 3D model on a turntable (scene.js garageView) instead of the old drawings:
+// every fitted part is on it, a slot grid underneath lists what's where (hover for details), and hovering a part
+// for sale previews it fitted on the car with its slot outlined.
+let gHover = null, gLoop = false;
+function slotChip(slot) {
+  const b = G.build[slot], on = b ? ' on' : '';
+  const tip = b ? `<span class="tip"><b>${esc(partName(b.id))} · Lv ${b.lvl}/${PART[b.id].max}</b><span>${esc(partDescAt(b.id, b.lvl))}</span><i style="color:${TAGC[PART[b.id].tag]}">${esc(L().tags[PART[b.id].tag])}</i></span>` : '';
+  return `<div class="chip${on}" data-slot="${slot}" tabindex="${b ? 0 : -1}">${b ? icon(b.id, 'ico xs') : '<span class="ico xs empty"></span>'}<span class="sl"><span class="sn">${esc(L().slots[slot])}</span><span class="pn${b ? '' : ' empty'}">${b ? esc(partName(b.id)) : esc(t('empty'))}</span></span>${b ? `<span class="lv">Lv ${b.lvl}</span>` : ''}${tip}</div>`;
+}
+function renderBlueprint() {
+  const id = G.P.car.id;
+  if (!$('bpCanvas')) {
+    $('blueprint').innerHTML = `<div class="bp3d"><canvas id="bpCanvas" aria-label="3D"></canvas><div class="bptitle" id="bpTitle"></div><div class="bphint" id="bpHint"></div><div class="bpprev" id="bpPrev"></div></div><div class="slotgrid" id="slotGrid"></div>`;
+    $('slotGrid').addEventListener('pointerover', ev => { const c = ev.target.closest('.chip'); gHover = c && G.build[c.dataset.slot] ? { slot: c.dataset.slot } : null });
+    $('slotGrid').addEventListener('pointerleave', () => { gHover = null });
+  }
+  set($('bpTitle'), `${L().cars[id][0]} (${YEAR[id] || 1984})`); set($('bpHint'), t('dragRotate'));
+  $('slotGrid').innerHTML = ALL_SLOTS.map(slotChip).join('');
+  garageView($('bpCanvas'));
+  if (!gLoop) { gLoop = true; let last = performance.now(); const tick = now => {
+    if ($('shop').classList.contains('hide')) { gLoop = false; return }
+    const build = { ...G.build }; let hl = gHover && gHover.slot, prev = '';
+    if (gHover && gHover.item) { const it = gHover.item, d = PART[it.id]; build[d.slot] = { id: it.id, lvl: targetLvl(it) }; hl = d.slot; prev = t('previewing', { x: nameOf(it), n: targetLvl(it) }) }
+    set($('bpPrev'), prev);
+    garageSet(build, hl); garageFrame(Math.min(.05, (now - last) / 1000)); last = now; requestAnimationFrame(tick) };
+    requestAnimationFrame(tick) }
+}
 export function renderShop() {
   set($('shopTitle'), t(G.retry ? 'garageRetry' : 'garage', { n: G.wave }));
   set($('shopScrap'), t('scrapAmt', { n: fmt(G.scrap) }));
@@ -201,9 +228,10 @@ export function wire(onStart, onMenu, onLang) {
     if ((ev.key === 'Enter' || ev.key === ' ') && ev.target.classList.contains('card')) { ev.preventDefault(); act(ev, ev.target) }
   });
   // hovering a part lights up the slot it goes into
-  const hl = s => { for (const el of document.querySelectorAll('#blueprint [data-slot]')) el.classList.toggle('hl', el.dataset.slot === s) };
-  $('cards').addEventListener('pointerover', ev => { const c = ev.target.closest('.card'); hl(c && c.dataset.slot) });
-  $('cards').addEventListener('focusin', ev => { const c = ev.target.closest('.card'); hl(c && c.dataset.slot) });
+  // hovering a card for sale: outline its slot chip and preview the part fitted on the 3D car
+  const hl = c => { const s = c && c.dataset.slot, it = c && G.offer[+c.dataset.i]; for (const el of document.querySelectorAll('#blueprint [data-slot]')) el.classList.toggle('hl', el.dataset.slot === s); gHover = it && !it.sold ? { item: it } : null };
+  $('cards').addEventListener('pointerover', ev => hl(ev.target.closest('.card')));
+  $('cards').addEventListener('focusin', ev => hl(ev.target.closest('.card')));
   $('cards').addEventListener('pointerleave', () => hl(null));
   $('reroll').onclick = () => { reroll(); renderShop() };
   $('repair').onclick = () => { repair(); renderShop() };

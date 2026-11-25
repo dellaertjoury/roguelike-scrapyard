@@ -1,256 +1,231 @@
-# Art prompts — Scrapyard Derby
+# Art prompts: Ottokeirkhof
 
-Elke prompt hieronder is compleet: de stijl zit er al in, je kopieert gewoon het blok. Zet elk bestand op het pad dat erboven staat; de game pikt het automatisch op en valt terug op de ingebouwde look als iets ontbreekt.
+Every prompt is complete: copy the `STYLE` block in front of the subject line (or paste the whole block where it is
+written out). Put each file at the path in its header. The game picks it up automatically and falls back to its
+built-in look when a file is missing.
 
-Tips: genereer met een vaste seed of met je logo als stijlreferentie (Midjourney `--sref`), zodat alles bij elkaar past. Waar *transparant* staat: genereer op de effen achtergrond uit de prompt en verwijder die daarna (Photoshop, remove.bg of `rembg`).
-
-Benzine: de wijzerplaat en naald vervangen de ingebouwde CSS-meter zodra ze in `assets/ui/` staan; de vloerdecal vervangt de grijze betonplaat onder de pomp.
-
-Al gemaakt en in het spel: alle logo's, achtergronden (behalve `garage-bg.jpg`), de arena-vloer, alle auto's en pakketten, de 22 onderdeel-iconen, de HUD-iconen, de elite- en thief-portretten, het vuurspoor, de pompvloer, de pomp, de jerrycan en de benzinemeter met naald. Ook in het spel: de vijand-portretten (`elites/rust.png`, `spit.png`, `brute.png`) in de ronde-banners van ronde 1, 3 en 4. Nog open: `garage-bg.jpg` (tot dan gebruikt de garage de arena-achtergrond, gedimd), de nieuwe meterkast (`ui/cluster-speedo.png`, `ui/cluster-nitro.png`). De strobalen (`obstacles/`) zitten erin. Alles werkt al zonder: de meterkast wordt dan in de game zelf getekend.
+Tips
+- Generate with a fixed seed, or use the logo / menu art as a style reference (Midjourney `--sref`), so everything matches.
+- **Transparent**: generate on the plain background named in the prompt and remove it afterwards (Photoshop, remove.bg, `rembg`).
+- Skins must be **orthographic** (no perspective) with the **nose pointing right**, exactly like `assets/skins/muscle-*.png`.
 
 ```text
-=== assets/logo-fr.png · 1600×600 · transparante achtergrond (achtergrond verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark. Game logo wordmark reading "DERBY DE LA CASSE" in chunky rounded bold letters built from riveted, bent rust-orange sheet metal with cream highlights, worn hazard-stripe details and a thick dark charcoal outline-shadow, a low-poly black tyre and a grey wrench crossed behind the words, a few flying bolts and small yellow spark shards, centred on a plain flat light-grey background, wide banner composition, spell the words exactly as given
-
-=== assets/logo-de.png · 1600×600 · transparante achtergrond (achtergrond verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark. Game logo wordmark reading "SCHROTTPLATZ DERBY" in chunky rounded bold letters built from riveted, bent rust-orange sheet metal with cream highlights, worn hazard-stripe details and a thick dark charcoal outline-shadow, a low-poly black tyre and a grey wrench crossed behind the words, a few flying bolts and small yellow spark shards, centred on a plain flat light-grey background, wide banner composition, spell the words exactly as given
-
-=== assets/logo-es.png · 1600×600 · transparante achtergrond (achtergrond verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark. Game logo wordmark reading "DERBI DEL DESGUACE" in chunky rounded bold letters built from riveted, bent rust-orange sheet metal with cream highlights, worn hazard-stripe details and a thick dark charcoal outline-shadow, a low-poly black tyre and a grey wrench crossed behind the words, a few flying bolts and small yellow spark shards, centred on a plain flat light-grey background, wide banner composition, spell the words exactly as given
-
-=== assets/logo-vls.png · 1600×600 · transparante achtergrond (achtergrond verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark. Game logo wordmark reading "OTOKERKOF DERBY" in chunky rounded bold letters built from riveted, bent rust-orange sheet metal with cream highlights, worn hazard-stripe details and a thick dark charcoal outline-shadow, a low-poly black tyre and a grey wrench crossed behind the words, a few flying bolts and small yellow spark shards, centred on a plain flat light-grey background, wide banner composition, spell the words exactly as given
-
-=== assets/loading-bg.jpg · 1920×1080 · laadscherm ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Moody early-evening view of a dirt demolition-derby arena seen from behind the tyre wall, floodlight towers switching on, a single rust-orange derby car with a roof machine gun parked in the foreground with its headlights on, dust hanging in warm light, stacked black and red tyres, crushed cars in a pile, quiet and empty centre of the image for a logo and loading bar, wide 16:9
-
-=== assets/garage-bg.jpg · 1920×1080 · achtergrond garage (wordt donker overlegd) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Interior of a cluttered low-poly derby garage workshop, a battered derby car on a hydraulic lift, a big blueprint of a car pinned to the back wall, tool walls, stacked tyres, welding sparks, oil drums with hazard stripes, warm hanging work lamps, darker vignette at the edges so interface panels stay readable, wide 16:9
-
-=== assets/fx/fire-trail.png · 512×512 · zwarte achtergrond laten staan (wordt additief gemengd) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game visual-effect sprite seen from directly above: a small patch of burning fuel on the ground, low-poly faceted flames in orange and yellow with a few red tips, roughly round and soft, fading out towards the edges, isolated on a pure black background, square
-
-=== assets/elites/harvester.png · 960×520 · elite-portret voor de aankondiging ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Boss vehicle portrait: a monstrous mustard-yellow combine harvester converted for demolition derby, dented armour plates, twin black exhaust stacks, a wide toothed front reel, and two big spinning circular saw blades on heavy chains launched forward from its front bumper with motion blur, sparks flying, three-quarter front view from slightly above on a dirt arena floor, menacing but toy-like, dark red glow behind it, 24:13
-
-=== assets/elites/monster.png · 960×520 · elite-portret voor de aankondiging ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Boss vehicle portrait: a purple monster truck with gigantic knobbly tyres, lifted chassis on exposed suspension struts, roof light bar, caught mid-air above a dirt arena with a red danger circle glowing on the ground below where it will land, dust trails, three-quarter view from slightly above, menacing but toy-like, 24:13
-
-=== assets/elites/tow.png · 960×520 · elite-portret voor de aankondiging ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Boss vehicle portrait: an orange heavy-duty tow truck converted for demolition derby, yellow crane boom on the back with flashing amber beacons, a big steel hook on a chain flying towards the viewer, dented bumper, three-quarter front view from slightly above on a dirt arena floor, menacing but toy-like, 24:13
-
-=== assets/packs/britland.jpg · 1600×600 · kaart 'Binnenkort' in het menu ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Wide banner: a classic 1960s British mini car in red with a white roof and a classic black London taxi cab drifting side by side through a muddy derby arena decorated with red, white and blue bunting, a red double-decker bus parked behind the tyre wall, drizzle and a soft grey-blue sky, leave the left third calm for text, 8:3
-
-=== assets/packs/f1.jpg · 1600×600 · kaart 'Binnenkort' in het menu ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Wide banner: a red open-wheel formula race car with wings and slick tyres racing a sporty safety car with a roof light bar in flashing orange, on a dirt derby arena with red-and-white kerbs, chequered flags waving in the crowd, motion streaks, leave the left third calm for text, 8:3
-
-=== assets/cars/mini.png · 960×520 · voor later (Britland-pakket) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. A battered classic 1960s British mini car built for demolition derby, red paint with a white roof, union-flag stripes on the bonnet, number roundel 11, roof rack with a spare tyre, rally spotlights, three-quarter front view from slightly above, centred on a small round dirt pad with a few pebbles and grass tufts, plain soft green gradient background, 24:13
-
-=== assets/cars/taxi.png · 960×520 · voor later (Britland-pakket) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. A battered classic black London taxi cab built for demolition derby, rounded body, yellow roof sign, number roundel 32, welded steel bumpers, rust patches, three-quarter front view from slightly above, centred on a small round dirt pad with a few pebbles and grass tufts, plain soft green gradient background, 24:13
-
-=== assets/cars/f1.png · 960×520 · voor later (F1-pakket) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. A scuffed red open-wheel formula race car with big front and rear wings, slick tyres and a roll hoop, number roundel 1, a small derby dent in the nose, three-quarter front view from slightly above, centred on a small round dirt pad with a few pebbles and grass tufts, plain soft green gradient background, 24:13
-
-=== assets/cars/safety.png · 960×520 · voor later (F1-pakket) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. A sporty safety car coupé in silver with orange stripes, roof light bar in amber and green, number roundel 0, slightly dented derby bumpers, three-quarter front view from slightly above, centred on a small round dirt pad with a few pebbles and grass tufts, plain soft green gradient background, 24:13
-
-=== assets/icons/mg.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a roof-mounted machine gun turret with an ammo belt, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/tesla.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a copper tesla coil with metal rings and a crackling blue spark on top, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/magnet.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a small yellow crane arm with a round red electromagnet holding bolts, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/cage.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a welded black steel roll cage frame, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/v8.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a chrome V8 supercharger blower with an air scoop on top, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/flame.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a red fuel tank with twin flamethrower nozzles spitting fire, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/rounds.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of an olive-green ammo crate with a yellow stripe and brass bullets, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/cooler.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a blue-grey radiator with cooling fins and frost, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/plow.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a V-shaped steel ram plow with hazard stripes, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/spikes.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a car grille covered in sharp chrome spikes, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/bullbar.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a black tubular bull bar, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/mines.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a yellow-black mine dispenser box dropping a round mine with a red light, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/exhaust.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of twin chrome exhaust pipes blasting orange flames, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/spoiler.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a black rear wing spoiler on two struts, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/nitro.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of two blue nitrous oxide bottles strapped together, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/ballast.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a cracked grey concrete block with a lifting chain, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/toolbox.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a red metal toolbox with a wrench sticking out, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/scrapbin.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a green metal bin overflowing with colourful scrap metal, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/saw.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a spinning circular saw blade on a steel side arm, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/plate.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a riveted steel armour door plate, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/skirts.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of a low side skirt with a glowing orange LED strip, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/icons/slicks.png · 256×256 · icoon in de garage ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Game item icon of an extra-wide racing slick tyre with a yellow sidewall stripe, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/ui/hull.png · 128×128 · HUD-icoon, transparante achtergrond (magenta verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Small game HUD icon of a dented car chassis with a wrench, simple bold chunky shape readable at 18 pixels, white with a hazard-yellow accent, centred on a plain flat magenta #FF00FF background for easy removal, square
-
-=== assets/ui/nitro.png · 128×128 · HUD-icoon, transparante achtergrond (magenta verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Small game HUD icon of a blue nitro bottle with a flame, simple bold chunky shape readable at 18 pixels, white with a hazard-yellow accent, centred on a plain flat magenta #FF00FF background for easy removal, square
-
-=== assets/ui/heat.png · 128×128 · HUD-icoon, transparante achtergrond (magenta verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Small game HUD icon of a thermometer with a flame, simple bold chunky shape readable at 18 pixels, white with a hazard-yellow accent, centred on a plain flat magenta #FF00FF background for easy removal, square
-
-=== assets/ui/lap.png · 128×128 · HUD-icoon, transparante achtergrond (magenta verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Small game HUD icon of a chequered flag, simple bold chunky shape readable at 18 pixels, white with a hazard-yellow accent, centred on a plain flat magenta #FF00FF background for easy removal, square
-
-=== assets/ui/scrap.png · 128×128 · HUD-icoon, transparante achtergrond (magenta verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Small game HUD icon of a hex nut and a bolt, simple bold chunky shape readable at 18 pixels, white with a hazard-yellow accent, centred on a plain flat magenta #FF00FF background for easy removal, square
-
-=== assets/ui/drift.png · 128×128 · HUD-icoon, transparante achtergrond (magenta verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Small game HUD icon of a car sliding sideways with tyre smoke, simple bold chunky shape readable at 18 pixels, white with a hazard-yellow accent, centred on a plain flat magenta #FF00FF background for easy removal, square
-
-=== assets/ui/boss.png · 128×128 · HUD-icoon, transparante achtergrond (magenta verwijderen) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos, no brand badges. Small game HUD icon of a skull with a cracked helmet, simple bold chunky shape readable at 18 pixels, white with a hazard-yellow accent, centred on a plain flat magenta #FF00FF background for easy removal, square
-=== assets/ui/fuel-gauge.png · 512×280 · wijzerplaat van de benzinemeter, transparant (achtergrond verwijderen), zonder naald ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark. Game HUD fuel gauge dial face, a half-circle dashboard gauge seen straight on, chunky dark charcoal rim with small rivets, a curved scale from a red zone on the left marked with a bold "E" through hazard yellow to green on the right marked with a bold "F", thick clear tick marks, a small fuel-pump symbol in the centre, no needle, flat-lit and readable at small size, centred on a plain flat magenta #FF00FF background for easy removal, the pivot point exactly at the bottom centre of the half-circle
-
-=== assets/ui/fuel-needle.png · 64×256 · naald van de benzinemeter, transparant; moet recht naar boven wijzen met het draaipunt onderaan in het midden ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text. Game HUD gauge needle, a single tapered needle pointing straight up, bright white with a rust-orange tip and a round dark hub at the very bottom centre, seen straight on, centred on a plain flat magenta #FF00FF background for easy removal, tall narrow image
-
-=== assets/fx/pump-pad.png · 1024×1024 · vloerdecal onder de pomp, transparant rond de cirkel; van recht boven ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text. Game ground decal seen from directly above: a round concrete refuelling pad on a dirt arena, a thick hazard-yellow and black striped ring around the edge, a few dark oil stains, tyre marks crossing it, a painted white fuel-nozzle symbol, flat even lighting with no cast shadows, isolated on a plain flat magenta #FF00FF background for easy removal, square
-
-=== assets/ui/pump.png · 256×256 · icoon van de pomp (voor tips en later) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Game icon of a chunky retro gas pump with a red body, a white top with a small green display, a black hose and silver nozzle hooked on its side, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/ui/jerrycan.png · 256×256 · icoon van de jerrycan die fuel thieves laten vallen (voor later) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Game icon of a dented red metal jerrycan with a triple handle and a green glow around it, single object centred, slight three-quarter view, bold readable silhouette, soft drop shadow, plain flat charcoal #2A2C30 background, square
-
-=== assets/elites/thief.png · 960×520 · portret van de fuel thief, voor tips of een uitleg-kaart (voor later) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Vehicle portrait: a small lime-green beat-up hatchback converted into a fuel thief, a bulging green siphon tank strapped to its roof, a long black hose trailing from the back with a nozzle, sneaky low stance, a few stolen jerrycans bungee-corded to the side, three-quarter front view from slightly above on a dirt arena floor, 24:13
-
-=== assets/ui/cluster-speedo.png · 1024×1024 · wijzerplaat van de snelheidsmeter, transparant (magenta verwijderen), ZONDER naald en ZONDER cijfervenster in het midden ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no logos. Game HUD speedometer dial face seen straight on, a perfect circle filling the whole square, in the same hand-painted rusty style as a weathered racing gauge: a thick dark gunmetal steel bezel with orange rust patches and four hex bolts at the diagonals, a near-black dial face, a 270-degree scale that starts at the bottom left and ends at the bottom right, bold cream-white tick marks every 10 and longer ticks every 40, cream numbers 0, 40, 80, 120, 160, 200, 240 in a chunky rounded sans-serif, a hazard-yellow band from 170 to 200 and a red band from 200 to 240 along the outer edge, the centre of the dial and the area below the centre left plain and empty for the needle, the lap window and the digital speed, no needle, flat even lighting, centred on a plain flat magenta #FF00FF background for easy removal, square
-
-=== assets/ui/cluster-nitro.png · 512×512 · rond nitro-kastje, transparant (magenta verwijderen), het midden leeg (de LED-balkjes tekent de game) ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no logos. Small round game HUD gauge pod seen straight on, a perfect circle filling the square, the same hand-painted rusty style: a thick dark gunmetal steel bezel with orange rust patches and four small hex bolts, a glossy near-black glass face with a faint cool-blue sheen, the word NOS printed vertically on the left edge of the face in small cyan letters, the centre-right of the face left completely plain and empty for a column of LED bars, flat even lighting, centred on a plain flat magenta #FF00FF background for easy removal, square
-
-=== assets/obstacles/hay-top.png · 512×512 · bovenkant van een ronde strobaal, van recht boven, transparant rond de cirkel ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text. Seen from directly above: the round flat end of a rolled hay bale, a tight spiral of golden straw winding from the centre to the edge, hazard-yellow and warm straw tones (#E2BF62, #EDD283) with a few darker brown strands, loose straw tufts at the rim, the circle filling the whole square edge to edge, flat even lighting with no cast shadow, on a plain flat magenta #FF00FF background outside the circle, square
-
-=== assets/obstacles/hay-side.jpg · 1024×256 · zijkant van de strobaal, naadloos herhalend van links naar rechts ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text. Seamless tileable texture strip, the left and right edges must match perfectly: the curved side of a rolled round hay bale flattened out, golden straw fibres running horizontally in warm straw tones (#E2BF62, #EDD283) with darker brown strands, two faded red twine bands running across the full width at one third and two thirds of the height, a little mud splatter along the bottom edge, flat even lighting, no shadows, fills the whole image, wide 4:1
-
-=== assets/elites/rust.png · 960×520 · portret van de gewone vijand (wrakkenrijder), getoond bij de start van ronde 1 ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Vehicle portrait: the same beat-up boxy 1980s four-door sedan used for every enemy in the game: square headlights, a dented hood, a cracked windscreen with a strip of duct tape, mismatched hubcaps, a rusty roof rack, mud splashed up the sides and rust bubbling along the wheel arches, painted in faded olive green with one primer-grey replacement door, a crude red number 13 painted on the door, three-quarter front view from slightly above, charging forward on a dirt arena floor kicking up dust, tyre walls blurred in the background, 24:13
-
-=== assets/elites/spit.png · 960×520 · portret van de spuwer (schiet van op afstand), getoond in ronde 3 ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Vehicle portrait: the same beat-up boxy 1980s four-door sedan used for every enemy in the game: square headlights, a dented hood, a cracked windscreen with a strip of duct tape, mismatched hubcaps, a rusty roof rack, mud splashed up the sides and rust bubbling along the wheel arches, painted in faded teal blue with white primer patches, a small welded steel gun turret bolted on the roof with one stubby barrel glowing bright red at the muzzle, a few red-hot slugs flying out of it, three-quarter front view from slightly above, sliding sideways on a dirt arena floor, tyre walls blurred in the background, 24:13
-
-=== assets/elites/brute.png · 960×520 · portret van de bonker (zware rammer), getoond in ronde 4 ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft sunny afternoon light with gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Vehicle portrait: the same beat-up boxy 1980s four-door sedan used for every enemy in the game: square headlights, a dented hood, a cracked windscreen with a strip of duct tape, mismatched hubcaps, a rusty roof rack, mud splashed up the sides and rust bubbling along the wheel arches, but stretched longer and wider, sitting heavy on fat tyres, painted in faded mustard yellow with black hazard chevrons on the doors, a massive grey steel ram bar welded across the whole front bumper, steel plates riveted over the side windows, three-quarter front view from slightly above, ploughing through a pile of tyres on a dirt arena floor, 24:13
-
-=== AUTO-SKINS · voor de 3D-auto's in het spel ===
-Elke auto heeft twee afbeeldingen nodig in `assets/skins/`: `<id>-top.png` (van recht boven, de neus naar rechts) en `<id>-side.png` (de zijkant van de carrosserie, de neus naar rechts). De game plakt ze op de 3D-auto; laat me weten welke er zijn, dan zet ik ze aan.
-
-=== assets/skins/hatch-top.png · 1024×560 · Zwerfoto (speler), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: a small beat-up 1990s hatchback in hazard yellow #F2C230 with black diagonal hazard stripes on the hood, a big white racing roundel with the number 7 on the hood, scuffed paint, a dented roof, rust spots along the edges
-
-=== assets/skins/hatch-side.png · 1024×224 · Zwerfoto (speler), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same hazard-yellow hatchback, black diagonal hazard stripes on the doors, a white roundel with the number 7 on the front door, scuffs, mud splashed along the bottom edge
-
-=== assets/skins/muscle-top.png · 1024×532 · Roestbak (speler), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: a battered 1970s American muscle car in rust orange #E8553A with two cream racing stripes running front to back over the hood and roof, a white roundel with the number 23 on the hood, a bulging hood scoop, flaking paint and rust patches
-
-=== assets/skins/muscle-side.png · 1024×212 · Roestbak (speler), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same rust-orange muscle car side panel, a long cream stripe along the doors, a white roundel with the number 23 on the door, rust bubbling over the rear wheel arch, mud along the sills
-
-=== assets/skins/hearse-top.png · 1024×478 · Lijkoto (speler), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: an armoured 1980s hearse in dark slate grey #56606E, a long flat roof with welded steel plates and rivets, a white cross and the number 66 in a white roundel on the hood, chrome trim scratched and dull, rust streaks
-
-=== assets/skins/hearse-side.png · 1024×192 · Lijkoto (speler), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same dark slate-grey hearse side panel, long and low, riveted steel plates welded over the rear windows area, a white roundel with the number 66 on the front door, rust streaks under the trim
-
-=== assets/skins/rust-top.png · 1024×536 · Wrak (gewone vijand), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: the beat-up boxy 1980s four-door sedan used by every enemy, faded olive green #7F8F3A, a dented hood, a rusty orange roof rack with three cross bars on the roof, rust bubbling at the corners, a strip of grey duct tape, mud splashes
-
-=== assets/skins/rust-side.png · 1024×214 · Wrak (gewone vijand), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same faded olive-green sedan side panel, the front door is a mismatched primer-grey replacement with a crude red number 13 painted on it, rust around the wheel-arch cut-outs, mud along the bottom
-
-=== assets/skins/spit-top.png · 1024×560 · Spuwer (vijand), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: the same beat-up boxy 1980s sedan in faded teal blue #3F8A8F with chalky white primer patches, a rusty orange roof rack on the roof, a circular steel plate in the middle of the roof where a turret is bolted, dents and rust edges
-
-=== assets/skins/spit-side.png · 1024×224 · Spuwer (vijand), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same faded teal sedan side panel with white primer patches, rust along the bottom of the doors, mud splashes
-
-=== assets/skins/brute-top.png · 1024×516 · Bonker (zware vijand), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: the same boxy 1980s sedan but longer and wider, faded mustard yellow #E0A92A, black hazard chevrons painted across the hood, riveted grey steel plates bolted over the roof, a rusty orange roof cage, heavy rust on the edges
-
-=== assets/skins/brute-side.png · 1024×206 · Bonker (zware vijand), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same mustard-yellow sedan side panel, big black chevrons pointing forward along the doors, riveted grey steel plates over the window line, rust and mud along the bottom
-
-=== assets/skins/thief-top.png · 1024×560 · Naftepikker (vijand), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: a small lime-green beat-up hatchback #5FBF4A, a bulging green siphon tank strapped across the roof with black ratchet straps, stolen red jerrycans bungee-corded on the trunk, dents and rust
-
-=== assets/skins/thief-side.png · 1024×224 · Naftepikker (vijand), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same lime-green hatchback side panel, a black siphon hose coiled along the door, scratched paint, mud along the bottom
-
-=== assets/skins/harvester-top.png · 1024×512 · De Pikdorser (elite), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: a rusty yellow #E0B040 combine-harvester-style derby monster, a huge flat body with hazard stripes along the edges, grain-dust stains, riveted panels, two black exhaust stacks on the rear
-
-=== assets/skins/harvester-side.png · 1024×204 · De Pikdorser (elite), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same rusty yellow harvester body side panel, riveted plates, hazard stripes along the bottom edge, grain dust and rust
-
-=== assets/skins/monster-top.png · 1024×682 · De Grote Rad (elite), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: a lifted monster-truck body in deep purple #7A3AB0 with orange flame decals licking back from the front of the hood, a black light bar across the roof, scratched paint and mud
-
-=== assets/skins/monster-side.png · 1024×272 · De Grote Rad (elite), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same purple monster-truck body side panel with orange flames along the doors, scratches and thick mud splatter along the bottom
-
-=== assets/skins/tow-top.png · 1024×442 · De Sleper (elite), bovenkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the car body seen from exactly straight above in orthographic top-down view, cropped to the body outline so the car fills the whole image edge to edge with no background and no ground, front of the car pointing to the RIGHT edge, the hood on the right third, the roof in the middle, the trunk on the left third, flat even lighting with no shadows and no perspective, no wheels visible: a long heavy tow truck in hazard orange #E8A020, black-and-yellow striped rear deck where a crane is mounted, orange beacon lights on the cab roof, oil stains, dents
-
-=== assets/skins/tow-side.png · 1024×176 · De Sleper (elite), zijkant ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no text, no logos. Flat game texture for a 3D car: the lower body panel of the car seen exactly side-on in orthographic view, only the painted metal between the sills and the window line (no windows, no wheels, no roof, no ground), front of the car at the RIGHT edge, the panel fills the whole image edge to edge with no background, flat even lighting with no shadows: the same hazard-orange tow truck side panel, black and yellow chevron stripes on the rear section, the words removed, oil stains and rust along the bottom
-
-=== assets/ui/sign-crane.png · 1024×560 · waarschuwingsbord voor de sloopkogel (vervangt het CSS-bord), transparant rond het bord ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no logos. A battered rectangular metal warning sign seen straight on, filling the image: scuffed off-white enamel plate with rust creeping in from the edges and four rusty screws in the corners, at the top a red oval with a black outline and white bold letters reading "GEVAAR", below it big bold black letters reading "SLOOPKOGEL", under that a simple black pictogram of a crane hook swinging a wrecking ball toward a small car, flat even lighting, on a plain flat magenta #FF00FF background around the sign for easy removal, 15:8
-
-=== assets/pit/gate.png · 512×256 · één poortvleugel van de pitpoort, recht van voren, vult het hele beeld ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no logos, no text. Flat game texture: one leaf of a heavy steel yard gate seen straight on and filling the whole image edge to edge, a thick dark gunmetal frame with bolts, the panel painted in diagonal hazard-yellow and black stripes, chipped paint, rust streaks running down from the bolts, a dented corner, flat even lighting, no shadows, no background, 2:1
-
-=== assets/pit/driveway.jpg · 256×1024 · betonnen oprit, van recht boven, naadloos herhalend van boven naar onder ===
-Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green #8CC063, charcoal #2A2C30), no outlines, no photorealism, no watermark, no logos, no text. Seamless tileable texture, the top and bottom edges must match perfectly: a strip of cracked grey concrete driveway seen from directly above, a dashed white centre line, thick hazard-yellow painted edge lines on both long sides, oil stains, black tyre marks running lengthwise, a few weeds in the cracks, flat even lighting with no shadows, tall 1:4
+STYLE =
+Low-poly 3D game art, flat-shaded faceted geometry, clean simple shapes, toy-like proportions, soft warm light with
+gentle shadows, warm saturated colours (rust orange #E8553A, hazard yellow #FFC23D, mud brown #A47F57, grass green
+#8CC063, charcoal #2A2C30), worn paint, rust patches, dents and rivets, no outlines, no photorealism, no watermark,
+no text, no logos, no brand badges.
+```
+
+## Status
+
+| Already in the game | Still missing (prompts below) |
+|---|---|
+| Logo, loading/menu art, arena dirt, pack banners | `garage-bg.jpg` (garage backdrop behind the 3D turntable) |
+| Menu renders of all 7 cars (`cars/`, cut out automatically) | Icons `radar`, `tank`, and a proper `mg2` (it is a copy of `mg` now) |
+| Skins for Zwerfotto, Roestbak, Lijkotto | Skins for the 4 enemy types, 3 bosses and 4 pack cars |
+| 22 part icons, HUD icons, fuel gauge + needle, pump icon, jerrycan | Gauge-cluster faces (`cluster-speedo`, `cluster-nitro`) |
+| Hay bales, pump pad decal, fire trail | Pit entry art (`pit/gate.png`, `pit/driveway.jpg`) |
+| Reference portraits of every enemy (`elites/`) | Showcase renders of the enemy cars (for a future "wanted" board) |
+
+Built in 3D in code, no art needed: the gas pump (healthy, burning and wrecked), pallets, radio tower, tyre piles,
+cones, ramps, the crane and the garage turntable.
+
+---
+
+## 1. Garage
+
+```text
+=== assets/garage-bg.jpg · 2560×1440 · garage backdrop (darkened by the game) ===
+STYLE + Interior of a cluttered scrapyard workshop at night, seen from inside towards the back wall. Corrugated metal
+walls with rust streaks, a pegboard full of wrenches and hammers, stacked black, red and white tyres, oil drums with
+hazard stripes, a welding cart with a small orange spark glow, a rolling toolbox, an engine block hanging on a hoist
+chain, a half-stripped rusty car on a lift at the left. A rolled-up garage door on the right shows the dusky junkyard
+and floodlights outside. Warm hanging work lamps make pools of yellow light, the rest is in cool blue-grey shadow.
+The centre is a darker, calm stretch of oil-stained concrete floor with faded yellow hazard lines, because a 3D car
+turntable and interface panels sit on top. No people, no cars in the foreground, wide 16:9.
+```
+
+## 2. Part icons (garage cards and slot chips)
+
+All icons: **512×512, transparent**, one object, three-quarter view from slightly above, centred with a little margin,
+on a plain flat light-grey background (removed afterwards). Same lighting for the whole set. The first three are
+missing; the rest are already in the game, listed so you can regenerate the full set in one consistent style.
+
+```text
+=== assets/icons/radar.png · MISSING ===
+STYLE + Game item icon: a small rusty radar dish antenna on a stubby mast with a riveted base plate, a hazard-yellow
+rim on the dish and a tiny blinking green light, a jerrycan symbol painted on the base
+
+=== assets/icons/tank.png · MISSING ===
+STYLE + Game item icon: a dented spare fuel tank (long red steel jerry tank) strapped down with two worn leather
+belts on a riveted bracket, brass filler cap, a yellow "+10 L" style dash pattern painted on the side (no readable text)
+
+=== assets/icons/mg2.png · MISSING (now a copy of mg) ===
+STYLE + Game item icon: a compact second machine-gun turret for a car boot: short twin barrels, a low round armoured
+base with bolts, an ammo box with a hazard-yellow stripe on the back, a little rusty, smaller and lower than a roof turret
+
+=== assets/icons/mg.png ===
+STYLE + Game item icon: a roof-mounted machine-gun turret with a rotating base, long barrel, ammo box with yellow stripe
+=== assets/icons/tesla.png ===
+STYLE + Game item icon: a tesla coil on a car roof: copper coils on a dark base, a glowing pale-blue crystal on top
+=== assets/icons/flame.png ===
+STYLE + Game item icon: twin flamethrower nozzles on a bracket with a red fuel bottle, small orange flame tips
+=== assets/icons/mines.png ===
+STYLE + Game item icon: a rear mine dropper box with three round black mines with red lights
+=== assets/icons/saw.png ===
+STYLE + Game item icon: a big circular saw blade on a side arm, steel teeth, hazard-striped guard
+=== assets/icons/v8.png ===
+STYLE + Game item icon: a V8 engine with a chrome supercharger blower poking out of a car hood
+=== assets/icons/rounds.png ===
+STYLE + Game item icon: an open wooden crate of brass bullets with a stencilled star
+=== assets/icons/cooler.png ===
+STYLE + Game item icon: a finned gun cooler block with blue coolant hoses
+=== assets/icons/plow.png ===
+STYLE + Game item icon: a heavy front ram plough, angled steel blade with hazard stripes
+=== assets/icons/bullbar.png ===
+STYLE + Game item icon: a chunky tubular bull bar with bolts and dents
+=== assets/icons/spikes.png ===
+STYLE + Game item icon: a front grille covered in welded steel spikes
+=== assets/icons/cage.png ===
+STYLE + Game item icon: a welded roll cage of rusty steel tubes with a yellow X brace
+=== assets/icons/plate.png ===
+STYLE + Game item icon: a riveted steel door armour plate with scratches
+=== assets/icons/skirts.png ===
+STYLE + Game item icon: low side skirts with glowing orange edge strips
+=== assets/icons/slicks.png ===
+STYLE + Game item icon: one fat racing slick tyre on a black rim
+=== assets/icons/spoiler.png ===
+STYLE + Game item icon: a bolted-on rear spoiler, bent a little, hazard-yellow end plates
+=== assets/icons/exhaust.png ===
+STYLE + Game item icon: side exhaust pipes shooting short orange flames
+=== assets/icons/nitro.png ===
+STYLE + Game item icon: two blue nitro bottles with red valves and a pressure gauge
+=== assets/icons/magnet.png ===
+STYLE + Game item icon: a red horseshoe crane magnet hanging from a chain, with a few bolts stuck to it
+=== assets/icons/ballast.png ===
+STYLE + Game item icon: a grey concrete block with a rebar loop strapped down with chains
+=== assets/icons/toolbox.png ===
+STYLE + Game item icon: an open red toolbox with wrenches and a roll of duct tape
+=== assets/icons/scrapbin.png ===
+STYLE + Game item icon: a small rusty bin overflowing with bolts, nuts and gears
+```
+
+## 3. Car skins (painted 3D cars in the game)
+
+A skin is two images that are wrapped on the in-game car: a **top view** (roof) and a **side view** (both flanks).
+Rules for every skin:
+- **Orthographic**, nose pointing **right**, car fills the whole frame edge to edge, **transparent background**.
+- **Top** 1024 × (1024 × width ÷ length), e.g. 1024×512. Straight down, **no turret or roof weapons** (the game adds those).
+- **Side** 1024 × about 330. Straight side profile with **empty wheel arches (no wheels)**; the game draws the wheels.
+- Use the same car in both, same paint, same number.
+
+When a pair is in `assets/skins/`, add its id to `SKINS` in `src/assets.js`.
+
+```text
+=== assets/skins/rust-top.png + rust-side.png · enemy: rammer ===
+STYLE + Orthographic game car skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A rusty olive-green (#7F8F3A) 1980s compact sedan rebuilt as a rammer: a heavy steel ram bar bolted across
+the nose, mismatched primer-grey door, cracked windows, number 13 in a cream circle, mud splashes on the lower half.
+[TOP: seen straight from above, no roof weapons] / [SIDE: straight side profile, empty wheel arches, no wheels]
+
+=== assets/skins/spit-top.png + spit-side.png · enemy: gunner ===
+STYLE + Orthographic game car skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A teal (#3F8A8F) boxy station wagon turned into a gunner car: welded mesh over the side windows, a mounting
+plate on the roof, ammo boxes strapped to the luggage rack, purple paint splashes, number 07 in a cream circle.
+[TOP: seen straight from above, no roof weapons] / [SIDE: straight side profile, empty wheel arches, no wheels]
+
+=== assets/skins/thief-top.png + thief-side.png · enemy: fuel thief ===
+STYLE + Orthographic game car skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A lime-green (#5FBF4A) small hot hatch with racing stripes, a red siphon hose coiled on the roof, two
+stolen jerrycans strapped to the back, a cartoon fuel-drop sticker with a mask, number 66.
+[TOP: seen straight from above] / [SIDE: straight side profile, empty wheel arches, no wheels]
+
+=== assets/skins/brute-top.png + brute-side.png · enemy: brute ===
+STYLE + Orthographic game car skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A mustard-yellow (#E0A92A) huge old pickup truck with armour plates welded over the doors, a cage over the
+windows, a massive front bumper, chains in the bed, hazard stripes on the tailgate, number 99.
+[TOP: seen straight from above] / [SIDE: straight side profile, empty wheel arches, no wheels]
+
+=== assets/skins/harvester-top.png + harvester-side.png · boss: De Pikdorser ===
+STYLE + Orthographic game vehicle skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A golden-yellow (#E0B040) rusty combine harvester, enormous, with a wide rotating header in front, saw
+blades bolted to the reel, straw stuck everywhere, a cab with cracked glass, hazard stripes on the corners.
+[TOP: seen straight from above] / [SIDE: straight side profile, empty wheel arches, no wheels]
+
+=== assets/skins/monster-top.png + monster-side.png · boss: Den Dikken Bompa ===
+STYLE + Orthographic game vehicle skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A purple (#7A3AB0) monster truck body lifted high on a chassis, flame decals, a roll cage, a skull-shaped
+radiator grille, oversized empty wheel arches, number 1 in a cream star.
+[TOP: seen straight from above] / [SIDE: straight side profile, empty wheel arches, no wheels]
+
+=== assets/skins/tow-top.png + tow-side.png · boss: De Takelwagen ===
+STYLE + Orthographic game vehicle skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. An orange (#E8A020) heavy tow truck with an amber light bar on the cab, a winch and boom on the back with
+a big steel hook, chains, hazard chevrons on the rear, dents and rust.
+[TOP: seen straight from above] / [SIDE: straight side profile, empty wheel arches, no wheels]
+
+=== assets/skins/mini-top.png + mini-side.png · pack car: Mini Cooper (Britland) ===
+STYLE + Orthographic game car skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A red classic Mini derby car with a faded Union Jack roof, a roof rack with four yellow spotlights, mesh
+over the rear windows, number 11 in a cream circle. Same car as assets/cars/mini.png.
+[TOP: seen straight from above, no roof weapons] / [SIDE: straight side profile, empty wheel arches, no wheels]
+
+=== assets/skins/taxi-top.png + taxi-side.png · pack car: London taxi (Britland) ===
+STYLE + Orthographic game car skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A black London cab derby car with a yellow TAXI light box, a checkered stripe, a big chrome grille with a
+bull bar, mesh windows, number 32. Same car as assets/cars/taxi.png.
+[TOP: seen straight from above, no roof weapons] / [SIDE: straight side profile, empty wheel arches, no wheels]
+
+=== assets/skins/f1-top.png + f1-side.png · pack car: Formula 1 (Da rappe wè) ===
+STYLE + Orthographic game car skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A battered red open-wheel formula car with a long nose, front and rear wings with hazard stripes, a halo
+over the cockpit, number 1. Wheels outside the body are NOT drawn. Same car as assets/cars/f1.png.
+[TOP: seen straight from above, no roof weapons] / [SIDE: straight side profile, no wheels]
+
+=== assets/skins/safety-top.png + safety-side.png · pack car: Safety Car (Da rappe wè) ===
+STYLE + Orthographic game car skin texture, nose pointing right, no perspective, fills the frame, transparent
+background. A silver sports saloon safety car with an orange light bar, yellow-black hazard stripes, a roll cage, a
+spoiler, number 0. Same car as assets/cars/safety.png.
+[TOP: seen straight from above, no roof weapons] / [SIDE: straight side profile, empty wheel arches, no wheels]
+```
+
+## 4. Car showcase renders
+
+Same framing as the menu cars (`assets/cars/*.png`): **960×520**, three-quarter front view from slightly above, the car
+on a round patch of dirt with a few grass tufts, on a plain flat green background (the game cuts it out). Save them in
+`assets/cars/` (enemies are not shown in a menu yet; they're for a future "wanted" board).
+
+```text
+=== assets/cars/rust.png ===
+STYLE + Game vehicle showcase render, three-quarter front view from slightly above, centred on a round patch of dirt
+with a few grass tufts, plain flat green background. The olive-green rammer sedan from rust-top/side: steel ram bar,
+primer-grey door, number 13.
+=== assets/cars/spit.png ===
+STYLE + (same framing) The teal gunner station wagon: twin roof machine gun, window mesh, ammo boxes, number 07.
+=== assets/cars/thief.png ===
+STYLE + (same framing) The lime-green fuel thief hot hatch with a coiled red siphon hose and stolen jerrycans, number 66.
+=== assets/cars/brute.png ===
+STYLE + (same framing) The mustard armoured pickup brute with a massive bumper and chains, number 99.
+```
+
+## 5. HUD and pit entry
+
+```text
+=== assets/ui/cluster-speedo.png · 1024×1024 · transparent · then add 'cluster-speedo' to UI_ICONS ===
+STYLE + Game HUD gauge face, front view, a round chrome-rimmed speedometer from an old rally car: black face, cream
+numerals 0 to 240 in steps of 20, a red zone from 200 up, a small empty rectangular window low in the centre (for the
+lap number), scratched glass, four bolts on the bezel. No needle (the game draws it).
+
+=== assets/ui/cluster-nitro.png · 512×512 · transparent · then add 'cluster-nitro' to UI_ICONS ===
+STYLE + Game HUD gauge face, front view, a small round nitro pressure gauge: black face, blue arc from empty to full,
+the letters NOS small at the bottom, chrome bezel with two bolts, scratched glass. No needle.
+
+=== assets/pit/gate.png · 1024×512 · transparent · then add 'gate' to PIT_ART ===
+STYLE + Seen straight from above: a scrapyard entrance gate made of two rusty sliding chain-link panels with
+hazard-striped steel posts and a warning light on each post, fills the frame, plain background removed.
+
+=== assets/pit/driveway.jpg · 512×2048 · tiling vertically · then add 'driveway' to PIT_ART ===
+STYLE + Seen straight from above: a muddy dirt driveway with deep tyre ruts, puddles, gravel, oil stains, the edges
+lined with half-buried tyres, seamless top to bottom.
 ```

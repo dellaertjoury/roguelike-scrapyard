@@ -1124,3 +1124,66 @@ export function portraits(cars) {
   r.dispose(); r.forceContextLoss && r.forceContextLoss();
   return out;
 }
+
+/* ---------- garage turntable ----------
+   A live 3D preview of your car in the garage, built with the same buildCar/partMesh as in the game, so every fitted
+   part (and its level) shows. It sits on a slowly turning platform under a work lamp; drag to spin it. Hovering a
+   part for sale previews it fitted (at the level you'd get), and the hovered slot gets a yellow outline. */
+let gp = null;
+export function garageView(canvas) {
+  if (gp && gp.canvas === canvas) return gp;
+  const r = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
+  r.setPixelRatio(Math.min(2, window.devicePixelRatio || 1)); r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+  const sc = new THREE.Scene();
+  sc.add(new THREE.HemisphereLight(0xdfe8ff, 0x3a3028, 1.5));
+  const key = new THREE.DirectionalLight(0xfff0d6, 2.8); key.position.set(-50, 140, 70); key.castShadow = true;
+  Object.assign(key.shadow.camera, { left: -80, right: 80, top: 80, bottom: -80 }); key.shadow.mapSize.set(1024, 1024); sc.add(key);
+  const rim = new THREE.DirectionalLight(0x9fc8ff, 1.2); rim.position.set(80, 50, -90); sc.add(rim);
+  // the platform: dark steel disc with a hazard-striped rim and bolt heads
+  const hz = stripeTex(512, 32, (c, w, h) => { for (let i = 0; i < w / 16; i++) { c.fillStyle = i % 2 ? '#1d1b1a' : '#ffc23d'; c.beginPath(); c.moveTo(i * 16, 0); c.lineTo(i * 16 + 16, 0); c.lineTo(i * 16 + 4, h); c.lineTo(i * 16 - 12, h); c.fill() } });
+  hz.wrapS = THREE.RepeatWrapping; hz.repeat.set(3, 1);
+  const plat = new THREE.Group(); sc.add(plat);
+  const side = new THREE.Mesh(new THREE.CylinderGeometry(66, 68, 7, 40, 1, true), new THREE.MeshLambertMaterial({ map: hz })); side.position.y = -3.5; plat.add(side);
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(66, 66, 1, 40), lam(0x3c3f45)); disc.position.y = -.5; disc.receiveShadow = true; plat.add(disc);
+  const inner = new THREE.Mesh(new THREE.RingGeometry(52, 54, 40).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x55585e })); inner.position.y = .05; plat.add(inner);
+  for (let i = 0; i < 12; i++) { const a = i / 12 * TAU, b = new THREE.Mesh(new THREE.CylinderGeometry(1.4, 1.4, 1, 6), lam(0x8a8d93)); b.position.set(Math.cos(a) * 60, .3, Math.sin(a) * 60); plat.add(b) }
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(220, 32).rotateX(-Math.PI / 2), new THREE.MeshLambertMaterial({ color: 0x24252a })); floor.position.y = -7; floor.receiveShadow = true; sc.add(floor);
+  const pivot = new THREE.Group(); plat.add(pivot);
+  const cam = new THREE.PerspectiveCamera(26, 1.6, 1, 2000);
+  const box = new THREE.Box3Helper(new THREE.Box3(), 0xffc23d); box.visible = false; sc.add(box);
+  gp = { canvas, r, sc, cam, plat, pivot, box, car: null, sig: '', rot: .7, vel: 0, drag: null, hl: null, w: 0, h: 0 };
+  canvas.addEventListener('pointerdown', e => { gp.drag = { x: e.clientX, t: performance.now() }; gp.vel = 0; canvas.setPointerCapture(e.pointerId); canvas.style.cursor = 'grabbing' });
+  canvas.addEventListener('pointermove', e => { if (!gp.drag) return; const dx = e.clientX - gp.drag.x; gp.drag.x = e.clientX; gp.rot += dx * .012; gp.vel = dx * .012 });
+  const up = () => { gp.drag = null; canvas.style.cursor = '' };
+  canvas.addEventListener('pointerup', up); canvas.addEventListener('pointercancel', up);
+  return gp;
+}
+// build = { slot: { id, lvl } }; rebuilt only when it changes
+export function garageSet(build, hl) {
+  const P = G.P; if (!gp || !P) return;
+  const sig = P.car.id + '|' + ALL_SLOTS.map(s => build[s] ? build[s].id + build[s].lvl : '-').join('|');
+  if (gp.sig !== sig) {
+    if (gp.car) { gp.pivot.remove(gp.car.root); dispose(gp.car.root) }
+    const o = buildCar({ ...P.car, kind: 'player' }), g = new THREE.Group();
+    o.turret = null; o.turret2 = null; o.blades = []; o.pipeGlow = null; o.skirtGlow = null;
+    for (const s of ALL_SLOTS) { const b = build[s]; if (!b) continue; const pm = partMesh(o, b.id, b.lvl, P); pm.userData.slot = s; g.add(pm) }
+    o.tilt.add(g); o.partsG = g; o.root.scale.setScalar(64 / P.car.len); o.root.position.y = 0;
+    o.root.traverse(m => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true } });
+    gp.pivot.add(o.root); gp.car = o; gp.sig = sig;
+  }
+  gp.hl = hl || null;
+}
+export function garageFrame(dt) {
+  if (!gp) return;
+  const { canvas, r, cam } = gp, w = canvas.clientWidth, h = canvas.clientHeight;
+  if (!w || !h) return;
+  if (w !== gp.w || h !== gp.h) { gp.w = w; gp.h = h; r.setSize(w, h, false); cam.aspect = w / h; cam.updateProjectionMatrix() }
+  if (!gp.drag) { gp.rot += gp.vel; gp.vel *= .93; if (Math.abs(gp.vel) < .003) gp.rot += dt * .3 }
+  gp.plat.rotation.y = gp.rot;
+  const dist = 205 / Math.min(1, cam.aspect / 1.3); cam.position.set(0, dist * .42, dist); cam.lookAt(0, 9, 0);
+  if (gp.car) for (const b of gp.car.blades || []) b.rotation.y += dt * 8;
+  const parts = gp.hl && gp.car ? gp.car.partsG.children.filter(c => c.userData.slot === gp.hl) : [];
+  if (parts.length) { gp.box.box.makeEmpty(); for (const p of parts) gp.box.box.expandByObject(p); gp.box.box.expandByScalar(1.5); gp.box.visible = !gp.box.box.isEmpty(); gp.box.material.opacity = .6 + .4 * Math.sin(performance.now() / 160) } else gp.box.visible = false;
+  gp.box.material.transparent = true;
+  r.render(gp.sc, cam);
+}
