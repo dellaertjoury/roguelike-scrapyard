@@ -369,9 +369,7 @@ export function hud() {
   const cs = $('craneSign'), cw = G.crane && G.crane.st === 'warn' && G.state === 'play'; // pulses through the whole 3 s warning
   cs.classList.toggle('on', !!cw);
   $('vign').classList.toggle('on', !!G.siphon && G.state === 'play');
-  // countdown: a round road sign 3-2-1, then a green GO disc
-  const cd = $('count'), n = G.startT > 0 && G.state === 'play' ? String(Math.ceil(G.startT)) : '';
-  if (cd._n !== n) { cd._n = n; if (n || cd.textContent) { cd.textContent = n || t('go'); cd.className = n ? 'tick' : 'tick go'; void cd.offsetWidth; cd.classList.add('on') } }
+  // (no countdown sign: the drive into the pit is the countdown)
   set($('scrapTxt'), fmt(G.scrap)); set($('wreckTxt'), t('wrecks', { n: fmt(G.wrecks) }));
   // scrap bump (+N) and a shake on the hull plate when you take damage
   if (hudMem.scrap != null && G.scrap > hudMem.scrap) { const b = $('scrapBump'), n = $('scrapTxt'); b.textContent = '+' + fmt(G.scrap - hudMem.scrap); b.classList.remove('go'); void b.offsetWidth; b.classList.add('go'); n.classList.add('pop'); clearTimeout(hudMem.pt); hudMem.pt = setTimeout(() => n.classList.remove('pop'), 150) }

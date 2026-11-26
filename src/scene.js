@@ -432,7 +432,33 @@ function buildObstacles() {
   obsGroup.updateMatrixWorld(true); const ms = []; obsGroup.traverse(m => { if (m.isMesh) ms.push(m) });
   const keepMs = obsGroup.children.slice(); mergeInto(obsGroup, ms, m => m.matrixWorld);
   for (const c of keepMs) if (c.isGroup) obsGroup.remove(c);
+  buildOil();
   obsBuilt = G.obsVersion;
+}
+// oil puddles: a glossy black slick with an irregular edge, a faint rainbow sheen on top, and a few drips around it
+const oilG = new THREE.Group(); scene.add(oilG);
+const oilM = keep(new THREE.MeshPhongMaterial({ color: 0x0b0a0e, specular: 0x9aa0c0, shininess: 90 }));
+const sheenTex = (() => { const c = document.createElement('canvas'); c.width = c.height = 128; const g = c.getContext('2d'), gr = g.createRadialGradient(64, 64, 4, 64, 64, 64);
+  [[0, 'rgba(0,0,0,0)'], [.3, 'rgba(120,60,200,.55)'], [.45, 'rgba(40,160,200,.5)'], [.6, 'rgba(90,200,90,.45)'], [.75, 'rgba(220,180,60,.35)'], [1, 'rgba(0,0,0,0)']].forEach(([o, col]) => gr.addColorStop(o, col));
+  g.fillStyle = gr; g.fillRect(0, 0, 128, 128); const t = new THREE.CanvasTexture(c); t.userData.keep = true; return t })();
+const sheenM = keep(new THREE.MeshBasicMaterial({ color: 0x5a4c8a, transparent: true, opacity: .55, depthWrite: false })), glintM = keep(new THREE.MeshBasicMaterial({ color: 0xd8e4ff, transparent: true, opacity: .5, depthWrite: false })); // purple-blue oily gloss and a white glint
+function blobGeo(r, seed, n = 20) {
+  const sh = new THREE.Shape();
+  for (let i = 0; i <= n; i++) { const a = i / n * TAU, k = .78 + .14 * Math.sin(a * 3 + seed) + .1 * Math.sin(a * 5 + seed * 2.3); i ? sh.lineTo(Math.cos(a) * r * k, Math.sin(a) * r * k) : sh.moveTo(Math.cos(a) * r * k, Math.sin(a) * r * k) }
+  const g = new THREE.ShapeGeometry(sh), p = g.attributes.position, uv = g.attributes.uv;
+  for (let i = 0; i < p.count; i++) uv.setXY(i, p.getX(i) / (2 * r) + .5, p.getY(i) / (2 * r) + .5); // 0..1 across the blob, for the sheen
+  return g.rotateX(-Math.PI / 2);
+}
+const oilRimM = keep(lam(0x3a3442));
+function buildOil() {
+  oilG.traverse(m => { if (m.isMesh) m.geometry.dispose() }); oilG.clear();
+  for (const o of G.oil || []) {
+    const rim = new THREE.Mesh(blobGeo(o.r * 1.07, o.seed), oilRimM); rim.position.set(o.x, .5, o.y); rim.rotation.y = o.a; oilG.add(rim); // wet, darkened dirt around the edge
+    const g = blobGeo(o.r, o.seed), m = new THREE.Mesh(g, oilM); m.position.set(o.x, .7, o.y); m.rotation.y = o.a; m.receiveShadow = true; oilG.add(m);
+    const sh = new THREE.Mesh(blobGeo(o.r * .5, o.seed + 1.7), sheenM); sh.position.set(o.x - o.r * .12, 1.4, o.y - o.r * .1); sh.rotation.y = o.a + .5; oilG.add(sh);
+    const gl = new THREE.Mesh(blobGeo(o.r * .16, o.seed + 3, 10), glintM); gl.scale.set(1.8, 1, .6); gl.position.set(o.x - o.r * .25, 1.8, o.y - o.r * .2); gl.rotation.y = .6; oilG.add(gl);
+    for (let i = 0; i < 4; i++) { const a = o.a + i * 1.7 + o.seed, d = o.r * (1.05 + .25 * ((i * 37 + o.seed) % 1)), dr = new THREE.Mesh(blobGeo(o.r * (.1 + .05 * (i % 2)), o.seed + i, 10), oilM); dr.position.set(o.x + Math.cos(a) * d, .7, o.y + Math.sin(a) * d); oilG.add(dr) }
+  }
 }
 
 /* ---------- cars ---------- */

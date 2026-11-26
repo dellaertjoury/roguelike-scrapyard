@@ -158,6 +158,20 @@ export function makeObs() {
     if (row.every(o => clear(o.x, o.y, o.r, 150) && !nearRamp(o.x, o.y, o.r))) { obs.push(...row); want-- }
   }
   for (let want = 3, n2 = 0; want > 0 && n2 < 400; n2++) { const p = ringSpot(); if (put({ ...p, r: rnd(26, 38), k: 'tire', v: Math.random() * 5 | 0 }, 160)) want-- }
+  // oil puddles: 2–3 flat slicks in open ground (not on pads, ramps, the pit line or the crane lane); you drive
+  // through them, but the tyres lose their grip and the car spins
+  const oil = [];
+  for (let want = 2 + (Math.random() < .5 ? 1 : 0), n2 = 0; want > 0 && n2 < 400; n2++) {
+    const r = rnd(48, 66), x = rnd(240, AW - 240), y = rnd(220, AH - 220);
+    if (!clear(x, y, r, 70) || nearRamp(x, y, r) || oil.some(o => Math.hypot(o.x - x, o.y - y) < o.r + r + 260)) continue;
+    oil.push({ x, y, r, a: rnd(0, TAU), seed: Math.random() * 100 }); want--;
+  }
+  for (let n2 = 0; oil.length < 2 && n2 < 400; n2++) { // crowded field: try again with less spacing
+    const r = rnd(44, 56), x = rnd(240, AW - 240), y = rnd(220, AH - 220);
+    if (!clear(x, y, r, 30) || nearRamp(x, y, r) || oil.some(o => Math.hypot(o.x - x, o.y - y) < o.r + r + 120)) continue;
+    oil.push({ x, y, r, a: rnd(0, TAU), seed: Math.random() * 100 });
+  }
+  G.oil = oil;
   G.pads = pads;
   // single tyre stacks hug both sides (from a quarter of the way up) and the back of every ramp,
   // so nothing can wedge itself into the steep faces
@@ -170,7 +184,7 @@ export function makeObs() {
   const cones = []; n = 0;
   while (cones.length < 4 && n++ < 300) {
     const x = rnd(260, AW - 260), y = rnd(260, AH - 260), a = rnd(0, TAU), k = 3 + (Math.random() * 3 | 0);
-    if (obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 120) || ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < 220) || pads.some(p => Math.hypot(p.x - x, p.y - y) < PUMP_R + 60) || Math.hypot(x - GATE.x, y - GATE.y1) < 200 || inCraneLane(x, y) || onHandLine(x, y, 40) || onHandLine(x + Math.cos(a) * 46 * (k - 1), y + Math.sin(a) * 46 * (k - 1), 40)) continue;
+    if (obs.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 120) || oil.some(o => Math.hypot(o.x - x, o.y - y) < o.r + 60) || ramps.some(r => Math.hypot(r.cx - x, r.cy - y) < 220) || pads.some(p => Math.hypot(p.x - x, p.y - y) < PUMP_R + 60) || Math.hypot(x - GATE.x, y - GATE.y1) < 200 || inCraneLane(x, y) || onHandLine(x, y, 40) || onHandLine(x + Math.cos(a) * 46 * (k - 1), y + Math.sin(a) * 46 * (k - 1), 40)) continue;
     for (let i = 0; i < k && cones.length < 4; i++) cones.push({ hx: x + Math.cos(a) * i * 46, hy: y + Math.sin(a) * i * 46 });
   }
   G.cones = cones; resetCones();
@@ -517,6 +531,7 @@ function coneStep(dt) {
    Cars steer like cars: a forward/sideways velocity split with grip, so a hard turn at speed slides (they drift,
    with smoke and rubber), turning needs speed, obstacles and walls bend their line, and a car that gets stuck
    backs out (reverse with the wheel flipped) before trying again. */
+export const onOil = (x, y) => (G.oil || []).some(o => Math.hypot(o.x - x, o.y - y) < o.r * .9);
 function drive(e, want, spd, dt, dPlayer) {
   // bend the line around tyre piles, bales, the pump post and the walls
   let ax = Math.cos(want), ay = Math.sin(want);
@@ -552,7 +567,10 @@ function drive(e, want, spd, dt, dPlayer) {
   let fwd = e.vx * c2 + e.vy * s2, lat = -e.vx * s2 + e.vy * c2;
   const tf = e.rev > 0 ? -spd * .55 : spd * (sharp ? .8 : 1);
   fwd += (tf - fwd) * Math.min(1, dt * 2.2);
-  lat *= Math.max(0, 1 - (drifting ? 1.8 : 6.5) * dt);
+  if (!(e.z > 2) && onOil(e.x, e.y)) { if (!(e.oilT > 0)) e.oilDir = Math.sign(lat || Math.random() - .5); e.oilT = .6 } // enemies spin out on oil too
+  e.oilT = Math.max(0, (e.oilT || 0) - dt);
+  if (e.oilT > 0) e.a += e.oilDir * 2.4 * Math.min(1, Math.abs(fwd) / 150) * dt;
+  lat *= Math.max(0, 1 - (e.oilT > 0 ? .3 : drifting ? 1.8 : 6.5) * dt);
   e.vx = c2 * fwd - s2 * lat; e.vy = s2 * fwd + c2 * lat;
   e.drift = drifting && Math.abs(lat) > 18;
   if (e.drift) { // smoke and rubber
@@ -588,7 +606,7 @@ function craneStep(dt, live) {
     G.shake = Math.max(G.shake, 3);
     if (Math.random() < .5) puff(bx, by, 1, { c: 0xdccbad, s0: 20, s1: 80, l0: .5, l1: .9, z0: 8, z1: 14, grow: 14, z: 4, vz0: 10, vz1: 40 });
     const smack = (o, r) => { const d = Math.hypot(o.x - bx, o.y - by); return d < r + CRANE.ball && !C.hit.has(o) && (o.z || 0) < 60 };
-    if (smack(P, P.r)) { C.hit.add(P); hitPlayer(CRANE_DMG); const sp = Math.hypot(tx, ty) || 1; P.vx += tx / sp * 1050; P.vy += ty / sp * 1050; P.slideT = .9; boom(P.x, P.y, 22); G.shake = 22 /* big knockback; loose grip for .9 s so you slide far */ }
+    if (smack(P, P.r)) { C.hit.add(P); hitPlayer(CRANE_DMG); const sp = Math.hypot(tx, ty) || 1; P.vx += tx / sp * 520; P.vy += ty / sp * 520; P.slideT = .45; boom(P.x, P.y, 22); G.shake = 18 /* knockback (was 1050 and .9 s of loose grip: too far) */ }
     for (const e of G.enemies) if (!e.dead && smack(e, e.r)) { C.hit.add(e); const sp = Math.hypot(tx, ty) || 1; e.vx += tx / sp * 600; e.vy += ty / sp * 600; hurt(e, e.elite ? 120 : 400) }
     if (k >= 1) { C.st = 'idle'; C.side = C.to; C.t = rnd(22, 34) }
   }
@@ -884,11 +902,15 @@ export function update(dt) {
   if (fwd > top) fwd += (top - fwd) * Math.min(1, dt * 3);
   fwd -= fwd * (!gr ? .05 : up || dn ? .12 : .9) * dt;
   P.slideT = Math.max(0, (P.slideT || 0) - dt); // just out of the pit: tyres still loose, so the slide carries on
-  if (gr) lat *= Math.max(0, 1 - (hb || P.slideT > 0 ? S.grip * .16 : S.grip) * dt);
+  // oil: nearly no side grip, twice the steering, and the car keeps rotating the way it was going (for .75 s after)
+  if (gr && onOil(P.x, P.y)) { if (!(P.oilT > 0)) P.oilDir = Math.sign(P.steer || lat || Math.random() - .5); P.oilT = .75 }
+  P.oilT = Math.max(0, (P.oilT || 0) - dt); const oily = P.oilT > 0;
+  if (gr) lat *= Math.max(0, 1 - (oily ? S.grip * .04 : hb || P.slideT > 0 ? S.grip * .16 : S.grip) * dt);
+  if (gr && oily) P.a += P.oilDir * 2.6 * Math.min(1, Math.hypot(fwd, lat) / 160) * dt;
   P.vx = fx * fwd - fy * lat; P.vy = fy * fwd + fx * lat;
   const sp = Math.hypot(P.vx, P.vy), steer = (rt ? 1 : 0) - (lt ? 1 : 0);
   P.steer += (steer - P.steer) * Math.min(1, dt * 10);
-  P.a += steer * S.turn * Math.min(1, sp / 80) * (fwd < -5 ? -1 : 1) * (hb ? 1.35 : 1) * (gr ? 1 : .3) * dt;
+  P.a += steer * S.turn * Math.min(1, sp / 80) * (fwd < -5 ? -1 : 1) * (hb ? 1.35 : 1) * (oily ? 2.1 : 1) * (gr ? 1 : .3) * dt;
   const px0 = P.x, py0 = P.y;
   P.x += P.vx * dt; P.y += P.vy * dt;
   rampStep(P, px0, py0, dt);
